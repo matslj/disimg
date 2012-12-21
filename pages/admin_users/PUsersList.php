@@ -1,0 +1,485 @@
+<?php
+// -------------------------------------------------------------------------------------------
+//
+// PUsersList.php
+//
+// Show all users in a list.
+//
+
+// -------------------------------------------------------------------------------------------
+//
+// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+//
+require_once(TP_SOURCEPATH . 'CPageController.php');
+
+$pc = CPageController::getInstance();
+
+// -------------------------------------------------------------------------------------------
+//
+// Interception Filter, access, authorithy and other checks.
+//
+require_once(TP_SOURCEPATH . 'CInterceptionFilter.php');
+
+$intFilter = new CInterceptionFilter();
+$intFilter->frontcontrollerIsVisitedOrDie();
+$intFilter->UserIsSignedInOrRecirectToSignIn();
+$intFilter->UserIsMemberOfGroupAdminOrDie();
+
+// -------------------------------------------------------------------------------------------
+//
+// Take care of global pageController settings, can exist for several pagecontrollers.
+// Decide how page is displayed, review CHTMLPage for supported types.
+//
+$displayAs = $pc->GETisSetOrSetDefault('pc_display', '');
+
+// -------------------------------------------------------------------------------------------
+//
+// Page specific code
+//
+$js = WS_JAVASCRIPT;
+$needjQuery = TRUE;
+$htmlHead = <<<EOD
+    <!-- jQuery UI -->
+    <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
+
+    <!-- jQuery Form Plugin -->
+    <script type='text/javascript' src='{$js}jquery-form/jquery.form.js'></script>
+
+    <style>
+        .demoHeaders {
+                margin-top: 2em;
+        }
+        /*
+        .myDialog {
+                padding: .4em 1em .4em 20px;
+                text-decoration: none;
+                position: relative;
+        }
+        .myDialog span.ui-icon {
+                margin: 0 5px 0 0;
+                position: absolute;
+                left: .2em;
+                top: 50%;
+                margin-top: -8px;
+        }
+        */
+        #dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+        .myDialog {
+                margin: 2px;
+                position: relative;
+                padding: 4px 0;
+                cursor: pointer;
+                float: left;
+                list-style: none;
+        }
+        .myDialog span.ui-icon {
+                float: left;
+                margin: 0 4px;
+        }
+        #icons {
+                margin: 0;
+                padding: 0;
+        }
+        #icons li {
+                margin: 2px;
+                position: relative;
+                padding: 4px 0;
+                cursor: pointer;
+                float: left;
+                list-style: none;
+        }
+        #icons span.ui-icon {
+                float: left;
+                margin: 0 4px;
+        }
+    </style>
+
+EOD;
+
+$redirectOnSuccess = 'json';
+$javaScript = <<<EOD
+// ----------------------------------------------------------------------------------------------
+//
+//
+//
+(function($){
+    $(document).ready(function() {
+    
+        $( "#dialogEdit" ).dialog({
+            autoOpen: false,
+            width: 400,
+            buttons: [
+                    {
+                            text: "Ok",
+                            click: function() {
+                                    $('#dialogEditForm').submit();
+                                    $( this ).dialog( "close" );
+                            }
+                    },
+                    {
+                            text: "Avbryt",
+                            click: function() {
+                                    $( this ).dialog( "close" );
+                            }
+                    }
+            ]
+        });
+        
+        $( "#dialogDelete" ).dialog({
+            autoOpen: false,
+            width: 400,
+            buttons: [
+                    {
+                            text: "Ok",
+                            click: function() {
+                                    $('#dialogDeleteForm').submit();
+                                    $( this ).dialog( "close" );
+                            }
+                    },
+                    {
+                            text: "Avbryt",
+                            click: function() {
+                                    $( this ).dialog( "close" );
+                            }
+                    }
+            ]
+        });
+        
+        $( "#dialogCreate" ).dialog({
+            autoOpen: false,
+            width: 400,
+            buttons: [
+                    {
+                            text: "Ok",
+                            click: function() {
+                                    $('#dialogCreateForm').submit();
+                                    $( this ).dialog( "close" );
+                            }
+                    },
+                    {
+                            text: "Avbryt",
+                            click: function() {
+                                    $( this ).dialog( "close" );
+                            }
+                    }
+            ]
+        });
+        
+        var options = { 
+            beforeSubmit:  showRequest,  // pre-submit callback 
+            success:       showResponse,  // post-submit callback 
+            dataType:  "json"
+        }; 
+        // Bind to form
+        $('#form1').ajaxForm(options);
+        
+        // pre-submit callback 
+        function showRequest(formData, jqForm, options) { 
+            return true; 
+        }
+
+        // post-submit callback 
+        function showResponse(data) {
+            if (data.action == 'publish') {
+                window.location = "?=home";
+            } else {
+                $('#page_id').val(data.pageId);
+                $('p.notice').html("Saved: " + data.timestamp);
+                $('button#savenow').attr('disabled', 'disabled');
+            }
+        }
+
+        // This function regulates the disabled state of the publish button.
+        function manipulatePublishButton() {
+            var empty = true;
+            $('.changables').each(function() {
+                // console.log(this.id);
+                if ($(this).val()) {
+                    empty = false;
+                }
+            });
+            // console.log("Empty = " + empty);
+            if (empty) {
+                $('button#publish').attr('disabled', 'disabled');
+            } else {
+                $('button#publish').removeAttr('disabled');
+            }
+        }
+        
+        // Some event binding - used only for regulating disabled status on buttons
+        $('#form1').bind('keyup', function() {
+            $('button#savenow').removeAttr('disabled');
+            manipulatePublishButton();
+        });
+        
+        function getUserInfoFromRow(targetId) {
+            obj = {};
+            var indexDelimiter = targetId.indexOf("_");
+            var rowIndex = -1;
+            if (indexDelimiter > 0) {
+                rowIndex = targetId.substring(indexDelimiter + 1);
+                obj.accountid = $('#idUser_' + rowIndex).html();
+                obj.accountname = $('#accountName_' + rowIndex).html();
+                obj.name = $('#nameUser_' + rowIndex).html();
+                obj.email = $('#emailUser_' + rowIndex).html();
+             
+                return obj;
+            } else {
+                return null;
+            }
+        }
+
+	// ----------------------------------------------------------------------------------------------
+	//
+	// Event handler for buttons in form. Instead of messing up the html-code with javascript.
+	// Using Event bubbling as described in this document:
+	// http://docs.jquery.com/Tutorials:AJAX_and_Events
+	//
+	$('#userList').click(function(event) {
+                if ($(event.target).is('.edit')) {
+                    $("#dialogEdit").dialog("open");
+                    var userObj = getUserInfoFromRow(event.target.id);        
+                    if (userObj != null) {
+                        $('#dialogEditUserId').val(userObj.accountid);
+                        $('#dialogEditAccountName').val(userObj.accountname);
+                        $('#dialogEditName').val(userObj.name);
+                        $('#dialogEditEmail').val(userObj.email);
+                    }
+                    event.preventDefault();
+		} else if ($(event.target).is('.delete')) {
+                    $("#dialogDelete").dialog("open");
+                    var userObj = getUserInfoFromRow(event.target.id);        
+                    if (userObj != null) {
+                        $('#dialogDeleteUserId').val(userObj.accountid);
+                        $('#dialogDeleteName').html(userObj.name);
+                    }
+                    event.preventDefault();
+		} else if ($(event.target).is('.create')) {
+                    $("#dialogCreate").dialog("open");
+                    event.preventDefault();
+		} else if ($(event.target).is('button#publish')) {
+                        $('#action').val('publish');
+			// Disable the button until form has changed again
+			$(event.target).attr('disabled', 'disabled');
+			// $(event.target).submit();
+		} else if ($(event.target).is('button#savenow')) {
+			$('#action').val('draft');
+                        $(event.target).attr('disabled', 'disabled');
+                        // $(event.target).submit();
+		} else if ($(event.target).is('button#discard')) {
+			history.back();
+		} else if ($(event.target).is('a#viewPost')) {
+			if($('#isPublished').val() == 1) {
+				$('a#viewPost').attr('href', '?p=article-edit&amp;article-id=%1\$d&amp;topic-id=%2\$d' + $('#topic_id').val() + '#post-' + $('#post_id').val());
+			} else {
+				alert('The post is not yet published. Press "Publish" to do so.');
+				return(false);
+			}
+		}
+	});
+});
+})(jQuery);
+EOD;
+
+
+$htmlLeft = "";
+
+$htmlMain = <<<EOD
+<h1>Admin: Show user accounts</h1>
+EOD;
+
+$htmlRight = "";
+
+// -------------------------------------------------------------------------------------------
+//
+// Take care of _GET variables. Store them in a variable (if they are set).
+// Then prepare the ORDER BY SQL-statement, but only if the _GET variables has a value.
+//
+$orderBy 	= $pc->GETisSetOrSetDefault('orderby', '');
+$orderOrder 	= $pc->GETisSetOrSetDefault('order', '');
+
+$orderStr = "";
+if(!empty($orderBy) && !empty($orderOrder)) {
+    $orderStr = " ORDER BY {$orderBy} {$orderOrder}";
+}
+
+// -------------------------------------------------------------------------------------------
+//
+// Prepare the order by ref, can you figure out how it works?
+//
+$ascOrDesc = $orderOrder == 'ASC' ? 'DESC' : 'ASC';
+$httpRef = "?p=admin&amp;order={$ascOrDesc}&orderby=";
+
+// -------------------------------------------------------------------------------------------
+//
+// Create a new database object, connect to the database.
+//
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Prepare and perform a SQL query.
+//
+$query = $db->LoadSQL('SAdminList.php');
+$res = $db->Query($query);
+
+// -------------------------------------------------------------------------------------------
+//
+// Show the results of the query
+//
+
+$htmlMain .= <<< EOD
+<div id="userList">
+    <p><a href="#" id="dialog-link" class="ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa användare</a></p>
+    <table id="userAccounts">
+    <tr>
+    <th><a href='{$httpRef}idUser'>Id</a></th>
+    <th><a href='{$httpRef}accountUser'>Användarnamn</a></th>
+    <th><a href='{$httpRef}nameUser'>Namn</a></th>
+    <th><a href='{$httpRef}emailUser'>E-post</a></th>
+    <th><a href='{$httpRef}lastLoginUser'>Senaste inloggning</a></th>
+    <th><a href='{$httpRef}idGroup'>Grupp</a></th>
+    <th><a href='{$httpRef}nameGroup'>Grupp - beskrivning</a></th>
+    <th>&nbsp;</th>
+    </tr>
+EOD;
+
+$i = 0;
+while($row = $res->fetch_object()) {
+    $htmlMain .= <<< EOD
+    <tr>
+        <td id="idUser_{$i}">{$row->idUser}</td>
+        <td id="accountName_{$i}">{$row->accountUser}</td>
+        <td id="nameUser_{$i}">{$row->nameUser}</td>
+        <td id="emailUser_{$i}">{$row->emailUser}</td>
+        <td id="lastLoginUser_{$i}">{$row->lastLoginUser}</td>
+        <td id="idGroup_{$i}">{$row->idGroup}</td>
+        <td id="nameGroup_{$i}">{$row->nameGroup}</td>
+        <td>
+            <a href="#" id="dialogEdit_{$i}" class="ui-state-default ui-corner-all myDialog edit">
+                <span id="dialogEditSpan_{$i}" class="ui-icon ui-icon-pencil edit"></span>
+            </a>
+EOD;
+                
+if (strcmp($row->idGroup, 'adm') != 0) {
+$htmlMain .= <<< EOD
+            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all myDialog delete">
+                <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
+            </a>
+        </td>
+    </tr>
+EOD;
+}
+$i++;
+}
+
+
+$action = "?p=usereditp";
+$redirect = "?p=admin";
+$htmlMain .= <<< EOD
+    </table>
+</div>
+<!-- ui-dialog create -->
+<div id="dialogCreate" title="Dialog Title">
+    <form id='dialogCreateForm' action='{$action}' method='POST'>
+        <input type='hidden' name='redirect' value='{$redirect}'>
+        <input type='hidden' name='redirect-failure' value='{$redirect}'>
+        <input type='hidden' id='dialogCreateUserId' name='accountid' value=''>
+        <input type='hidden' id='dialogCreateAction' name='action' value='create'>
+        <fieldset>
+            <p>Användarnamn eller epost används i samband med inloggning</p>
+            <table width='99%'>
+                <tr>
+                    <td><label for="dialogCreateAccountName">Namn: </label></td>
+                    <td style='text-align: right;'><input id='dialogCreateAccountName' class='name' type='text' name='accountname' value='' /></td>
+                </tr>
+                <tr>
+                    <td><label for="dialogCreateName">Namn: </label></td>
+                    <td style='text-align: right;'><input id='dialogCreateName' class='name' type='text' name='name' value='' /></td>
+                </tr>
+                <tr>
+                    <td><label for="dialogCreateEmail">Epost: </label></td>
+                    <td style='text-align: right;'><input id='dialogCreateEmail' class='email' type='text' name='email' value='' /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+<!-- ui-dialog edit -->
+<div id="dialogEdit" title="Dialog Title">
+    <form id='dialogEditForm' action='{$action}' method='POST'>
+        <input type='hidden' name='redirect' value='{$redirect}'>
+        <input type='hidden' name='redirect-failure' value='{$redirect}'>
+        <input type='hidden' id='dialogEditUserId' name='accountid' value=''>
+        <input type='hidden' id='dialogEditAction' name='action' value='edit'>
+        <fieldset>
+            <table width='99%'>
+                <tr>
+                    <td><label for="dialogEditAccountName">Namn: </label></td>
+                    <td style='text-align: right;'><input id='dialogEditAccountName' class='name' type='text' name='accountname' value='' /></td>
+                </tr>
+                <tr>
+                    <td><label for="dialogEditName">Namn: </label></td>
+                    <td style='text-align: right;'><input id='dialogEditName' class='name' type='text' name='name' value='' /></td>
+                </tr>
+                <tr>
+                    <td><label for="dialogEditEmail">Epost: </label></td>
+                    <td style='text-align: right;'><input id='dialogEditEmail' class='email' type='text' name='email' value='' /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+<!-- ui-dialog delete -->
+<div id="dialogDelete" title="Dialog Title">
+    <form id='dialogDeleteForm' action='{$action}' method='POST'>
+        <input type='hidden' name='redirect' value='{$redirect}'>
+        <input type='hidden' name='redirect-failure' value='{$redirect}'>
+        <input type='hidden' id='dialogDeleteUserId' name='accountid' value=''>
+        <input type='hidden' id='dialogDeleteAction' name='action' value='delete'>
+        <fieldset>
+            <p>Vill du radera den här användaren?</p>
+            <div id="dialogDeleteName"></div>
+        </fieldset>
+    </form>
+</div>
+EOD;
+
+$res->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Close the connection to the database
+//
+
+$mysqli->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Create and print out the resulting page
+//
+require_once(TP_SOURCEPATH . 'CHTMLPage.php');
+
+$page = new CHTMLPage(WS_STYLESHEET);
+
+// $page->printPage($htmlLeft, $htmlMain, $htmlRight, '', $displayAs);
+$page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
+exit;
+
+
+?>

@@ -1,0 +1,28 @@
+/* =====================================================================================
+ *
+ *
+ * All definitions related displaying an article
+ *
+ *
+ */
+
+
+/* -------------------------------------------------------------------------------------
+/* article general */
+
+article.general {
+	font-family: Verdana, Sans-serif;
+}
+
+article.general h1 {
+	;
+}
+
+article.general p {
+	font-size: 1.0em;
+}
+
+article.general p.notice {
+	font-size: x-small;
+	font-style: italic;
+}

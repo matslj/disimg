@@ -1,0 +1,295 @@
+/* =====================================================================================
+ *
+ * Style: plain
+ *
+ * A very simple and easy to learn stylesheet. It supports 1, 2 and 3 columns and
+ * various widths and liquid layout.
+ *
+ */
+
+@import url("nav.css");   		/* definitions to navigation menu bar */
+@import url("font.css");  		/* all font related definitions  */
+@import url("color.css"); 		/* all color related definitions */
+@import url("login.css"); 		/* standard login div and related */
+@import url("editor.css"); 		/* for WYSIWYG editor */
+@import url("article.css"); 		/* for displaying articles */
+
+
+/* -------------------------------------------------------------------------------------
+/* Pagestructure and general container divs */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background: #E3E0D1;
+}
+
+div#wrap {												/* wraps all divs of page */
+    margin: 0 auto;
+    padding: 0;
+    min-width: 500px;
+    max-width: 1000px;
+    background: #FFFFF0;
+}
+
+div#top {
+    margin: 0;
+    padding: 0;
+    margin-top: 5px;
+    padding-bottom: 5px;
+    height: 20px;
+}
+
+header {												/* wraps all header related divs */
+	margin: 0;
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 0;
+}
+
+div#title {
+	margin: 0;
+	padding: 0;
+        height: 200px;
+}
+
+#nav {}
+
+div#body {
+	margin: 0;
+	padding: 0;
+	margin-top: 30px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 5px;
+}
+
+footer {
+	margin: 0;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 0;
+}
+
+div#bottom {
+	margin: 0;
+	padding: 0;
+	padding-top: 4px;
+}
+
+
+/* -------------------------------------------------------------------------------------
+/* Special divs */
+
+div.sidebox {
+    margin: 0;
+    padding: 0;
+}
+
+div#loginbar {
+    float: right;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+}
+
+div#infobar {
+    float: left;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+
+/* -------------------------------------------------------------------------------------
+ * divs within #body, supporting felxible 1,2,3 column liquid layout
+ *
+ */
+
+/* Container column spans content column */
+div#container_LMR,
+div#container_MR { width: 100%; float: left; margin-right: -250px; }
+div#container_LM,
+div#container_M { width: 100%; float: left; margin-right: -0px; }
+
+/* Content column spans left & main column */
+div#content_LMR,
+div#content_MR { margin-right: 250px; }
+div#content_LM,
+div#content_M { margin-right: 0px; }
+
+/* The left column */
+div#left_LMR,
+div#left_LM  {
+  float: left;
+  width: 160px;
+}
+
+/* The right column */
+div#right_LMR,
+div#right_MR {
+	float: right;
+    width: 250px;
+}
+
+/* The main column */
+div#main_LMR,
+div#main_LM { margin-left: 170px;  margin-right: 10px;}
+div#main_MR,
+div#main_M { margin-left: 10px; margin-right: 10px;}
+
+/* Clearer */
+div.clear {
+	height: 0;
+	clear: both;
+}
+
+p.last {
+	margin-bottom: 0;
+}
+
+
+/* -------------------------------------------------------------------------------------
+ * pageBody supporting 1, 2, 3 column layout
+ *
+ */
+/*
+div.pageBody {
+	background-color: white;
+	border: dashed #333333 1px;
+	margin-top: 10px;
+}
+
+div.pageBodyLeft2, div.pageBodyLeft3  {
+    float: left;
+    padding: 10px;
+    background-color: springgreen;
+}
+
+div.pageBodyLeft2  {
+    width: 160px;
+}
+
+div.pageBodyLeft3  {
+    width: 140px;
+}
+
+div.pageBodyRight2, div.pageBodyRight3 {
+    float: right;
+    padding: 10px;
+    background-color: steelblue;
+}
+
+div.pageBodyRight2 {
+    width: 160px;
+}
+
+div.pageBodyRight3 {
+    width: 140px;
+}
+
+div.pageBodyMain1, div.pageBodyMain2, div.pageBodyMain3 {
+    float: left;
+    width: 408px;
+    padding: 10px;
+    background-color: darksalmon;
+}
+
+div.pageBodyMain1 {
+    width: 728px;
+}
+
+div.pageBodyMain2 {
+    width: 548px;
+}
+
+div.pageBodyMain3 {
+    width: 408px;
+}
+*/
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Other functional divs, not part of the main structure of the website
+ *
+ */
+
+div.errorMessage {
+	border: #333333 4px dashed;
+	padding: 5px;
+	margin: 5px;
+	text-align: center;
+}
+
+/* To display code. */
+fieldset.code {}
+
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Fonts
+ *
+ */
+
+
+
+
+/* For the menu column, header */
+h3.columnMenu {
+	text-transform: uppercase;
+	border-bottom: double #333333 1px;
+}
+
+p.small {}
+
+div#title p {
+	text-align: left;
+}
+
+footer p {
+	text-align: center;
+}
+
+div#bottom p {
+	text-align: center;
+}
+
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Links
+ *
+ */
+
+a, a:visited {}
+a:hover {}
+
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Tables
+ *
+ */
+
+th {}
+td {}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Display source code
+ *
+ */
+div.sourcecode {
+	border: 4px solid #eeeeee;
+	overflow: auto;
+	background: white;
+	padding-left: 10px;
+}
+
+

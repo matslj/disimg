@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>jQuery Autosave</title>
+		<style type="text/css">
+			body {
+				font-family: Tahoma, Arial, sans-serif;
+				font-size: 12px;
+			}
+			
+			input[type=text], label, textarea {
+				display: block;
+			}
+			
+			input[type=text], textarea {
+				border: 1px #000 solid;
+				padding: 3px;
+				margin-bottom: 15px;
+				width: 400px;
+			}
+		</style>
+		<script type="text/javascript" src="jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="jquery.autosave.js"></script>
+		<script type="text/javascript">
+		(function($){
+			$.log = function(message){
+				$('#log').append('<p>' + message + '</p>');
+			};
+
+			$(document).ready(function(){
+				$.log("interval is set to 10 seconds");
+
+				$('form.autosave').autosave({
+					interval: 	10000,
+					setup: 		function(e,o) {
+						$.log('jquery.autosave setup');
+					},
+					record: 	function(e,o) {
+						$.log('jquery.autosave recording');
+					},
+					before: 	function(e,o) { 
+						$.log('jquery.autosave before saving');
+						return true; 
+					},
+					validate: 	function(e,o) {
+						$.log('jquery.autosave checking validation');
+						return $.isFunction($.fn.validate) && !$(this).is('.ignore-validate') ? $(this).valid() : true; 
+					},
+					save: 		function(e,o) {
+						$.log('jquery.autosave saving');
+					},
+					shutdown: 	function(e,o) {
+						$.log('jquery.autosave shutdown');
+					},
+					dirty: 		function(e,o) {
+						$.log('jquery.autosave dirty');
+					}
+				});
+				
+				setInterval(function(){
+					$.log('changing last name field');
+					$('input[name=lastName]').val('Last Name');
+				}, 30000);
+			});
+		})(jQuery);
+		</script>
+	</head>
+	<body>
+		<h1>jQuery Autosave Example</h1>
+		<form class="autosave" method="post" action="#">
+			<label for="firstName">First Name</label>
+			<input type="text" name="firstName" id="firstName" value="Default First Name"/>
+
+			<label for="lastName">Last Name</label>
+			<input type="text" name="lastName" id="lastName"/>
+
+			<label for="email">E-mail</label>
+			<input type="text" name="email" id="email"/>
+
+			<label for="message">Message:</label>
+			<textarea name="message" id="message"></textarea>
+
+			<input type="submit" value="Submit"/>
+			<input type="reset" value="Clear"/>
+		</form>
+
+		<h1>Log</h1>
+		<div id="log"></div>
+	</body>
+</html>

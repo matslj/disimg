@@ -1,0 +1,42 @@
+/* =====================================================================================
+ *
+ *
+ * All definitions related to navigation bar,
+ * except fonts, colors and background images (except borders).
+ *
+ *
+ */
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation bar */
+
+#nav {
+	clear: both;
+	padding-top: 3px;
+	font: 1em/2 Verdana, Sans-serif;
+}
+#nav ul {
+	float: left;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#nav li {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+#nav a {
+	display: block;
+	float: left;
+	padding: 0 12px;
+	text-decoration: none;
+}
+#nav a:hover,
+#nav a:focus {}
+#nav .sel a {}
+#nav .sel a:hover,
+#nav .sel a:focus {}
+

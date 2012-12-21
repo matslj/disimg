@@ -1,0 +1,201 @@
+/* =====================================================================================
+ *
+ *
+ * All definitions related to colors and background images.
+ * Change color scheme in this file.
+ *
+ */
+
+
+/* -------------------------------------------------------------------------------------
+/* Color scheme
+/* Palette URL: http://colorschemedesigner.com/#0011DuBi2dgI1 */
+.primary-1 { background-color: #900606 }
+.primary-2 { background-color: #811212 } /* darklight */
+.primary-3 { background-color: #7B0404 } /* dark */
+.primary-4 { background-color: #DE5454 } /* lightdark */
+.primary-5 { background-color: #DE9090 } /* light */
+
+/* -------------------------------------------------------------------------------------
+/* Alt color scheme
+/* Palette URL: http://colorschemedesigner.com/#0G11Tw0w0w0w0 */
+.primary-1 { background-color: #FF8E00 }
+.primary-2 { background-color: #BF8030 } /* darklight */
+.primary-3 { background-color: #A65C00 } /* dark */
+.primary-4 { background-color: #FFAA40 } /* lightdark */
+.primary-5 { background-color: #FFC173 } /* light */
+
+/* -------------------------------------------------------------------------------------
+/* Pagestructure */
+html,
+body {
+    /* background-image: url(bg_paper.jpg);
+    background-color:#cccccc; */
+}
+
+div#wrap {}
+
+div#top {
+	background: #E3E0D1;
+}
+
+header {}
+
+div#title {
+	background: #FFAA40 /* dark */ /*#970601 url(nav-tab.png) repeat-x*/;
+}
+div#title div.right {
+	color: #A65C00;
+        background-image: url(marimekko_logo.png);
+        background-repeat: no-repeat;
+        background-position: right;
+        margin-right: 30px;
+        float: right;
+        height: 200px;
+        width: 348px;
+}
+
+div#title div.left {
+        float: left;
+}
+
+footer {
+	background: #A65C00 /* darklight */ /* url(nav-tab.png) repeat */;
+}
+footer p {
+	color: #FFAA40;
+}
+
+div#bottom {
+	background: #E3E0D1;
+}
+div#bottom p {
+	color: #999999;
+}
+
+div.sidebox {
+	background: #E3E0D1;
+}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Links
+ *
+ */
+
+a, a:visited {
+	color: #FFAA40;
+}
+
+a:hover {
+	color: #A65C00;
+}
+
+h1 a, h1 a:visited, h1 a:hover {
+	text-decoration: none;
+}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Top Links
+ *
+ */
+
+#top a, #top a:visited {
+	color: #111111;
+}
+
+#top a:hover {
+	color: #7F3A34;
+}
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation bar */
+
+#nav {}
+#nav ul {
+	background: #A65C00;
+}
+#nav li {}
+#nav a {
+	border-right: 1px solid #FFFFF0;
+	border-bottom: none;
+	border-left: 1px solid #FFFFF0;
+	color: #FF8E00;
+	background: #A65C00;
+}
+#nav a:hover,
+#nav a:focus {
+        color: #A65C00;
+	background: #FF8E00;
+}
+#nav .sel a {
+	color: #A65C00;
+	background: #FF8E00;
+}
+#nav .sel a:hover,
+#nav .sel a:focus {
+	color: #A65C00;
+	background: #FF8E00;
+}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Other functional divs, not part of the main structure of the website
+ *
+ */
+
+div.login {
+	background-color: transparent;
+}
+
+div.errorMessage {
+	background-color: #DE9090;
+	color: #111111;
+}
+
+/* To display code. */
+fieldset.code {
+	background-color: #eeeeee;
+	color: #111111;
+}
+
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Fonts
+ *
+ */
+
+h1 {
+    color: #FFAA40;
+}
+h2 {}
+h3.menu {}
+
+p.small {}
+
+/* Links in the bottom paragraph */
+div#bottom a,
+div#bottom a:visited {
+	color: #999999;
+}
+
+div#bottom a:hover {
+	color: #7F3A34;
+}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Tables
+ *
+ */
+
+th, td {
+	color: #111111;
+}
+
+th {
+	background: #cccccc;
+}

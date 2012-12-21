@@ -1,0 +1,79 @@
+/* =====================================================================================
+ *
+ *
+ * Fonts, contains all font related definitions, no colors.
+ *
+ */
+
+
+/* -------------------------------------------------------------------------------------
+/* Font */
+
+body,
+th,
+td {
+	font-family: Calibri, sans-serif /* Verdana, Sans-serif */;
+}
+
+div#title p {
+	margin: 0;
+	padding-left: 20px;
+        padding-top: 40px;
+	font-family: monospace /* Times, Sans-serif */;
+	font-weight: bold;
+	font-size: 46px;
+}
+
+div#title #subtitle {
+    padding-top: 0px;
+    font-size: 20px;
+}
+
+#nav {
+	font: 1em/2 Calibri, sans-serif /* Verdana, Sans-serif */;
+}
+
+footer p {
+	margin: 0;
+	padding: 3px;
+	font-size: x-small;
+}
+
+div#bottom p {
+	margin: 0;
+	padding: 0;
+	font-style: italic;
+	font-size: x-small;
+}
+
+body,
+p,
+th,
+td,
+h3.columnMenu {
+	font-size: small;
+}
+
+div#body h1 {
+	/* text-transform: uppercase; */
+	border-bottom: double #333333 4px;
+}
+
+h2 { }
+h3 { }
+
+p.small {
+	font-size: x-small;
+}
+
+div#loginbar p {
+	margin: 0;
+	padding: 0;
+	font-size: x-small;
+}
+
+div#infobar p {
+	margin: 0;
+	padding: 0;
+	font-size: x-small;
+}
