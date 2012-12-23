@@ -12,7 +12,8 @@
 @import url("color.css"); 		/* all color related definitions */
 @import url("login.css"); 		/* standard login div and related */
 @import url("editor.css"); 		/* for WYSIWYG editor */
-@import url("article.css"); 		/* for displaying articles */
+/* @import url("article.css"); 	*/	/* for displaying articles */
+@import url("dialog.css"); 		/* for displaying dialogs */
 
 
 /* -------------------------------------------------------------------------------------

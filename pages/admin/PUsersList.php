@@ -44,67 +44,7 @@ $htmlHead = <<<EOD
 
     <!-- jQuery Form Plugin -->
     <script type='text/javascript' src='{$js}jquery-form/jquery.form.js'></script>
-
-    <style>
-        .demoHeaders {
-                margin-top: 2em;
-        }
-        /*
-        .myDialog {
-                padding: .4em 1em .4em 20px;
-                text-decoration: none;
-                position: relative;
-        }
-        .myDialog span.ui-icon {
-                margin: 0 5px 0 0;
-                position: absolute;
-                left: .2em;
-                top: 50%;
-                margin-top: -8px;
-        }
-        */
-        #dialog-link {
-		padding: .4em 1em .4em 20px;
-		text-decoration: none;
-		position: relative;
-	}
-	#dialog-link span.ui-icon {
-		margin: 0 5px 0 0;
-		position: absolute;
-		left: .2em;
-		top: 50%;
-		margin-top: -8px;
-	}
-        .myDialog {
-                margin: 2px;
-                position: relative;
-                padding: 4px 0;
-                cursor: pointer;
-                float: left;
-                list-style: none;
-        }
-        .myDialog span.ui-icon {
-                float: left;
-                margin: 0 4px;
-        }
-        #icons {
-                margin: 0;
-                padding: 0;
-        }
-        #icons li {
-                margin: 2px;
-                position: relative;
-                padding: 4px 0;
-                cursor: pointer;
-                float: left;
-                list-style: none;
-        }
-        #icons span.ui-icon {
-                float: left;
-                margin: 0 4px;
-        }
-    </style>
-
+    <script type='text/javascript' src='{$js}myJs/disimg-utils.js'></script>
 EOD;
 
 $redirectOnSuccess = 'json';
@@ -115,114 +55,24 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
-    
-        $( "#dialogEdit" ).dialog({
-            autoOpen: false,
-            width: 400,
-            buttons: [
-                    {
-                            text: "Ok",
-                            click: function() {
-                                    $('#dialogEditForm').submit();
-                                    $( this ).dialog( "close" );
-                            }
-                    },
-                    {
-                            text: "Avbryt",
-                            click: function() {
-                                    $( this ).dialog( "close" );
-                            }
-                    }
-            ]
-        });
+        $("#dialogCreate").initDialog();
+        $("#dialogEdit").initDialog();
+        $("#dialogDelete").initDialog();
         
-        $( "#dialogDelete" ).dialog({
-            autoOpen: false,
-            width: 400,
-            buttons: [
-                    {
-                            text: "Ok",
-                            click: function() {
-                                    $('#dialogDeleteForm').submit();
-                                    $( this ).dialog( "close" );
-                            }
-                    },
-                    {
-                            text: "Avbryt",
-                            click: function() {
-                                    $( this ).dialog( "close" );
-                            }
-                    }
-            ]
-        });
-        
-        $( "#dialogCreate" ).dialog({
-            autoOpen: false,
-            width: 400,
-            buttons: [
-                    {
-                            text: "Ok",
-                            click: function() {
-                                    $('#dialogCreateForm').submit();
-                                    $( this ).dialog( "close" );
-                            }
-                    },
-                    {
-                            text: "Avbryt",
-                            click: function() {
-                                    $( this ).dialog( "close" );
-                            }
-                    }
-            ]
-        });
-        
-        var options = { 
-            beforeSubmit:  showRequest,  // pre-submit callback 
+        var options = {
             success:       showResponse,  // post-submit callback 
             dataType:  "json"
         }; 
         // Bind to form
         $('#form1').ajaxForm(options);
-        
-        // pre-submit callback 
-        function showRequest(formData, jqForm, options) { 
-            return true; 
-        }
 
         // post-submit callback 
         function showResponse(data) {
-            if (data.action == 'publish') {
-                window.location = "?=home";
-            } else {
-                $('#page_id').val(data.pageId);
-                $('p.notice').html("Saved: " + data.timestamp);
-                $('button#savenow').attr('disabled', 'disabled');
-            }
+            $('#page_id').val(data.pageId);
+            $('p.notice').html("Saved: " + data.timestamp);
+            $('button#savenow').attr('disabled', 'disabled');
         }
 
-        // This function regulates the disabled state of the publish button.
-        function manipulatePublishButton() {
-            var empty = true;
-            $('.changables').each(function() {
-                // console.log(this.id);
-                if ($(this).val()) {
-                    empty = false;
-                }
-            });
-            // console.log("Empty = " + empty);
-            if (empty) {
-                $('button#publish').attr('disabled', 'disabled');
-            } else {
-                $('button#publish').removeAttr('disabled');
-            }
-        }
-        
-        // Some event binding - used only for regulating disabled status on buttons
-        $('#form1').bind('keyup', function() {
-            $('button#savenow').removeAttr('disabled');
-            manipulatePublishButton();
-        });
-        
         function getUserInfoFromRow(targetId) {
             obj = {};
             var indexDelimiter = targetId.indexOf("_");
@@ -247,48 +97,30 @@ $javaScript = <<<EOD
 	// http://docs.jquery.com/Tutorials:AJAX_and_Events
 	//
 	$('#userList').click(function(event) {
-                if ($(event.target).is('.edit')) {
-                    $("#dialogEdit").dialog("open");
-                    var userObj = getUserInfoFromRow(event.target.id);        
-                    if (userObj != null) {
-                        $('#dialogEditUserId').val(userObj.accountid);
-                        $('#dialogEditAccountName').val(userObj.accountname);
-                        $('#dialogEditName').val(userObj.name);
-                        $('#dialogEditEmail').val(userObj.email);
-                    }
-                    event.preventDefault();
-		} else if ($(event.target).is('.delete')) {
-                    $("#dialogDelete").dialog("open");
-                    var userObj = getUserInfoFromRow(event.target.id);        
-                    if (userObj != null) {
-                        $('#dialogDeleteUserId').val(userObj.accountid);
-                        $('#dialogDeleteName').html(userObj.name);
-                    }
-                    event.preventDefault();
-		} else if ($(event.target).is('.create')) {
-                    $("#dialogCreate").dialog("open");
-                    event.preventDefault();
-		} else if ($(event.target).is('button#publish')) {
-                        $('#action').val('publish');
-			// Disable the button until form has changed again
-			$(event.target).attr('disabled', 'disabled');
-			// $(event.target).submit();
-		} else if ($(event.target).is('button#savenow')) {
-			$('#action').val('draft');
-                        $(event.target).attr('disabled', 'disabled');
-                        // $(event.target).submit();
-		} else if ($(event.target).is('button#discard')) {
-			history.back();
-		} else if ($(event.target).is('a#viewPost')) {
-			if($('#isPublished').val() == 1) {
-				$('a#viewPost').attr('href', '?p=article-edit&amp;article-id=%1\$d&amp;topic-id=%2\$d' + $('#topic_id').val() + '#post-' + $('#post_id').val());
-			} else {
-				alert('The post is not yet published. Press "Publish" to do so.');
-				return(false);
-			}
-		}
+            if ($(event.target).is('.edit')) {
+                $("#dialogEdit").dialog("open");
+                var userObj = getUserInfoFromRow(event.target.id);
+                if (userObj != null) {
+                    $('#dialogEditUserId').val(userObj.accountid);
+                    $('#dialogEditAccountName').val(userObj.accountname);
+                    $('#dialogEditName').val(userObj.name);
+                    $('#dialogEditEmail').val(userObj.email);
+                }
+                event.preventDefault();
+            } else if ($(event.target).is('.delete')) {
+                $("#dialogDelete").dialog("open");
+                var userObj = getUserInfoFromRow(event.target.id);
+                if (userObj != null) {
+                    $('#dialogDeleteUserId').val(userObj.accountid);
+                    $('#dialogDeleteName').html(userObj.name);
+                }
+                event.preventDefault();
+            } else if ($(event.target).is('.create')) {
+                $("#dialogCreate").dialog("open");
+                event.preventDefault();
+            }
 	});
-});
+    });
 })(jQuery);
 EOD;
 
@@ -366,14 +198,14 @@ while($row = $res->fetch_object()) {
         <td id="idGroup_{$i}">{$row->idGroup}</td>
         <td id="nameGroup_{$i}">{$row->nameGroup}</td>
         <td>
-            <a href="#" id="dialogEdit_{$i}" class="ui-state-default ui-corner-all myDialog edit">
+            <a href="#" id="dialogEdit_{$i}" class="ui-state-default ui-corner-all dialogRowIcon edit">
                 <span id="dialogEditSpan_{$i}" class="ui-icon ui-icon-pencil edit"></span>
             </a>
 EOD;
                 
 if (strcmp($row->idGroup, 'adm') != 0) {
 $htmlMain .= <<< EOD
-            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all myDialog delete">
+            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all dialogRowIcon delete">
                 <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
             </a>
         </td>
