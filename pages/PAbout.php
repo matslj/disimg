@@ -38,7 +38,7 @@ $htmlMain = <<<EOD
 EOD;
 
 $htmlMain = <<<EOD
-<h1>About Munchy</h1>
+<h1>About DisImg</h1>
 <h2>README</h2>
 <p>
 This is the README-file.

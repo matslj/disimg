@@ -33,6 +33,7 @@ $intFilter->UserIsMemberOfGroupAdminOrDie();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $pageId	= $pc->GETisSetOrSetDefault('page-id', 0);
+$redirect	= $pc->GETisSetOrSetDefault('redirect', '');
 $userId		= $_SESSION['idUser'];
 
 // Always check whats coming in...
@@ -110,14 +111,14 @@ $javaScript = <<<EOD
 //
 //
 (function($){
-$(document).ready(function() {
-        
+    $(document).ready(function() {
+        // Define options for jQuery.form.plugin
         var options = { 
             beforeSubmit:  showRequest,  // pre-submit callback 
-            success:       showResponse,  // post-submit callback 
+            success:       showResponse,  // post-submit callback
             dataType:  "json"
         }; 
-        // Bind to form
+        // Bind form to plugin
         $('#form1').ajaxForm(options);
         
         // pre-submit callback 
@@ -131,7 +132,7 @@ $(document).ready(function() {
         // post-submit callback 
         function showResponse(data) {
             if (data.action == 'publish') {
-                window.location = "?=home";
+                window.location = "?p={$redirect}";
             } else {
                 $('#page_id').val(data.pageId);
                 $('p.notice').html("Saved: " + data.timestamp);
@@ -172,6 +173,7 @@ $(document).ready(function() {
 	$('#form1').click(function(event) {
 		if ($(event.target).is('button#publish')) {
                         $('#action').val('publish');
+                        // $('#redirect').val('{$redirect}');
 			// Disable the button until form has changed again
 			$(event.target).attr('disabled', 'disabled');
 			// $(event.target).submit();
@@ -209,7 +211,7 @@ $htmlMain = <<<EOD
 <!-- ==================================================================================== -->
 <h1>Ändra text</h1>
 <form id="form1" class='editor1' action='?p=page-save' method='POST'>
-<input type='hidden' name='redirect_on_success' value='{$redirectOnSuccess}'>
+<input id='redirect' type='hidden' name='redirect_on_success' value='{$redirectOnSuccess}'>
 <input type='hidden' name='redirect_on_failure' value='page-edit&amp;page-id=%1\$d'>
 <input type='hidden' id='page_id' name='page_id' value='{$pageId}'>
 <input type='hidden' id='action' name='action' value=''>

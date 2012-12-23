@@ -30,7 +30,6 @@ class CPageController {
             // print_r($_SESSION);
 	}
 
-
 	// ------------------------------------------------------------------------------------
 	//
 	// Destructor
@@ -63,6 +62,19 @@ class CPageController {
 		$this->lang = array_merge($this->lang, $lang);
 	}
 
+        public function computePage() {
+            global $gPage;
+            global $gSubPage;
+            $returnValue = $gPage;
+            if (!empty($gSubPage)) {
+                $returnValue = $returnValue . '_' . $gSubPage;
+            }
+            return $returnValue;
+        }
+
+        public function computeRedirect() {
+            return '&amp;redirect=' . $this->computePage();
+        }
 
 	// ------------------------------------------------------------------------------------
 	//

@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// PIndex.php
+// PAdminIndex.php
 //
 // A WYSIWYG editor
 //
@@ -87,14 +87,7 @@ $htmlMain = <<<EOD
 </p>
 EOD;
 
-$htmlLeft 	= "";
 $htmlRight	= "";
-
-// -------------------------------------------------------------------------------------------
-//
-// Local menu?
-//
-// require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config_nav.php');
 
 // -------------------------------------------------------------------------------------------
 //
@@ -102,7 +95,10 @@ $htmlRight	= "";
 //
 $page = new CHTMLPage();
 
-$page->printPage('DisImg - Ett bildarkiv', $htmlLeft, $htmlMain, $htmlRight);
+// Creating the left menu panel
+$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+
+$page->printPage('Admin', $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

@@ -38,8 +38,18 @@ session_start();
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to the choosen pagecontroller.
+// Observe that all redirects in all subpages should consist of either the
+// gPage attribute or the gSubPage-attribute. So no hard referencs in subpages.
 //
 $gPage = isset($_GET['p']) ? $_GET['p'] : 'home';
+$gSubPage = '';
+
+// In order to use modules this snippet is used
+$gSubPages = explode("_", $gPage);
+if (count($gSubPages) >= 2) {
+    $gPage = $gSubPages[0];   // Pages accessed from this index file
+    $gSubPage = $gSubPages[1]; // Pages accessed from a sub level index file
+}
 
 switch ($gPage) {
     //
@@ -80,9 +90,7 @@ switch ($gPage) {
     //
     // Admin pages
     //
-    case 'admin': require_once(TP_PAGESPATH . 'admin_users/PUsersList.php');
-        break;
-    case 'usereditp': require_once(TP_PAGESPATH . 'admin_users/PUserEdit.php');
+    case 'admin': require_once(TP_PAGESPATH . 'admin/index.php');
         break;
 
     //

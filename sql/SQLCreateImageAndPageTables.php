@@ -304,6 +304,8 @@ END;
 
 SET @aSidaId = 0;
 CALL {$spPInsertOrUpdateSida}(@aSidaId, 2, 'PIndex.php', 'Ändra mig', 'Ändra mig');
+SET @aSidaId = 0;
+CALL {$spPInsertOrUpdateSida}(@aSidaId, 2, 'PAdminIndex.php', 'Ändra mig', 'Ändra mig');
 
 EOD;
 

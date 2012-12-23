@@ -98,6 +98,9 @@ if(strcmp($success, 'json') == 0) {
 }
 EOD;
     echo $json;
+} else {
+    $log -> debug($success);
+    CPageController::RedirectTo($success);
 }
 exit;
 

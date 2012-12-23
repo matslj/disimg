@@ -292,11 +292,8 @@ $javaScript = <<<EOD
 })(jQuery);
 EOD;
 
-
-$htmlLeft = "";
-
 $htmlMain = <<<EOD
-<h1>Admin: Show user accounts</h1>
+<h1>Användarkonton</h1>
 EOD;
 
 $htmlRight = "";
@@ -387,8 +384,8 @@ $i++;
 }
 
 
-$action = "?p=usereditp";
-$redirect = "?p=admin";
+$action = "?p=" . $pc->computePage() . "p";
+$redirect = "?p=" . $pc->computePage();
 $htmlMain .= <<< EOD
     </table>
 </div>
@@ -477,9 +474,11 @@ require_once(TP_SOURCEPATH . 'CHTMLPage.php');
 
 $page = new CHTMLPage(WS_STYLESHEET);
 
+// Creating the left menu panel
+$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+
 // $page->printPage($htmlLeft, $htmlMain, $htmlRight, '', $displayAs);
 $page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
-
 
 ?>

@@ -170,8 +170,31 @@ EOD;
 
         $nav = "<ul>";
         foreach($menu as $key => $value) {
-                $selected = (strcmp($gPage, substr($value, 3)) == 0) ? " class='sel'" : "";
-                $nav .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
+            $selected = (strcmp($gPage, substr($value, 3)) == 0) ? " class='sel'" : "";
+            $nav .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
+        }
+        $nav .= '</ul>';
+
+        return $nav;
+    }
+
+    // ------------------------------------------------------------------------------------
+    //
+    // Prepare the header-div of the page
+    //
+    public function PrepareLeftSideNavigationBar($menu) {
+        $menu = unserialize($menu);
+        $theSelection = 'nothing'; // dummy value
+        global $gSubPages;
+        if (count($gSubPages) > 1) {
+            $theSelection = $gSubPages[1];
+        }
+        $nav = "<ul>";
+        foreach($menu as $key => $value) {
+            $index = strpos($value, "_");
+            $index = $index > 0 ? $index : 0;
+            $selected = (strcmp($theSelection, substr($value, $index + 1)) == 0) ? " class='sel'" : "";
+            $nav .= "<li><a{$selected} href='{$value}'>{$key}</a></li>";
         }
         $nav .= '</ul>';
 

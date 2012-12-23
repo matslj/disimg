@@ -15,7 +15,7 @@
 // PERHAPS SPLIT THIS WHEN UPDATING CHTMLPAGE
 //
 define('WS_MELINK',   'http://localhost/dbwebb2/me/'); // Link to me pages.
-define('WS_SITELINK',   'http://localhost/disimg/disimg/'); // Link to site.
+define('WS_SITELINK',   'http://localhost/disimg/'); // Link to site.
 define('WS_TITLE', 	'DisImg');		    // The title of this site.
 define('WS_SUB_TITLE',  'Disas album');
 define('WS_STYLESHEET', 'style/plain/stylesheet_liquid.css');	// Default stylesheet of the site.
