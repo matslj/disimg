@@ -39,6 +39,7 @@ switch($thePage) {
     //
     case 'homef':		require_once(TP_PAGESPATH . 'file_handling/PIndex.php'); break;
     case 'archive':             require_once(TP_PAGESPATH . 'admin/PPictureArchive.php'); break;
+    case 'manager':             require_once(TP_PAGESPATH . 'admin/PPictureManager.php'); break;
     case 'upload':              require_once(TP_PAGESPATH . 'file_handling/PFileUpload.php'); break;
     case 'uploadp':             require_once(TP_PAGESPATH . 'file_handling/PFileUploadProcess.php'); break;
     case 'file-delete':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcess.php'); break;

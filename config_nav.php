@@ -20,7 +20,7 @@ define('MENU_NAVBAR', 	serialize($menuNavBar));
 $adminMenuNavBar = Array (
         'Användare'           => '?p=admin_anvandare',
         'Bildarkiv' 	=> '?p=admin_archive',
-        'Koppla användare' 	=> '?p=something',
+        'Koppla användare' 	=> '?p=admin_manager',
 );
 define('ADMIN_MENU_NAVBAR', 	serialize($adminMenuNavBar));
 ?>

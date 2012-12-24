@@ -62,3 +62,35 @@
         float: left;
         margin: 0 4px;
 }
+
+/* 
+ * Two sided multi select 
+ * Use with $(".multiselect").twosidedmultiselect(); (example)
+ */
+ 
+/* Recommended styles */
+.tsmsselect {
+        width: 40%;
+        float: left;
+}
+
+.tsmsselect select {
+        width: 100%;
+}
+
+.tsmsoptions {
+        width: 20%;
+        float: left;
+}
+
+.tsmsoptions p {
+        margin: 2px;
+        text-align: center;
+        font-size: larger;
+        cursor: pointer;
+}
+
+.tsmsoptions p:hover {
+        color: White;
+        background-color: Silver;
+}
