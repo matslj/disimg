@@ -34,7 +34,7 @@ $userId = $uo -> getId();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
-$redirect			= $pc->POSTisSetOrSetDefault('redirect');
+$redirect	= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 
 //$referenceId	= $pc->POSTisSetOrSetDefault('referenceId', 0);
@@ -77,12 +77,12 @@ if(false) {
 // Upload single file and return html success/failure message. Ajax-like.
 // 
 else if($submitAction == 'upload-return-html') {
-        if (!isset($_FILES['file'])) {
-            exit(CHTMLHelpers::GetHTMLUserFeedbackNegative($errorMessages[4]));
+        if (!isset($_FILES['file']) || empty($_FILES['file'])) {
+            exit(CHTMLHelpers::GetErrorMessageAsJSON($errorMessages[4]));
         }
 	// Check that uploaded filesize is within limit
 	if ($_FILES['file']['size'] > FILE_MAX_SIZE) {
-		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf("Failed to upload the file. Filesize, as defined in config.php (%s), is to large.", FILE_MAX_SIZE)));
+		exit(CHTMLHelpers::GetErrorMessageAsJSON(sprintf("Failed to upload the file. Filesize, as defined in config.php (%s), is to large.", FILE_MAX_SIZE)));
 	}
 
 	// Create a unique filename
@@ -93,7 +93,7 @@ else if($submitAction == 'upload-return-html') {
 
 	// Move the uploaded file
 	if (!move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . $file)) {
-		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf("Failed to upload the file. Error code = %1d. %2s", $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']])));
+		exit(CHTMLHelpers::GetErrorMessageAsJSON(sprintf("Failed to upload the file. Error code = %1d. %2s", $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']])));
 	}
 	
 	// Store metadata of the file in the database
@@ -126,6 +126,7 @@ EOD;
 		// Create query to set new unique name
 		do {
 			$newid = uniqid();
+                        $file = $newid;
 			$query 	= <<< EOD
 CALL {$spFileUpdateUniqueName}('{$fileid}', '{$newid}', @status);
 SELECT @status AS status;
@@ -138,47 +139,20 @@ EOD;
 	}
 
 	$mysqli->close();
-
-	// Echo out the result
-	exit(CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf("File '%1s' (%2d bytes) was uploaded. The file was recognized having mimetype '%3s'.", $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type'])));
+        $date = date("Y-m-d H:i:s");
+    $json = <<<EOD
+{
+        "uploadedFile": {
+            "fileName": "{$_FILES['file']['name']}",
+            "size": "{$_FILES['file']['size']}",
+            "mimeType": "{$_FILES['file']['type']}",
+            "uniqueName": "{$file}",
+            "created": "{$date}"
+        }
 }
-
-// -------------------------------------------------------------------------------------------
-//
-// Upload single file and return html success/failure message.
-// 
-else if($submitAction == 'upload-return-html-old') {	
-    $html = '';
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . basename($_FILES['file']['name']))) {
-            $html = CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf("k    Success", $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type']));
-    } else {
-            $html = CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf("Fail", $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']]));
-    }
-    
-    echo $html;
-    exit;
+EOD;
+    exit($json);
 }
-// -------------------------------------------------------------------------------------------
-// 
-// UNDER CONSTRUCTION!
-// 
-// Upload a single file by a traditional form.
-// 
-else if($submitAction == 'single-by-traditional-form') {
-    echo '<pre>';
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . basename($_FILES['file']['name']))) {
-                    echo "File is valid, and was successfully uploaded.\n";
-    } else {
-                    echo "Possible file upload attack!\n";
-    }
-
-    echo 'Here is some more debugging info:';
-    print_r($_FILES);
-
-    print "</pre>";
-    exit;
-}
-
 
 
 // -------------------------------------------------------------------------------------------
@@ -186,6 +160,5 @@ else if($submitAction == 'single-by-traditional-form') {
 // Default, submit-action not supported, show error and die.
 // 
 die("Not suported.");
-
 
 ?>

@@ -184,6 +184,7 @@ BEGIN
 	WHERE
 		File_idUser = aUserId AND
 		deletedFile IS NULL;
+        ORDER BY createdFile;
 END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

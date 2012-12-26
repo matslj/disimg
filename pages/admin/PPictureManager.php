@@ -37,7 +37,7 @@ $htmlHead = <<<EOD
 
     <!-- jQuery Form Plugin -->
     <script type='text/javascript' src='{$js}jquery-form/jquery.form.js'></script>
-    <script type='text/javascript' src='{$js}jquery-twosidedmultiselector.js/jquery.twosidedmultiselector.js'></script>
+    <script type='text/javascript' src='{$js}jquery-twosidedmultiselector/jquery.twosidedmultiselector.js'></script>
 EOD;
     
 $redirectOnSuccess = 'json';

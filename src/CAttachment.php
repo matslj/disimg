@@ -20,6 +20,8 @@ class CAttachment {
         // have the same action attribute. This attribute is defined by FILE_ACTION in config.php.
         private $action = "";
 
+        private $fileListId = "fileList";
+
 	// ------------------------------------------------------------------------------------
 	//
 	// Internal variables
@@ -31,6 +33,7 @@ class CAttachment {
         //
 	public function __construct() {
             $this -> action = FILE_ACTION;
+            $this -> fileListId = "fileList";
 	}
 
 
@@ -67,7 +70,7 @@ EOD;
         // called the getAsHtml() multiple times, you still only have to call this method once.
         // It is constructed to handle multiple forms.
 	//
-        public function getJavaScript() {
+        public function getJavaScript($redirect) {
             // Link to images
             $imageLink = WS_IMAGES;
             
@@ -77,6 +80,11 @@ EOD;
                 // Initiate JavaScript when document is loaded.
                 //
                 $(document).ready(function() {
+                    var listElementSelector = "#{$this -> fileListId}";
+                    var listElement = $(listElementSelector);
+//                    $(listElementSelector + '.delete').on('click', function() {
+//                        $(this).closest('li').remove();
+//                    }
                     // Preload loader image
                     var loader = new Image();
                     loader.src = "{$imageLink}/loader.gif";
@@ -94,7 +102,7 @@ EOD;
                     var options = {
                         //timeout: 1000,
                         // return a datatype of json
-                        //dataType: 'json',
+                        dataType: 'json',
                         // remove short delay before posting form when uploading files
                         //forceSync: true,	
                         // form should always target the server response to an iframe. This is useful in conjuction with file uploads.
@@ -107,16 +115,43 @@ EOD;
                     $('form').ajaxForm(options);
 
                     // pre-submit callback 
-                    function prepareSubmit(formData, \$form, options) { 
-                        $.jGrowl('Before submit...');
-                         \$form.find('span.status').html(loader); // Write to status element -> loader image
-                        return true; // True = do not abort submit
+                    function prepareSubmit(formData, \$form, options) {
+                        var queryString = $.param(formData);
+                        console.log(queryString);
+                        var file = $('#fileInput').val();
+                        if (typeof file === 'undefined' || file == '') {
+                            var message = "<span class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat; padding-left: 20px;\">Ingen fil angiven</span>";
+                            \$form.find('span.status').html(message);
+                            return false;
+                        } else {
+                            $.jGrowl('Before submit...');
+                            \$form.find('span.status').html(loader); // Write to status element -> loader image
+                            return true; // True = do not abort submit
+                        }
                     } 
 
                     // post-submit callback 
-                    function showResponse(responseText, statusText, xhr, \$form)  { 
+                    function showResponse(data, statusText, xhr, \$form) {
+                        if (typeof data.errorMessage === 'undefined') {
+                            // window.location = "?p={$redirect}";
+                            listElement.prepend("<tr><td><a href='?p=file-download&amp;file=" +
+                                        data.uploadedFile.uniqueName +
+                                        "' title='Klicka för att ladda ner fil.'>" +
+                                        data.uploadedFile.fileName +
+                                        "</a> NEW!</td><td>" +
+                                        data.uploadedFile.size +
+                                        "</td><td>" +
+                                        data.uploadedFile.created +
+                                        "</td><td>DELETE</td></tr>");
+                            var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
+                            \$form.find('span.status').html(message);
+                        } else {
+                            var message = "<span class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat; padding-left: 20px;\">" + data.errorMessage + "</span>";
+                            \$form.find('span.status').html(message);
+                            console.log(data.errorMessage);
+                        }
                         $.jGrowl("Uploaded file. Done.");
-                        \$form.find('span.status').html(responseText);
+                        // \$form.find('span.status').html(responseText);
                     }
                 });
 EOD;
@@ -145,15 +180,37 @@ EOD;
             $html = <<<EOD
                 <form id='form{$formId}' enctype="multipart/form-data" action="{$this -> action}" method="post">
                     <fieldset class='standard'>
-                        <legend>Attachments</legend>
                         <input type="hidden" name="MAX_FILE_SIZE" value="{$maxFileSize}">
                         {$params}
-                        <label for='file'>File to upload:</label>
-                        <input name='file' type='file'>
+                        <label for='file'>Fil:</label>
+                        <input id='fileInput' name='file' type='file' />
                         <div id='file'>&nbsp;</div>
-                            <button id='submit-ajax' type='submit' name='do-submit' value='{$typeOfSubmit}'>Upload</button>
+                            <button id='submit-ajax' type='submit' name='do-submit' value='{$typeOfSubmit}'>Ladda upp</button>
                             <span class='status'></span>
                         </div>
+                    </fieldset>
+                </form>
+EOD;
+            return $html;
+        }
+
+                // ------------------------------------------------------------------------------------
+	//
+	// Returns the attachment presentation in html form.
+        //
+        // @param parameters - if ajax isn't used, the whole form has to be preserved. To do this
+        //                     all parameters/form inputs has to be sent to the processpage as a key value pair
+        //                     array. The processpage will then return all the parameters to the caller.
+	// @return the captcha in HTML form
+        public function getAsHTMLNoUploadButton() {
+            $maxFileSize = FILE_MAX_SIZE;
+            $formId = uniqid(); // Maybe it should be a parameter instead
+            $html = <<<EOD
+                <form id='form{$formId}' enctype="multipart/form-data" action="{$this -> action}" method="post">
+                    <fieldset class='standard'>
+                        <input type="hidden" name="MAX_FILE_SIZE" value="{$maxFileSize}">
+                        <label for='file'>Fil:</label>
+                        <input name='file' type='file'>
                     </fieldset>
                 </form>
 EOD;
@@ -277,11 +334,13 @@ EOD;
                 $archiveDb .= <<<EOD
                     <tr>
                     <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
+                    <td>{$row->size}</td>
+                    <td>{$row->created}</td>
                     <!--
                     <td title='{$row->path}'>{$row->uniquename}</td>
-                    <td>{$row->size}</td>
+                    
                     <td>{$row->mimetype}</td>
-                    <td>{$row->created}</td>
+                    
                     <td>{$row->modified}</td>
                     -->
                     {$deleteCol}
@@ -295,17 +354,19 @@ EOD;
             $archiveDbStart = <<<EOD
                 <table width='99%'>
                 <thead>
-                <th>Download</th>
+                <th>Filnamn</th>
+                <th>Storlek</th>
+                <th>Skapad</th>
                 <!--
                 <th>Unique</th>
-                <th>Size</th>
+                
                 <th>Type</th>
-                <th>Created</th>
+                
                 <th>Modified</th>
                 -->
                 {$deleteCol}
                 </thead>
-                <tbody>
+                <tbody id='{$this -> fileListId}'>
 EOD;
             
             $archiveDb = $archiveDbStart . $archiveDb;

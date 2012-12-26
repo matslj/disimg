@@ -95,6 +95,19 @@ class CHTMLHelpers {
 		return $menu;
 	}
 
+        // ------------------------------------------------------------------------------------
+	//
+	// Create a negative (Failed) feedback message for the user.
+	//
+	public static function GetErrorMessageAsJSON($aMessage) {
+            $json = <<<EOD
+            {
+                "errorMessage": {$aMessage}
+            }
+EOD;
+            return $json;
+        }
+
 
 } // End of Of Class
 
