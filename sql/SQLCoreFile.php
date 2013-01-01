@@ -171,20 +171,23 @@ CREATE PROCEDURE {$spListFiles}
 )
 BEGIN
 	SELECT 
-		File_idUser AS owner, 
-		nameFile AS name, 
-		uniqueNameFile AS uniquename,
-		pathToDiskFile AS path, 
-		sizeFile AS size, 
-		mimetypeFile AS mimetype, 
-		createdFile AS created,
-		modifiedFile AS modified,
-		deletedFile AS deleted
-	FROM {$tFile}
+		A.File_idUser AS owner,
+		A.nameFile AS name,
+		A.uniqueNameFile AS uniquename,
+		A.pathToDiskFile AS path,
+		A.sizeFile AS size,
+		A.mimetypeFile AS mimetype,
+		A.createdFile AS created,
+		A.modifiedFile AS modified,
+		A.deletedFile AS deleted,
+                U.accountUser AS account
+	FROM {$tFile} AS A
+            INNER JOIN {$tUser} AS U
+                    ON A.File_idUser = U.idUser
 	WHERE
-		File_idUser = aUserId AND
-		deletedFile IS NULL;
-        ORDER BY createdFile;
+		A.File_idUser = aUserId AND
+		deletedFile IS NULL
+        ORDER BY createdFile DESC;
 END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

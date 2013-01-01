@@ -34,9 +34,10 @@ $userId = $uo -> getId();
 //
 $filename	= $pc->GETisSetOrSetDefault('file');
 $referer	= $pc->GETisSetOrSetDefault('referer');
+$ext	= $pc->GETisSetOrSetDefault('ext');
 
 $account = $pc->SESSIONisSetOrSetDefault('accountUser');
-$archivePath = FILE_ARCHIVE_PATH . DIRECTORY_SEPARATOR . $account . DIRECTORY_SEPARATOR . $filename;
+$archivePath = FILE_ARCHIVE_PATH . DIRECTORY_SEPARATOR . $account . DIRECTORY_SEPARATOR . $filename . "." . $ext;
 
 if (!is_file($archivePath)) die("The file does not exist in the file system.");
 

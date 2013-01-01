@@ -105,12 +105,11 @@ $redirectFail   = "?p=" . $pc->computePage();
 // Create HTML for page
 //
 $htmlMain = <<<EOD
-<h1>File archive</h1>
+<h1>Bildarkiv</h1>
     <div class='section'>
         <div id='fileArchiveDiv'>
             <p><a href="#" id="dialog-link" class="ui-state-default ui-corner-all upload"><span class="ui-icon ui-icon-newwin create"></span>Ladda upp filer</a></p>
         </div>
-        <h2>Databaseview of the archive</h2>
         {$archiveDb}
     </div>
 EOD;

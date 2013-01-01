@@ -73,6 +73,7 @@ EOD;
         public function getJavaScript($redirect) {
             // Link to images
             $imageLink = WS_IMAGES;
+            $uploadLink = WS_SITELINK . FILE_ARCHIVE_FOLDER;
             
             $javaScript = <<<EOD
                 // ----------------------------------------------------------------------------------------------
@@ -133,8 +134,10 @@ EOD;
                     // post-submit callback 
                     function showResponse(data, statusText, xhr, \$form) {
                         if (typeof data.errorMessage === 'undefined') {
+                            var link = "{$uploadLink}/" + data.uploadedFile.accountName + "/";
+                            var theFile = data.uploadedFile.uniqueName + "." + data.uploadedFile.extension;
                             // window.location = "?p={$redirect}";
-                            listElement.prepend("<tr><td><a href='?p=file-download&amp;file=" +
+                            listElement.prepend("<tr><td><a href='" + link + theFile + "'><img src='" + link + "thumbs/80px_thumb_" + data.uploadedFile.uniqueName + ".jpg' title='Klicka för att se bilden' /></a></td><td><a href='?p=file-download&amp;file=" +
                                         data.uploadedFile.uniqueName +
                                         "' title='Klicka för att ladda ner fil.'>" +
                                         data.uploadedFile.fileName +
@@ -142,13 +145,12 @@ EOD;
                                         data.uploadedFile.size +
                                         "</td><td>" +
                                         data.uploadedFile.created +
-                                        "</td><td>DELETE</td></tr>");
+                                        "</td><td><a href='?p=file-delete&amp;referer={$redirect}&amp;file=" + data.uploadedFile.uniqueName + "&amp;ext=" + data.uploadedFile.extension + "' title='Klicka för att radera bilden.'>[delete]</a></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
                         } else {
                             var message = "<span class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat; padding-left: 20px;\">" + data.errorMessage + "</span>";
                             \$form.find('span.status').html(message);
-                            console.log(data.errorMessage);
                         }
                         $.jGrowl("Uploaded file. Done.");
                         // \$form.find('span.status').html(responseText);
@@ -302,6 +304,9 @@ EOD;
         public function getFileList($db, $userId, $referer) {
             // Assumes the presence of a working mysqli-object
             // No defensive programming!
+
+            // Get user-object
+            $uo = CUserData::getInstance();
             
             $spListFiles = DBSP_ListFiles;
             
@@ -319,20 +324,23 @@ EOD;
             
             $deleteFile = "?p=file-delete&amp;referer={$referer}&amp;file=";
             $deleteCol = "";
-            $someDelete = FALSE;
             $downloadFile = "?p=file-download&amp;referer={$referer}&amp;file=";
             $archiveDb = "";
+            $thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
             
             // Populate table with content
             while($row = $results[0]->fetch_object()) {
-                if ($row->owner == $userId) {
-                    $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}' title='Click to delete file.'>[delete]</a></td>";
-                    $someDelete = TRUE;
+                $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+                $ext = pathinfo($row->path, PATHINFO_EXTENSION);
+                $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
+                if ($uo -> isAdmin()) {
+                    $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
                 } else {
                     $deleteCol = "";
                 }
                 $archiveDb .= <<<EOD
                     <tr>
+                    <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
                     <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
                     <td>{$row->size}</td>
                     <td>{$row->created}</td>
@@ -348,12 +356,11 @@ EOD;
 EOD;
             }
             
-            $deleteCol = $someDelete == TRUE ? "<th>Delete</th>" : "";
-            
             // Start table
             $archiveDbStart = <<<EOD
                 <table width='99%'>
                 <thead>
+                <th>Tumme</th>
                 <th>Filnamn</th>
                 <th>Storlek</th>
                 <th>Skapad</th>
@@ -364,7 +371,7 @@ EOD;
                 
                 <th>Modified</th>
                 -->
-                {$deleteCol}
+                <th>Radera</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>
 EOD;

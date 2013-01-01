@@ -61,11 +61,11 @@ if($row->success > 1) {
 }
 
 $row = $results[0]->fetch_object();
-$name 			= $row->name;
-$path 			= $row->path;
-$size 			= $row->size;
+$name 		= $row->name;
+$path 		= $row->path;
+$size 		= $row->size;
 $mimetype 	= $row->mimetype;
-$created 		= $row->created;
+$created 	= $row->created;
 $modified 	= $row->modified;
 
 $results[2]->close();

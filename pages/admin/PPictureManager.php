@@ -150,7 +150,8 @@ $userId	= $uo -> getId();
 $htmlMain = <<<EOD
 <h1>File archive</h1>
 <div class='section'>
-<p>You can use it on as many select lists as you wish and each will work independently. This list already has a couple of selected values.</p>
+<p>You can use it on as many select lists as you wish and each will work independently.
+This list already has a couple of selected values.</p>
 <form method="post" action="">
         <select name="yourselect" class="multiselect" size="6" multiple="true">
         <option value="A" selected="true">The Letter A</option>

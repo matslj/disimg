@@ -24,6 +24,8 @@ $pc = CPageController::getInstance();
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
+$intFilter->UserIsSignedInOrRecirectToSignIn();
+$intFilter->UserIsMemberOfGroupAdminOrDie();
 $img = WS_IMAGES;
 
 $redirect = $pc->computeRedirect();
