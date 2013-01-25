@@ -22,10 +22,12 @@ $fileDef = Array(
 );
 
 $tFile         = DBT_File;
+$tFolder       = DBT_Folder;
 $tUser         = DBT_User;
 $tGroup        = DBT_Group;
 $tGroupMember  = DBT_GroupMember;
 
+// Files
 $spInsertFile = DBSP_InsertFile;
 $spFileUpdateUniqueName = DBSP_FileUpdateUniqueName;
 $spFileDetails = DBSP_FileDetails;
@@ -37,6 +39,14 @@ $spFileDetailsDeleted = DBSP_FileDetailsDeleted;
 $udfFileCheckPermission = DBUDF_FileCheckPermission;
 $udfFileDelete = DBUDF_FileDelete;
 
+// Folders
+$spInsertFolder = DBSP_InsertFolder;
+$spListFolders = DBSP_ListFolders;
+$spFileUpdateFolder = DBSP_FileUpdateFolder;
+$udfNumberOfFilesInFolder = DBUDF_NumberOfFilesInFolder;
+$udfFolderDelete = DBUDF_FolderDelete;
+
+// Misc
 $fCheckUserIsAdmin = DBUDF_CheckUserIsAdmin;
 
 // Create the query
@@ -44,12 +54,29 @@ $query = <<<EOD
 
 -- =============================================================================================
 --
--- SQL for File
+-- SQL for Folders & Files
 --
 -- =============================================================================================
 
 
+
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Table for Folder
+-- Observe that there are no tree hierarki only a totaly flat folder structure.
+--
+DROP TABLE IF EXISTS {$tFolder};
+CREATE TABLE {$tFolder} (
+
+	-- Primary key(s)
+	idFolder INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	
+	-- Attributes
+        nameFolder VARCHAR({$fileDef['CSizeFileName']}) NOT NULL
+);
+
+
+-- X++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for File
 --
@@ -64,6 +91,8 @@ CREATE TABLE {$tFile} (
 	-- Foreign keys
 	File_idUser INT UNSIGNED NOT NULL,
 	FOREIGN KEY (File_idUser) REFERENCES {$tUser}(idUser),
+        File_idFolder INT NULL,
+	FOREIGN KEY (File_idFolder) REFERENCES {$tFolder}(idFolder),
 	
 	-- Attributes
 	nameFile VARCHAR({$fileDef['CSizeFileName']}) NOT NULL,
@@ -83,7 +112,7 @@ CREATE TABLE {$tFile} (
 ) ENGINE MyISAM CHARACTER SET {$fileDef['DefaultCharacterSet']} COLLATE {$fileDef['DefaultCollate']};
 
 
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Y++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to insert new file. 
 --
@@ -107,15 +136,16 @@ CREATE PROCEDURE {$spInsertFile}
 	IN aUniqueFilename VARCHAR({$fileDef['CSizeFileNameUnique']}),
 	IN aSize INT UNSIGNED,
 	IN aMimetype VARCHAR({$fileDef['CSizeMimetype']}),
+        IN aFolderId INT UNSIGNED,
 	OUT aFileId INT UNSIGNED,
 	OUT aStatus TINYINT UNSIGNED
 )
 BEGIN
 	-- Insert the file
 	INSERT INTO {$tFile}	
-			(File_idUser, nameFile, pathToDiskFile, sizeFile, mimetypeFile, createdFile) 
+			(File_idUser, File_idFolder, nameFile, pathToDiskFile, sizeFile, mimetypeFile, createdFile) 
 		VALUES 
-			(aUserId, aFilename, aPathToDisk, aSize, aMimetype, NOW());
+			(aUserId, aFolderId, aFilename, aPathToDisk, aSize, aMimetype, NOW());
 	
 	SELECT LAST_INSERT_ID() INTO aFileId;
 	
@@ -129,6 +159,21 @@ BEGIN
 
 END;
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to update folder for a file. 
+--
+DROP PROCEDURE IF EXISTS {$spFileUpdateFolder};
+CREATE PROCEDURE {$spFileUpdateFolder}
+(
+	IN aFileId INT UNSIGNED,
+	IN aFolderId INT UNSIGNED
+)
+BEGIN
+	UPDATE {$tFile} 
+		SET	File_idFolder = aFolderId
+		WHERE idFile = aFileId;
+END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -159,6 +204,37 @@ BEGIN
 
 END;
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to insert folder
+--
+DROP PROCEDURE IF EXISTS {$spInsertFolder};
+CREATE PROCEDURE {$spInsertFolder}
+(
+    IN aName VARCHAR(100)
+)
+BEGIN
+    INSERT INTO {$tFolder}
+        (nameFolder)
+    VALUES
+        (aName);
+END;   
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all folders and the number of files in each folder (facet)
+--
+DROP PROCEDURE IF EXISTS {$spListFolders};
+CREATE PROCEDURE {$spListFolders}
+()
+BEGIN
+	SELECT
+            A.idFolder as id,
+            A.nameFolder as name,
+            {$udfNumberOfFilesInFolder}(idFolder) as facet
+        FROM {$tFolder} AS A;
+END;        
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -259,7 +335,35 @@ BEGIN
 	WHERE
 		uniqueNameFile = aUniqueFilename;
 END;
-                
+  
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Function which returns the number of files in a folder.
+--
+-- Return values:
+--  0 if folder is empty
+--  n where n is the number of files in the folder
+--
+DROP FUNCTION IF EXISTS {$udfNumberOfFilesInFolder};
+CREATE FUNCTION {$udfNumberOfFilesInFolder}
+(
+	aFolderId INT UNSIGNED
+)
+RETURNS INT UNSIGNED
+READS SQL DATA
+BEGIN
+	DECLARE i INT UNSIGNED;
+	
+	-- File exists and user have permissions to update file?
+	SELECT COUNT(idFile) INTO i FROM {$tFile} 
+	WHERE 
+		File_idFolder = aFolderId;
+        IF i IS NULL THEN
+            RETURN 0;
+	END IF;	
+	RETURN i;
+END;   
+
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Function to check if file exists and if user has permissions to use it.
@@ -301,7 +405,34 @@ BEGIN
 	-- So, file exists but user has no permissions to use/update file.
 	RETURN 1;
 END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to delete folder
+--
+DROP FUNCTION IF EXISTS {$udfFolderDelete};
+CREATE FUNCTION {$udfFolderDelete}
+(
+	aFolderId INT UNSIGNED
+)
+RETURNS TINYINT UNSIGNED
+DETERMINISTIC
+wrap: BEGIN
+	DECLARE i INT UNSIGNED;
+	
+	-- Check permissions
+	SELECT {$udfNumberOfFilesInFolder}(aFolderId) INTO i;
 
+        -- If the return value from the udf is greater than zero, then the folder is not empty and may not be deleted.
+        IF i>0 THEN
+            RETURN 1;
+	END IF;
+        
+        DELETE FROM {$tFolder} WHERE idFolder = aFolderId;
+        
+        -- Delete ok
+	RETURN 0;
+END wrap;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --

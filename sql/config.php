@@ -35,6 +35,7 @@ define('DBT_Article',		DB_PREFIX . 'Article');
 define('DBT_BildIntresse',	DB_PREFIX . 'BildIntresse');
 define('DBT_Bildgrupp',		DB_PREFIX . 'Bildgrupp');
 define('DBT_File', 		DB_PREFIX . 'File');
+define('DBT_Folder', 		DB_PREFIX . 'Folder');
 define('DBT_Sida',		DB_PREFIX . 'Sida');
 
 
@@ -86,6 +87,13 @@ define('DBSP_UseReferenceToListFiles',      DB_PREFIX . 'PUseReferenceToListFile
 define('DBSP_FileDetailsDeleted',           DB_PREFIX . 'PFileDetailsDeleted');
 define('DBUDF_FileCheckPermission',         DB_PREFIX . 'FFileCheckPermission');
 define('DBUDF_FileDelete',                  DB_PREFIX . 'FFileDelete');
+
+// Stored routines concering folders
+define('DBSP_InsertFolder',                   DB_PREFIX . 'PInsertFolder');
+define('DBSP_ListFolders',                    DB_PREFIX . 'PListFolders');
+define('DBSP_FileUpdateFolder',                    DB_PREFIX . 'PFileUpdateFolder');
+define('DBUDF_NumberOfFilesInFolder',         DB_PREFIX . 'FNumberOfFilesInFolder');
+define('DBUDF_FolderDelete',                  DB_PREFIX . 'FFolderDelete');
 
 // Triggers
 define('DBTR_TInsertUser',		DB_PREFIX . 'TInsertUser');

@@ -24,15 +24,21 @@ if (count($gSubPages) >= 2) {
 }
 
 switch($thePage) {
-     //
-    // Admin pages
     //
-        case 'home': require_once(TP_PAGESPATH . 'admin/PAdminIndex.php');
-        break;
-        case 'anvandare': require_once(TP_PAGESPATH . 'admin/PUsersList.php');
-        break;
-        case 'anvandarep': require_once(TP_PAGESPATH . 'admin/PUserEdit.php');
-        break;
+    // User management pages
+    //
+    case 'home': require_once(TP_PAGESPATH . 'admin/PAdminIndex.php');
+    break;
+    case 'anvandare': require_once(TP_PAGESPATH . 'admin/PUsersList.php');
+    break;
+    case 'anvandarep': require_once(TP_PAGESPATH . 'admin/PUserEdit.php');
+    break;
+
+    // Folder management pages
+    case 'folders': require_once(TP_PAGESPATH . 'admin/PFolders.php');
+    break;
+    case 'foldersp': require_once(TP_PAGESPATH . 'admin/PFoldersProcess.php');
+    break;
 
     //
     //	File Archive

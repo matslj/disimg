@@ -37,6 +37,7 @@ $accountName = $uo -> getAccount();
 $submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
 $redirect	= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
+$folderId       = $pc->POSTisSetOrSetDefault('folderid', null);
 
 //$referenceId	= $pc->POSTisSetOrSetDefault('referenceId', 0);
 //$pc->IsNumericOrDie($referenceId, 0);
@@ -160,7 +161,7 @@ EOD;
         
 	// Create the query
 	$query 	= <<< EOD
-CALL {$spInsertFile}('{$userId}', '{$_FILES['file']['name']}', '{$path}', '{$file}', {$_FILES['file']['size']}, '{$_FILES['file']['type']}', @fileId, @status);
+CALL {$spInsertFile}('{$userId}', '{$folderId}', '{$_FILES['file']['name']}', '{$path}', '{$file}', {$_FILES['file']['size']}, '{$_FILES['file']['type']}', @fileId, @status);
 SELECT @fileId AS fileid, @status AS status;
 EOD;
 

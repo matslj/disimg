@@ -145,11 +145,45 @@ $userId	= $uo -> getId();
 
 // -------------------------------------------------------------------------------------------
 //
+// Reuse query from PUsersList.php
+//
+$httpRef = "?p=admin_manager&amp;order=ASC&orderby=nameUser";
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+$query = $db->LoadSQL('SAdminList.php');
+$res = $db->Query($query);
+
+// Set up a select-option list using the result from the query
+$selectOption = <<< EOD
+<select id="userSelect" name="userSelect">
+  <option selected value="">Välj en användare...</option>
+EOD;
+
+while($row = $res->fetch_object()) {
+    if (strcmp($row->idGroup, 'adm') != 0) {
+    $selectOption .= <<< EOD
+        <option value='{$row->idUser}'>{$row->nameUser}</option>
+EOD;
+    }
+}
+
+$selectOption .= <<< EOD
+</select> 
+EOD;
+
+// Close resultset and db
+$res->close();
+$mysqli->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Create HTML for page
 //
 $htmlMain = <<<EOD
 <h1>File archive</h1>
 <div class='section'>
+{$selectOption}
 <p>You can use it on as many select lists as you wish and each will work independently.
 This list already has a couple of selected values.</p>
 <form method="post" action="">

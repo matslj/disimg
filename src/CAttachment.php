@@ -392,6 +392,30 @@ EOD;
             return $archiveDb;
         }
         
+        public function getOptionList($db, $userId, $referer) {
+            $options = "";
+            
+            $spListFiles = DBSP_ListFiles;
+            
+            // Create the query
+            $query 	= <<< EOD
+            CALL {$spListFiles}('{$userId}');
+EOD;
+
+            // Perform the query
+            $res = $db->MultiQuery($query);
+
+            // Use results
+            $results = Array();
+            $db->RetrieveAndStoreResultsFromMultiQuery($results);
+            
+            while($row = $results[0]->fetch_object()) {
+                $options .= <<<EOD
+                    <option value="{$row->uniquename}">{$row -> name}</option>
+EOD;
+            }
+        }
+        
 } // End of Of Class
 
 ?>
