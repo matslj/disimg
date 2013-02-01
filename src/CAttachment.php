@@ -322,19 +322,21 @@ EOD;
             $results = Array();
             $db->RetrieveAndStoreResultsFromMultiQuery($results);
             
-            $deleteFile = "?p=file-delete&amp;referer={$referer}&amp;file=";
+            // $deleteFile = "?p=file-delete&amp;referer={$referer}&amp;file=";
+            // <input type="checkbox" name="vehicle" value="Bike">
             $deleteCol = "";
             $downloadFile = "?p=file-download&amp;referer={$referer}&amp;file=";
             $archiveDb = "";
             $thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
-            
+            $i = 0;
             // Populate table with content
             while($row = $results[0]->fetch_object()) {
                 $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
                 $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 if ($uo -> isAdmin()) {
-                    $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
+                    // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
+                    $deleteCol = "<td><input id='cbMark#{$i}' type='checkbox' name='cbMark#{$i}'></td>";
                 } else {
                     $deleteCol = "";
                 }
@@ -354,6 +356,7 @@ EOD;
                     {$deleteCol}
                     </tr>
 EOD;
+                $i++;
             }
             
             // Start table

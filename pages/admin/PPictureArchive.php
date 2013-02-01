@@ -45,6 +45,23 @@ $userId	= $uo -> getId();
 //
 $db 		= new CDatabaseController();
 $mysqli = $db->Connect();
+
+// Get all the folders from db (the result will, later on, be used in order
+// to populate drop downs).
+$spListFolders = DBSP_ListFolders;
+$query 	= <<< EOD
+CALL {$spListFolders}();
+EOD;
+$res = $db->MultiQuery($query);
+$results = Array();
+$db->RetrieveAndStoreResultsFromMultiQuery($results);
+$folders = Array();
+while($row = $results[0]->fetch_object()) {
+    $folders[] = $row->id . "#" . $row->name . "#" . $row->facet;
+}
+
+// Create file handler (CAttachment()). The file handler presents html
+// for listing files.
 $attachment = new CAttachment();
 $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage());
 // $archiveDb = $attachment -> getDownloads($db, $userId, 'archive');

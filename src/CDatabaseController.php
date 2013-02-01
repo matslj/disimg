@@ -72,6 +72,8 @@ class CDatabaseController {
         // ------------------------------------------------------------------------------------
 	//
 	// Execute a database multi_query
+        // Den här metoden används specifikt för när man ska skapa en ny användare,
+        // den fångar nämligen felkoden 1062, och lägger ut ett felmeddelande.
 	//
 	public function MultiQuerySpecial($aQuery) {
 
@@ -101,7 +103,7 @@ class CDatabaseController {
 		} while($mysqli->more_results() && $mysqli->next_result());
 
 		// Check if there is a database error
-        !$mysqli->errno
+                !$mysqli->errno
         	or die("<p>Failed retrieving resultsets.</p><p>Query =<br/><pre>{$query}</pre><br/>Error code: {$this->iMysqli->errno} ({$this->iMysqli->error})</p>");
 	}
 

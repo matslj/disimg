@@ -71,18 +71,21 @@ if (!empty($_SESSION['errorMessage'])) {
 
 // Perform the query
 $res = $db->MultiQuery($query);
-if ($res != null) {
-    // Ignore results but count successful statements.
-    $nrOfStatements = $db->RetrieveAndIgnoreResultsFromMultiQuery();
-
+if ($res != null && $res != false) {
+    
     // Kolla vilken action som gäller och kolla hur det gick utfrån detta
     if (strcmp($action, 'create') == 0) {
+        // Ignore results but count successful statements.
+        $nrOfStatements = $db->RetrieveAndIgnoreResultsFromMultiQuery();
         if($nrOfStatements != 1) {
             $_SESSION['errorMessage']	= "Fel: kunde inte skapa katalog";
         }
     } else if (strcmp($action, 'delete') == 0) {
         $results = Array();
+        // Hämta resultatet från queryn och lägg in det i result-arrayen.
+        // Vi kollar sen om status != 1 (se definitionen av SQLen ovan)
         $db->RetrieveAndStoreResultsFromMultiQuery($results);
+        // $log -> debug(print_r($results, true));
         $row = $results[0]->fetch_object();
         if ($row->status == 1) {
             $_SESSION['errorMessage']	= "Fel: katalogen innehåller bilder och kan därför inte raderas. Radera bilderna i katalogen först.";

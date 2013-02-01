@@ -131,12 +131,12 @@ DROP PROCEDURE IF EXISTS {$spInsertFile};
 CREATE PROCEDURE {$spInsertFile}
 (
 	IN aUserId INT UNSIGNED,
+        IN aFolderId INT UNSIGNED,
 	IN aFilename VARCHAR({$fileDef['CSizeFileName']}), 
 	IN aPathToDisk VARCHAR({$fileDef['CSizePathToDisk']}), 
 	IN aUniqueFilename VARCHAR({$fileDef['CSizeFileNameUnique']}),
 	IN aSize INT UNSIGNED,
 	IN aMimetype VARCHAR({$fileDef['CSizeMimetype']}),
-        IN aFolderId INT UNSIGNED,
 	OUT aFileId INT UNSIGNED,
 	OUT aStatus TINYINT UNSIGNED
 )
