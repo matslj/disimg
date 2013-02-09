@@ -132,6 +132,7 @@ EOD;
                     } 
 
                     // post-submit callback 
+                    // old delete-link <a href='?p=file-delete&amp;referer={$redirect}&amp;file=" + data.uploadedFile.uniqueName + "&amp;ext=" + data.uploadedFile.extension + "' title='Klicka för att radera bilden.'>[delete]</a>
                     function showResponse(data, statusText, xhr, \$form) {
                         if (typeof data.errorMessage === 'undefined') {
                             var link = "{$uploadLink}/" + data.uploadedFile.accountName + "/";
@@ -145,7 +146,7 @@ EOD;
                                         data.uploadedFile.size +
                                         "</td><td>" +
                                         data.uploadedFile.created +
-                                        "</td><td><a href='?p=file-delete&amp;referer={$redirect}&amp;file=" + data.uploadedFile.uniqueName + "&amp;ext=" + data.uploadedFile.extension + "' title='Klicka för att radera bilden.'>[delete]</a></td></tr>");
+                                        "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
                         } else {
@@ -186,7 +187,8 @@ EOD;
                         {$params}
                         <label for='file'>Fil:</label>
                         <input id='fileInput' name='file' type='file' />
-                        <div id='file'>&nbsp;</div>
+                        <div id='file'>
+                            <div>&nbsp;</div>
                             <button id='submit-ajax' type='submit' name='do-submit' value='{$typeOfSubmit}'>Ladda upp</button>
                             <span class='status'></span>
                         </div>
@@ -328,7 +330,7 @@ EOD;
             $downloadFile = "?p=file-download&amp;referer={$referer}&amp;file=";
             $archiveDb = "";
             $thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
-            $i = 0;
+            
             // Populate table with content
             while($row = $results[0]->fetch_object()) {
                 $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
@@ -336,7 +338,7 @@ EOD;
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 if ($uo -> isAdmin()) {
                     // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                    $deleteCol = "<td><input id='cbMark#{$i}' type='checkbox' name='cbMark#{$i}'></td>";
+                    $deleteCol = "<td><input id='cbMark#{$row->uniquename}' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
                 } else {
                     $deleteCol = "";
                 }
@@ -356,7 +358,6 @@ EOD;
                     {$deleteCol}
                     </tr>
 EOD;
-                $i++;
             }
             
             // Start table
@@ -385,6 +386,11 @@ EOD;
             $archiveDb .= <<<EOD
                 </tbody>
                 <tfoot>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
                 </tfoot>
                 </table>
 EOD;

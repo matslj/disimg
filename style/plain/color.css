@@ -199,3 +199,6 @@ th, td {
 th {
 	background: #cccccc;
 }
+tfoot td {
+	background: #cccccc;
+}
