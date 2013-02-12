@@ -74,6 +74,7 @@ EOD;
             // Link to images
             $imageLink = WS_IMAGES;
             $uploadLink = WS_SITELINK . FILE_ARCHIVE_FOLDER;
+            $pages = TP_PAGESPATH;
             
             $javaScript = <<<EOD
                 // ----------------------------------------------------------------------------------------------
@@ -146,6 +147,8 @@ EOD;
                                         data.uploadedFile.size +
                                         "</td><td>" +
                                         data.uploadedFile.created +
+                                        "</td><td>" +
+                                        "Ingen katalog" +
                                         "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
@@ -157,6 +160,25 @@ EOD;
                         // \$form.find('span.status').html(responseText);
                     }
                 });
+                
+                // Hämtar id på alla checkade checkboxar, lägger dessa i en array
+                // och skickar iväg den.
+                function sendCheckedCheckboxes() {
+                    var p = [];
+                    $('input.cb').each( function() {
+                        if ($(this).attr('checked')) {
+                            p.push($(this).attr('id'));
+                        }
+                    });
+                    $.ajax({
+                        url:'?p=deletefile',
+                        type:'POST',
+                        data: {list:p},
+                        success: function(res) {
+                            alert(res);
+                        }
+                    });
+                }
 EOD;
             return $javaScript;
         }
@@ -355,6 +377,7 @@ EOD;
                     
                     <td>{$row->modified}</td>
                     -->
+                    <td>{$row->foldername}</td>
                     {$deleteCol}
                     </tr>
 EOD;
@@ -375,7 +398,8 @@ EOD;
                 
                 <th>Modified</th>
                 -->
-                <th>Radera</th>
+                <th>katalog</th>
+                <th>&nbsp;</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>
 EOD;
@@ -386,6 +410,7 @@ EOD;
             $archiveDb .= <<<EOD
                 </tbody>
                 <tfoot>
+                <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

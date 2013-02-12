@@ -126,31 +126,31 @@ $htmlMain = <<<EOD
     <div class='section'>
         <div id='fileArchiveDiv'>
             <p>
-                <a href="#" id="dialog-link" class="ui-state-default ui-corner-all upload">
+                <a href="#" id="load-link" class="dialog-link ui-state-default ui-corner-all upload">
                     <span class="ui-icon ui-icon-newwin create"></span>Ladda upp filer
                 </a>
             </p>
         </div>
         {$archiveDb}
         <div id='fileArchiveControlsDiv'>
-            <p>
+            <span class='control'>
                 <select>
                 <option value="volvo">Volvo</option>
                 <option value="saab">Saab</option>
                 <option value="mercedes">Mercedes</option>
                 <option value="audi">Audi</option>
                 </select>
-            </p>
-            <p>
-                <a href="#" id="move-link" class="ui-state-default ui-corner-all">
+            </span>
+            <span class='control'>
+                <a href="#" id="move-link" class="dialog-link ui-state-default ui-corner-all">
                     <span class="ui-icon ui-icon-newwin create"></span>Flytta markerade filer
                 </a>
-            </p>
-            <p>
-                <a href="#" id="delete-link" class="ui-state-default ui-corner-all">
+            </span>
+            <span class='control'>
+                <a href="#" id="delete-link" class="dialog-link ui-state-default ui-corner-all">
                     <span class="ui-icon ui-icon-newwin create"></span>Radera markerade filer
                 </a>
-            </p>
+            </span>
         </div>
     </div>
 EOD;

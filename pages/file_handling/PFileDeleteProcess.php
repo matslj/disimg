@@ -33,6 +33,7 @@ $userId = $uo -> getId();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $filename	= $pc->GETisSetOrSetDefault('file');
+$filenames	= $pc->GETisSetOrSetDefault('filenames');
 $referer	= $pc->GETisSetOrSetDefault('referer');
 $ext	= $pc->GETisSetOrSetDefault('ext');
 

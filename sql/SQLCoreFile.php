@@ -256,10 +256,13 @@ BEGIN
 		A.createdFile AS created,
 		A.modifiedFile AS modified,
 		A.deletedFile AS deleted,
-                U.accountUser AS account
+                U.accountUser AS account,
+                IFNULL(F.nameFolder, "Ingen katalog") AS foldername
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U
                     ON A.File_idUser = U.idUser
+            LEFT OUTER JOIN {$tFolder} AS F
+                    ON A.File_idFolder = F.idFolder
 	WHERE
 		A.File_idUser = aUserId AND
 		deletedFile IS NULL

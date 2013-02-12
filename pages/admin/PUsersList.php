@@ -172,7 +172,7 @@ $res = $db->Query($query);
 
 $htmlMain .= <<< EOD
 <div id="userList">
-    <p><a href="#" id="dialog-link" class="ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa användare</a></p>
+    <p><a href="#" id="new-user-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa användare</a></p>
     <table id="userAccounts">
     <tr>
     <th><a href='{$httpRef}idUser'>Id</a></th>

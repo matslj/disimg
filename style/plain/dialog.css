@@ -22,12 +22,12 @@
         margin-top: -8px;
 }
 */
-#dialog-link {
+.dialog-link {
         padding: .4em 1em .4em 20px;
         text-decoration: none;
         position: relative;
 }
-#dialog-link span.ui-icon {
+.dialog-link span.ui-icon {
         margin: 0 5px 0 0;
         position: absolute;
         left: .2em;
@@ -93,4 +93,19 @@
 .tsmsoptions p:hover {
         color: White;
         background-color: Silver;
+}
+
+/* Specials */
+#fileArchiveControlsDiv {
+    text-align: right;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+#fileArchiveControlsDiv select {
+    display: inline;
+}
+
+#fileArchiveControlsDiv span.control {
+    margin-left: 10px;
 }
