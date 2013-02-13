@@ -107,6 +107,7 @@ switch ($gPage) {
     case 'upload':              require_once(TP_PAGESPATH . 'file_handling/PFileUpload.php'); break;	
     case 'uploadp':             require_once(TP_PAGESPATH . 'file_handling/PFileUploadProcess.php'); break;
     case 'file-delete':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcess.php'); break;
+    case 'file-deleteMulti':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcessMulti.php'); break;
     case 'file-download':	require_once(TP_PAGESPATH . 'file_handling/PFileDownloadProcess.php'); break;
 
     //

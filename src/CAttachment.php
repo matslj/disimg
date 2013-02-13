@@ -149,7 +149,7 @@ EOD;
                                         data.uploadedFile.created +
                                         "</td><td>" +
                                         "Ingen katalog" +
-                                        "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
+                                        "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
                         } else {
@@ -164,18 +164,19 @@ EOD;
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
                 // och skickar iväg den.
                 function sendCheckedCheckboxes() {
-                    var p = [];
-                    $('input.cb').each( function() {
+                    var checkedList = [];
+                    $('input.cbMark').each( function() {
                         if ($(this).attr('checked')) {
-                            p.push($(this).attr('id'));
+                            checkedList.push($(this).attr('id'));
                         }
                     });
+                    console.log(checkedList);
                     $.ajax({
-                        url:'?p=deletefile',
+                        url:'?p=file-deleteMulti',
                         type:'POST',
-                        data: {list:p},
+                        data: {filenames:checkedList},
                         success: function(res) {
-                            alert(res);
+                            // alert(res);
                         }
                     });
                 }
@@ -360,7 +361,7 @@ EOD;
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 if ($uo -> isAdmin()) {
                     // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                    $deleteCol = "<td><input id='cbMark#{$row->uniquename}' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
+                    $deleteCol = "<td><input id='cbMark#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
                 } else {
                     $deleteCol = "";
                 }

@@ -144,7 +144,7 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
 $htmlMain .= <<< EOD
 <div id="folderList">
-    <p><a href="#" id="dialog-link" class="ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa katalog</a></p>
+    <p><a href="#" id="folder-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa katalog</a></p>
     <table id="folders">
     <tr>
     <th><a href='{$httpRef}idFolder'>Id</a></th>

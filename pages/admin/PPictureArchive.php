@@ -100,11 +100,16 @@ $javaScript .= <<<EOD
         $("#dialogFileUpload").initDialog(dialogOptions);
 
         // Event declaration
-        $('#fileArchiveDiv').click(function(event) {
+        $('.section').click(function(event) {
             if ($(event.target).is('.upload')) {
                 $(".status").html("");
                 $("#fileInput").val("");
                 $("#dialogFileUpload").dialog("open");
+                event.preventDefault();
+            } else if ($(event.target).is('.delete')) {
+                // Anropa javascript-metoden i CAttachment.php som samlar ihop
+                // och postar alla kryssade checkboxes.
+                sendCheckedCheckboxes();
                 event.preventDefault();
             }
         });
@@ -142,12 +147,12 @@ $htmlMain = <<<EOD
                 </select>
             </span>
             <span class='control'>
-                <a href="#" id="move-link" class="dialog-link ui-state-default ui-corner-all">
+                <a href="#" id="move-link" class="dialog-link ui-state-default ui-corner-all move">
                     <span class="ui-icon ui-icon-newwin create"></span>Flytta markerade filer
                 </a>
             </span>
             <span class='control'>
-                <a href="#" id="delete-link" class="dialog-link ui-state-default ui-corner-all">
+                <a href="#" id="delete-link" class="dialog-link ui-state-default ui-corner-all delete">
                     <span class="ui-icon ui-icon-newwin create"></span>Radera markerade filer
                 </a>
             </span>
