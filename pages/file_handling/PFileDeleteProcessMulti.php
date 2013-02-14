@@ -60,31 +60,34 @@ for ($i = 0; $i < $max; ++$i) {
     $filename = substr($filenames[$i], $index1 +1 , $index2 - $index1 - 1);
     $ext = substr($filenames[$i], $index2 + 1);
     $archivePath = FILE_ARCHIVE_PATH . DIRECTORY_SEPARATOR . $account . DIRECTORY_SEPARATOR . $filename . "." . $ext;
+    if (!is_file($archivePath)) die("The file does not exist in the file system.");
+    
     $log -> debug($archivePath);
+    
+    // Create the query
+    $query 	= <<< EOD
+    SELECT {$udfDeleteFile}('{$filename}', '{$userId}') AS status;
+EOD;
+
+    // Perform the query and manage results
+    $results = $db->Query($query);
+
+    $row = $results -> fetch_object();
+    if($row->status > 0) {
+            $_SESSION['errorMessage'] = $row->status == 1 ? "No permission" : "File does not exist";
+    } else {
+        // Delete from file system
+        unlink($archivePath);
+    }
+
+    $results->close();
 }
-//$archivePath = FILE_ARCHIVE_PATH . DIRECTORY_SEPARATOR . $account . DIRECTORY_SEPARATOR . $filename . "." . $ext;
-//
-//if (!is_file($archivePath)) die("The file does not exist in the file system.");
-//
-//
-//
-//// Create the query
-//$query 	= <<< EOD
-//SELECT {$udfDeleteFile}('{$filename}', '{$userId}') AS status;
-//EOD;
-//
-//// Perform the query and manage results
-//$results = $db->Query($query);
-//
-//$row = $results -> fetch_object();
-//if($row->status > 0) {
-//        $_SESSION['errorMessage'] = $row->status == 1 ? "No permission" : "File does not exist";
-//} else {
-//    // Delete from file system
-//    unlink($archivePath);
-//}
-//
-//$results->close();
+
+
+
+
+
+
 
 
 $mysqli->close();

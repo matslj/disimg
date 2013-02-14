@@ -139,7 +139,7 @@ EOD;
                             var link = "{$uploadLink}/" + data.uploadedFile.accountName + "/";
                             var theFile = data.uploadedFile.uniqueName + "." + data.uploadedFile.extension;
                             // window.location = "?p={$redirect}";
-                            listElement.prepend("<tr><td><a href='" + link + theFile + "'><img src='" + link + "thumbs/80px_thumb_" + data.uploadedFile.uniqueName + ".jpg' title='Klicka för att se bilden' /></a></td><td><a href='?p=file-download&amp;file=" +
+                            listElement.prepend("<tr id='row"+ data.uploadedFile.uniqueName + "'><td><a href='" + link + theFile + "'><img src='" + link + "thumbs/80px_thumb_" + data.uploadedFile.uniqueName + ".jpg' title='Klicka för att se bilden' /></a></td><td><a href='?p=file-download&amp;file=" +
                                         data.uploadedFile.uniqueName +
                                         "' title='Klicka för att ladda ner fil.'>" +
                                         data.uploadedFile.fileName +
@@ -164,6 +164,7 @@ EOD;
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
                 // och skickar iväg den.
                 function sendCheckedCheckboxes() {
+                    $.jGrowl("Raderar filer...");
                     var checkedList = [];
                     $('input.cbMark').each( function() {
                         if ($(this).attr('checked')) {
@@ -176,6 +177,18 @@ EOD;
                         type:'POST',
                         data: {filenames:checkedList},
                         success: function(res) {
+                            $.jGrowl("Radering utförd");
+                            for (var i = 0; i < checkedList.length; i++) {
+                                var index1 = checkedList[i].indexOf('#');
+                                var index2 = checkedList[i].indexOf('#', index1 + 2);
+                                if (index1 >= 0 && index2 >= 0) {
+                                    var indexName = checkedList[i].substring(index1 + 1, index2);
+                                    $('#row' + indexName).remove();
+                                    console.log(index1);
+                                    console.log(checkedList[i].substring(index1 + 1, index2));
+                                }
+                            }
+                            //$('input.cbMark').remove();
                             // alert(res);
                         }
                     });
@@ -366,7 +379,7 @@ EOD;
                     $deleteCol = "";
                 }
                 $archiveDb .= <<<EOD
-                    <tr>
+                    <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
                     <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
                     <td>{$row->size}</td>
