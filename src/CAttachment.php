@@ -147,7 +147,7 @@ EOD;
                                         data.uploadedFile.size +
                                         "</td><td>" +
                                         data.uploadedFile.created +
-                                        "</td><td>" +
+                                        "</td><td class='folderName'>" +
                                         "Ingen katalog" +
                                         "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
@@ -163,35 +163,58 @@ EOD;
                 
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
                 // och skickar iväg den.
-                function sendCheckedCheckboxes() {
-                    $.jGrowl("Raderar filer...");
+                function sendCheckedCheckboxes(actionType, idFolder) {
+                    actionType = typeof actionType !== 'undefined' ? actionType : 'file-deleteMulti';
+                    idFolder = typeof idFolder !== 'undefined' ? '&folderid=' + idFolder : '';
+                    
+                    // Sök ut markerade checkboxar
                     var checkedList = [];
                     $('input.cbMark').each( function() {
                         if ($(this).attr('checked')) {
                             checkedList.push($(this).attr('id'));
                         }
                     });
-                    console.log(checkedList);
-                    $.ajax({
-                        url:'?p=file-deleteMulti',
-                        type:'POST',
-                        data: {filenames:checkedList},
-                        success: function(res) {
-                            $.jGrowl("Radering utförd");
-                            for (var i = 0; i < checkedList.length; i++) {
-                                var index1 = checkedList[i].indexOf('#');
-                                var index2 = checkedList[i].indexOf('#', index1 + 2);
-                                if (index1 >= 0 && index2 >= 0) {
-                                    var indexName = checkedList[i].substring(index1 + 1, index2);
-                                    $('#row' + indexName).remove();
-                                    console.log(index1);
-                                    console.log(checkedList[i].substring(index1 + 1, index2));
-                                }
-                            }
-                            //$('input.cbMark').remove();
-                            // alert(res);
+                    
+                    // Gör bara något om någon checkbox var markerad
+                    if (checkedList.length != 0) {
+                        // Sätt jGrowl-message utifrån den action som ska
+                        // utföras.
+                        var jGrowlMsg = "Raderar";
+                        if (actionType != 'file-deleteMulti') {
+                            jGrowlMsg = "Flyttar";
                         }
-                    });
+                        $.jGrowl(jGrowlMsg + " filer...");
+
+                        // Förbered Ajax-call
+                        $.ajax({
+                            url:'?p=' + actionType + idFolder,
+                            type:'POST',
+                            dataType: "json",
+                            data: {filenames:checkedList, action:actionType},
+                            success: function(data) {
+                                $.jGrowl("Klar");
+                                for (var i = 0; i < checkedList.length; i++) {
+                                    var index1 = checkedList[i].indexOf('#');
+                                    var index2 = checkedList[i].indexOf('#', index1 + 2);
+                                    if (index1 >= 0 && index2 >= 0) {
+                                        var indexName = checkedList[i].substring(index1 + 1, index2);
+                                        if (data.action == 'file-deleteMulti') {
+                                            $('#row' + indexName).remove();
+                                        } else {
+                                            $('#row' + indexName + ' td.folderName').text(data.folderName);
+                                            // $('select').find(":selected").text(data.folderName + ' (' + data.facet + ')');
+                                        }
+                                        console.log(index1);
+                                        console.log(checkedList[i].substring(index1 + 1, index2));
+                                    }
+                                }
+                                //$('input.cbMark').remove();
+                                // alert(res);
+                            }
+                        });
+                    } else {
+                        $.jGrowl("Inget händer - ingen kryssruta är markerad.");
+                    }
                 }
 EOD;
             return $javaScript;
@@ -391,7 +414,7 @@ EOD;
                     
                     <td>{$row->modified}</td>
                     -->
-                    <td>{$row->foldername}</td>
+                    <td class='folderName'>{$row->foldername}</td>
                     {$deleteCol}
                     </tr>
 EOD;

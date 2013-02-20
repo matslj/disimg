@@ -91,7 +91,8 @@ define('DBUDF_FileDelete',                  DB_PREFIX . 'FFileDelete');
 // Stored routines concering folders
 define('DBSP_InsertFolder',                   DB_PREFIX . 'PInsertFolder');
 define('DBSP_ListFolders',                    DB_PREFIX . 'PListFolders');
-define('DBSP_FileUpdateFolder',                    DB_PREFIX . 'PFileUpdateFolder');
+define('DBSP_DetailFolder',                   DB_PREFIX . 'PDetailFolder');
+define('DBUDF_FileUpdateFolder',              DB_PREFIX . 'FFileUpdateFolder');
 define('DBUDF_NumberOfFilesInFolder',         DB_PREFIX . 'FNumberOfFilesInFolder');
 define('DBUDF_FolderDelete',                  DB_PREFIX . 'FFolderDelete');
 

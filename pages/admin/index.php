@@ -10,7 +10,7 @@
 // All requests passes through this page, for each request a pagecontroller is choosen.
 // The pagecontroller results in a response or a redirect.
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 // -------------------------------------------------------------------------------------------
@@ -50,6 +50,7 @@ switch($thePage) {
     case 'uploadp':             require_once(TP_PAGESPATH . 'file_handling/PFileUploadProcess.php'); break;
     case 'file-delete':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcess.php'); break;
     case 'file-deleteMulti':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcessMulti.php'); break;
+    case 'file-moveMulti':         require_once(TP_PAGESPATH . 'file_handling/PFileMoveProcessMulti.php'); break;
     case 'file-download':	require_once(TP_PAGESPATH . 'file_handling/PFileDownloadProcess.php'); break;
 
 

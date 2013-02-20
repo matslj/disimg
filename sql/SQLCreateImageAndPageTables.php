@@ -30,6 +30,7 @@ $tSida                  = DBT_Sida;
 $tBildIntresse          = DBT_BildIntresse;
 $tBildgrupp             = DBT_Bildgrupp;
 $tFile                  = DBT_File;
+$tFolder                = DBT_Folder;
 $tUser 			= DBT_User;
 $tGroup 		= DBT_Group;
 $tGroupMember           = DBT_GroupMember;
@@ -102,7 +103,7 @@ CREATE TABLE {$tBildgrupp} (
   FOREIGN KEY (Bildgrupp_idFile) REFERENCES {$tFile}(idFile),
   
   -- Attributes
-  nameBildgrupp VARCHAR(256) NOT NULL
+  nameBildgrupp VARCHAR(256) NULL
 ) ENGINE MyISAM CHARACTER SET {$fileDef['DefaultCharacterSet']} COLLATE {$fileDef['DefaultCollate']};
 
 --

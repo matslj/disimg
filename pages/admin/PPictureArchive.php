@@ -57,7 +57,7 @@ $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 $folders = Array();
 while($row = $results[0]->fetch_object()) {
-    $folders[] = $row->id . "#" . $row->name . "#" . $row->facet;
+    $folders[$row->id] = $row->name . "#" . $row->facet;
 }
 
 // Create file handler (CAttachment()). The file handler presents html
@@ -111,6 +111,16 @@ $javaScript .= <<<EOD
                 // och postar alla kryssade checkboxes.
                 sendCheckedCheckboxes();
                 event.preventDefault();
+            } else if ($(event.target).is('.move')) {
+                var ddSelect = $("#ddFolders").val();
+                if (ddSelect) {
+                    // Anropa javascript-metoden i CAttachment.php som samlar ihop
+                    // och postar alla kryssade checkboxes.
+                    sendCheckedCheckboxes('file-moveMulti', ddSelect);
+                } else {
+                    $.jGrowl("Inget händer - ingen kryssruta är markerad.");
+                }
+                event.preventDefault();
             }
         });
     });
@@ -121,6 +131,18 @@ $maxFileSize 	= FILE_MAX_SIZE;
 $action 	= "?p=uploadp";
 $redirect       = "?p=" . $pc->computePage();
 $redirectFail   = "?p=" . $pc->computePage();
+
+$folderHtml = <<<EOD
+    <select id="ddFolders">
+    <option value="">Välj...</option>
+EOD;
+foreach ($folders as $key => $value) {
+    $indexF = strpos($value, "#");
+    $nameF = substr($value, 0, $indexF);
+    $facetF = substr($value, $indexF + 1);
+    $folderHtml .= "<option value='{$key}'>{$nameF}</option>"; 
+}
+$folderHtml .= "</select>";
 
 // -------------------------------------------------------------------------------------------
 //
@@ -139,12 +161,7 @@ $htmlMain = <<<EOD
         {$archiveDb}
         <div id='fileArchiveControlsDiv'>
             <span class='control'>
-                <select>
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="mercedes">Mercedes</option>
-                <option value="audi">Audi</option>
-                </select>
+                {$folderHtml}
             </span>
             <span class='control'>
                 <a href="#" id="move-link" class="dialog-link ui-state-default ui-corner-all move">

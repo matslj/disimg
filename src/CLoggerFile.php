@@ -35,7 +35,7 @@ class CLoggerFile extends CLogger {
             } else {
                 $mode = "wb";
             }
-            $this -> fh = fopen($filename, $mode) or die("can't open file");
+            $this -> fh = fopen($filename, $mode) or die("CLoggerFile.php - ERROR - can't open file");
             fwrite($this -> fh, $log);
 	}
 

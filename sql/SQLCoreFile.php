@@ -42,7 +42,8 @@ $udfFileDelete = DBUDF_FileDelete;
 // Folders
 $spInsertFolder = DBSP_InsertFolder;
 $spListFolders = DBSP_ListFolders;
-$spFileUpdateFolder = DBSP_FileUpdateFolder;
+$spDetailFolder = DBSP_DetailFolder;
+$udfFileUpdateFolder = DBUDF_FileUpdateFolder;
 $udfNumberOfFilesInFolder = DBUDF_NumberOfFilesInFolder;
 $udfFolderDelete = DBUDF_FolderDelete;
 
@@ -161,22 +162,6 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to update folder for a file. 
---
-DROP PROCEDURE IF EXISTS {$spFileUpdateFolder};
-CREATE PROCEDURE {$spFileUpdateFolder}
-(
-	IN aFileId INT UNSIGNED,
-	IN aFolderId INT UNSIGNED
-)
-BEGIN
-	UPDATE {$tFile} 
-		SET	File_idFolder = aFolderId
-		WHERE idFile = aFileId;
-END;
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
 -- SP to update unique key for file. 
 --
 -- Use this to update the unique key if it failed during insertion of a new file. 
@@ -220,6 +205,23 @@ BEGIN
         (aName);
 END;   
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to obtain folder details
+--
+DROP PROCEDURE IF EXISTS {$spDetailFolder};
+CREATE PROCEDURE {$spDetailFolder}
+(
+    IN aFolderId INT
+)
+BEGIN
+    SELECT
+        idFolder AS id,
+        nameFolder AS name,
+        {$udfNumberOfFilesInFolder}(idFolder) as facet
+    FROM {$tFolder}
+    WHERE idFolder = aFolderId;
+END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -473,8 +475,45 @@ wrap: BEGIN
 	RETURN 0;
 END wrap;
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to delete file
+-- See funktion {$udfFileCheckPermission} for return values.
+--
+DROP FUNCTION IF EXISTS {$udfFileUpdateFolder};
+CREATE FUNCTION {$udfFileUpdateFolder}
+(
+	aUniqueFilename VARCHAR({$fileDef['CSizeFileNameUnique']}),
+	aUserId INT UNSIGNED,
+        aFolderId INT UNSIGNED
+)
+RETURNS TINYINT UNSIGNED
+DETERMINISTIC
+wrap: BEGIN
+	DECLARE i INT UNSIGNED;
+        DECLARE fileid INT UNSIGNED;
+	
+	-- Get the id of the file
+	SELECT idFile INTO fileid FROM {$tFile}
+	WHERE
+		uniqueNameFile = aUniqueFilename;
+	
+	-- Check permissions
+	SELECT {$udfFileCheckPermission}(fileid, aUserId) INTO i;
+
+        -- If the return value from the udf is greater than zero something is wrong
+        IF i>0 THEN
+            RETURN i;
+	END IF;
+        
+        UPDATE {$tFile} 
+            SET File_idFolder = aFolderId
+            WHERE idFile = fileid;
+        
+        -- Below I return 0 even though it is not entierly correct to do so.
+	RETURN 0;
+END wrap;
 
 EOD;
-
 
 ?>
