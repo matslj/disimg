@@ -108,13 +108,27 @@ $htmlMain = <<<EOD
 EOD;
 
 $htmlRight = "";
+$redirect = "?p=" . $pc->computePage();
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET variables. Store them in a variable (if they are set).
 // Then prepare the ORDER BY SQL-statement, but only if the _GET variables has a value.
 //
-$httpRef = "";
+$orderBy 	= $pc->GETisSetOrSetDefault('orderby', 'idFolder');
+$orderOrder 	= $pc->GETisSetOrSetDefault('order', 'DESC');
+
+$orderStr = "";
+if(!empty($orderBy) && !empty($orderOrder)) {
+    $orderStr = " ORDER BY {$orderBy} {$orderOrder}";
+}
+
+// -------------------------------------------------------------------------------------------
+//
+// Prepare the order by ref, can you figure out how it works?
+//
+$ascOrDesc = $orderOrder == 'ASC' ? 'DESC' : 'ASC';
+$httpRef = $redirect . "&amp;order={$ascOrDesc}&orderby=";
 
 // -------------------------------------------------------------------------------------------
 //
@@ -127,7 +141,7 @@ $spListFolders = DBSP_ListFolders;
 
 // Create the query
 $query 	= <<< EOD
-CALL {$spListFolders}();
+CALL {$spListFolders}('{$orderStr}');
 EOD;
 
 // Perform the query
@@ -149,7 +163,7 @@ $htmlMain .= <<< EOD
     <tr>
     <th><a href='{$httpRef}idFolder'>Id</a></th>
     <th><a href='{$httpRef}nameFolder'>Namn</a></th>
-    <th><a href='{$httpRef}facets'>Innehåll<br/>(antal filer)</a></th>
+    <th><a href='{$httpRef}facet'>Innehåll<br/>(antal filer)</a></th>
     <th>&nbsp;</th>
     </tr>
 EOD;
@@ -173,7 +187,7 @@ $i++;
 
 
 $action = "?p=" . $pc->computePage() . "p";
-$redirect = "?p=" . $pc->computePage();
+
 $htmlMain .= <<< EOD
     </table>
 </div>

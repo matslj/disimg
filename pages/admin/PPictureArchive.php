@@ -50,7 +50,7 @@ $mysqli = $db->Connect();
 // to populate drop downs).
 $spListFolders = DBSP_ListFolders;
 $query 	= <<< EOD
-CALL {$spListFolders}();
+CALL {$spListFolders}('');
 EOD;
 $res = $db->MultiQuery($query);
 $results = Array();

@@ -229,13 +229,18 @@ END;
 --
 DROP PROCEDURE IF EXISTS {$spListFolders};
 CREATE PROCEDURE {$spListFolders}
-()
+(
+    IN orderSQL varchar(100)
+)
 BEGIN
-	SELECT
-            A.idFolder as id,
-            A.nameFolder as name,
-            {$udfNumberOfFilesInFolder}(idFolder) as facet
-        FROM {$tFolder} AS A;
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+    SET @SQLStatement = CONCAT('SELECT A.idFolder as id, A.nameFolder as name, {$udfNumberOfFilesInFolder}(idFolder) as facet ',
+                             'FROM {$tFolder} AS A ',orderSQL);
+
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
 END;        
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
