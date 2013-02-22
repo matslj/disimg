@@ -6,7 +6,7 @@
 // Description: Show the content of the users filearchive.
 //
 // Author: Mikael Roos, mos@bth.se
-//t
+//
 
 $log = CLogger::getInstance(__FILE__);
 
@@ -147,7 +147,7 @@ $userId	= $uo -> getId();
 //
 // Reuse query from PUsersList.php
 //
-$httpRef = "";
+$httpRef = "?p=admin_manager&amp;order=ASC&orderby=nameUser";
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 $query = $db->LoadSQL('SAdminList.php');
@@ -171,101 +171,10 @@ $selectOption .= <<< EOD
 </select> 
 EOD;
 
-// Close resultset
+// Close resultset and db
 $res->close();
-
-// -------------------------------------------------------------------------------------------
-//
-// Load the list of folders from DB
-//
-$spListFolders = DBSP_ListFolders;
-
-// Create the query
-$query 	= <<< EOD
-CALL {$spListFolders}('{$orderStr}');
-EOD;
-
-// Perform the query
-$res = $db->MultiQuery($query);
-
-// Use results
-$results = Array();
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
-
-$htmlFolderList = <<< EOD
-<div id="folderList">
-    <p><a href="#" id="folder-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa katalog</a></p>
-    <table id="folders">
-    <tr>
-    <th><a href='{$httpRef}idFolder'>Id</a></th>
-    <th><a href='{$httpRef}nameFolder'>Namn</a></th>
-    <th><a href='{$httpRef}facet'>Innehåll<br/>(antal filer)</a></th>
-    <th>&nbsp;</th>
-    </tr>
-EOD;
-
-$i = 0;
-while($row = $results[0]->fetch_object()) {
-    $htmlFolderList .= <<< EOD
-    <tr>
-        <td id="idFolder_{$i}">{$row->id}</td>
-        <td id="nameFolder_{$i}">{$row->name}</td>
-        <td id="facet_{$i}">{$row->facet}</td>
-        <td>
-            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all dialogRowIcon delete">
-                <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
-            </a>
-        </td>
-    </tr>
-EOD;
-$i++;
-}
-
-$results[0]->close();
-
-// -------------------------------------------------------------------------------------------
-//
-// Close DB
-//
 $mysqli->close();
 
-
-$action = "?p=" . $pc->computePage() . "p";
-
-$htmlFolderList .= <<< EOD
-    </table>
-</div>
-<!-- ui-dialog create -->
-<div id="dialogCreate" title="Dialog Title">
-    <form id='dialogCreateForm' action='{$action}' method='POST'>
-        <input type='hidden' name='redirect' value='{$redirect}'>
-        <input type='hidden' name='redirect-failure' value='{$redirect}'>
-        <input type='hidden' id='dialogCreateAction' name='action' value='create'>
-        <fieldset>
-            <p>Skapa ny katalog</p>
-            <table width='99%'>
-                <tr>
-                    <td><label for="dialogCreateFolderName">Namn: </label></td>
-                    <td style='text-align: right;'><input id='dialogCreateFolderName' class='name' type='text' name='foldername' value='' /></td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
-</div>
-<!-- ui-dialog delete -->
-<div id="dialogDelete" title="Radera katalog">
-    <form id='dialogDeleteForm' action='{$action}' method='POST'>
-        <input type='hidden' name='redirect' value='{$redirect}'>
-        <input type='hidden' name='redirect-failure' value='{$redirect}'>
-        <input type='hidden' id='dialogDeleteFolderId' name='folderid' value=''>
-        <input type='hidden' id='dialogDeleteAction' name='action' value='delete'>
-        <fieldset>
-            <p>Vill du radera den här katalogen?</p>
-            <div id="dialogDeleteFolderName"></div>
-        </fieldset>
-    </form>
-</div>
-EOD;
 
 // -------------------------------------------------------------------------------------------
 //
