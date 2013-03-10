@@ -59,6 +59,29 @@ $javaScript = <<<EOD
         $("#dialogEdit").initDialog();
         $("#dialogDelete").initDialog();
         
+        // Declare buttons
+        $(".edit").button({
+            icons: {secondary : "ui-icon-pencil"},
+            text: false
+        }).click(function(event) {
+            var substr = $(this).attr('id').split(':');
+            $('#dialogEditUserId').val(substr[1]);
+            $('#dialogEditAccountName').val(substr[2]);
+            $('#dialogEditName').val(substr[3]);
+            $('#dialogEditEmail').val(substr[4]);
+            $("#dialogEdit").dialog("open");
+        });
+        
+        $(".delete").button({
+            icons: {secondary : "ui-icon-close"},
+            text: false
+        }).click(function(event) {
+            var substr = $(this).attr('id').split(':');
+            $('#dialogDeleteUserId').val(substr[1]);
+            $('#dialogDeleteName').html(substr[2]);
+            $('#dialogDelete').dialog("open");
+        });
+        
         var options = {
             success:       showResponse,  // post-submit callback 
             dataType:  "json"
@@ -97,25 +120,25 @@ $javaScript = <<<EOD
 	// http://docs.jquery.com/Tutorials:AJAX_and_Events
 	//
 	$('#userList').click(function(event) {
-            if ($(event.target).is('.edit')) {
-                $("#dialogEdit").dialog("open");
-                var userObj = getUserInfoFromRow(event.target.id);
-                if (userObj != null) {
-                    $('#dialogEditUserId').val(userObj.accountid);
-                    $('#dialogEditAccountName').val(userObj.accountname);
-                    $('#dialogEditName').val(userObj.name);
-                    $('#dialogEditEmail').val(userObj.email);
-                }
-                event.preventDefault();
-            } else if ($(event.target).is('.delete')) {
-                $("#dialogDelete").dialog("open");
-                var userObj = getUserInfoFromRow(event.target.id);
-                if (userObj != null) {
-                    $('#dialogDeleteUserId').val(userObj.accountid);
-                    $('#dialogDeleteName').html(userObj.name);
-                }
-                event.preventDefault();
-            } else if ($(event.target).is('.create')) {
+//            if ($(event.target).is('.edit')) {
+//                $("#dialogEdit").dialog("open");
+//                var userObj = getUserInfoFromRow(event.target.id);
+//                if (userObj != null) {
+//                    $('#dialogEditUserId').val(userObj.accountid);
+//                    $('#dialogEditAccountName').val(userObj.accountname);
+//                    $('#dialogEditName').val(userObj.name);
+//                    $('#dialogEditEmail').val(userObj.email);
+//                }
+//                event.preventDefault();
+//            } else if ($(event.target).is('.delete')) {
+//                $("#dialogDelete").dialog("open");
+//                var userObj = getUserInfoFromRow(event.target.id);
+//                if (userObj != null) {
+//                    $('#dialogDeleteUserId').val(userObj.accountid);
+//                    $('#dialogDeleteName').html(userObj.name);
+//                }
+//                event.preventDefault();
+            if ($(event.target).is('.create')) {
                 $("#dialogCreate").dialog("open");
                 event.preventDefault();
             }
@@ -173,7 +196,7 @@ $res = $db->Query($query);
 $htmlMain .= <<< EOD
 <div id="userList">
     <p><a href="#" id="new-user-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa användare</a></p>
-    <table id="userAccounts">
+    <table id="folders" style='width: 100%;'>
     <tr>
     <th><a href='{$httpRef}idUser'>Id</a></th>
     <th><a href='{$httpRef}accountUser'>Användarnamn</a></th>
@@ -182,7 +205,7 @@ $htmlMain .= <<< EOD
     <th><a href='{$httpRef}lastLoginUser'>Senaste inloggning</a></th>
     <th><a href='{$httpRef}idGroup'>Grupp</a></th>
     <th><a href='{$httpRef}nameGroup'>Grupp - beskrivning</a></th>
-    <th>&nbsp;</th>
+    <th class='knapp' style='width: 80px;'>&nbsp;</th>
     </tr>
 EOD;
 
@@ -197,17 +220,12 @@ while($row = $res->fetch_object()) {
         <td id="lastLoginUser_{$i}">{$row->lastLoginUser}</td>
         <td id="idGroup_{$i}">{$row->idGroup}</td>
         <td id="nameGroup_{$i}">{$row->nameGroup}</td>
-        <td>
-            <a href="#" id="dialogEdit_{$i}" class="ui-state-default ui-corner-all dialogRowIcon edit">
-                <span id="dialogEditSpan_{$i}" class="ui-icon ui-icon-pencil edit"></span>
-            </a>
+        <td><span id="{$i}:{$row->idUser}:{$row->accountUser}:{$row->nameUser}:{$row->emailUser}" class="edit"></span>
 EOD;
                 
 if (strcmp($row->idGroup, 'adm') != 0) {
 $htmlMain .= <<< EOD
-            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all dialogRowIcon delete">
-                <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
-            </a>
+            <span id="{$i}:{$row->accountUser}:{$row->nameUser}" class="delete"></span>
         </td>
     </tr>
 EOD;

@@ -58,26 +58,21 @@ $javaScript = <<<EOD
         $("#dialogCreate").initDialog();
         $("#dialogDelete").initDialog();
         
+        $('.delete').button({
+            icons: {secondary : "ui-icon-close"},
+            text: false
+        }).click(function(event) {
+            var substr = $(this).attr('id').split(':');
+            $('#dialogDeleteFolderId').val(substr[1]);
+            $('#dialogDeleteFolderName').html(substr[2]);
+            $('#dialogDelete').dialog("open");
+        });
+        
         var options = {
             dataType:  "json"
         }; 
         // Bind to form
         $('#form1').ajaxForm(options);
-
-        function getUserInfoFromRow(targetId) {
-            obj = {};
-            var indexDelimiter = targetId.indexOf("_");
-            var rowIndex = -1;
-            if (indexDelimiter > 0) {
-                rowIndex = targetId.substring(indexDelimiter + 1);
-                obj.id = $('#idFolder_' + rowIndex).html();
-                obj.name = $('#nameFolder_' + rowIndex).html();
-             
-                return obj;
-            } else {
-                return null;
-            }
-        }
 
 	// ----------------------------------------------------------------------------------------------
 	//
@@ -86,15 +81,7 @@ $javaScript = <<<EOD
 	// http://docs.jquery.com/Tutorials:AJAX_and_Events
 	//
 	$('#folderList').click(function(event) {
-            if ($(event.target).is('.delete')) {
-                $("#dialogDelete").dialog("open");
-                var folderObj = getUserInfoFromRow(event.target.id);
-                if (folderObj != null) {
-                    $('#dialogDeleteFolderId').val(folderObj.id);
-                    $('#dialogDeleteFolderName').html(folderObj.name);
-                }
-                event.preventDefault();
-            } else if ($(event.target).is('.create')) {
+            if ($(event.target).is('.create')) {
                 $("#dialogCreate").dialog("open");
                 event.preventDefault();
             }
@@ -161,10 +148,9 @@ $htmlMain .= <<< EOD
     <p><a href="#" id="folder-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa katalog</a></p>
     <table id="folders">
     <tr>
-    <th><a href='{$httpRef}idFolder'>Id</a></th>
-    <th><a href='{$httpRef}nameFolder'>Namn</a></th>
-    <th><a href='{$httpRef}facet'>Innehåll<br/>(antal filer)</a></th>
-    <th>&nbsp;</th>
+    <th class='namn'><a href='{$httpRef}nameFolder'>Namn</a></th>
+    <th class='antal'><a href='{$httpRef}facet'>Antal</a></th>
+    <th class='knapp'>&nbsp;</th>
     </tr>
 EOD;
 
@@ -172,14 +158,9 @@ $i = 0;
 while($row = $results[0]->fetch_object()) {
     $htmlMain .= <<< EOD
     <tr>
-        <td id="idFolder_{$i}">{$row->id}</td>
         <td id="nameFolder_{$i}">{$row->name}</td>
         <td id="facet_{$i}">{$row->facet}</td>
-        <td>
-            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all dialogRowIcon delete">
-                <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
-            </a>
-        </td>
+        <td><span id="{$i}:{$row->id}:{$row->name}" class="delete"></span></td>
     </tr>
 EOD;
 $i++;

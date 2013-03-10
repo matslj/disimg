@@ -47,6 +47,19 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
+        $('.toggle').button({
+            icons: {secondary : "ui-icon-plusthick"},
+            text: false
+        }).click(function(event) {
+            var sign = $(this).button("option", "icons").secondary == "ui-icon-plusthick" ? false : true;
+            if (sign) {
+                $(this).button("option", "icons", {secondary: "ui-icon-plusthick"});
+                $(this).parent().parent().css('background-color', '');
+            } else {
+                $(this).button("option", "icons", {secondary: "ui-icon-minusthick"});
+                $(this).parent().parent().css('background-color', '#66CD00');
+            }
+        });
         
 	// ----------------------------------------------------------------------------------------------
 	//
@@ -146,10 +159,10 @@ $htmlFolderList = <<< EOD
 <div id="folderList">
     <table id="folders">
     <tr>
-    <th><a href='{$httpRef}idFolder'>Id</a></th>
-    <th><a href='{$httpRef}nameFolder'>Namn</a></th>
-    <th><a href='{$httpRef}facet'>Innehåll<br/>(antal filer)</a></th>
-    <th>&nbsp;</th>
+    <!-- <th><a href='{$httpRef}idFolder'>Id</a></th> -->
+    <th class='namn'><a href='{$httpRef}nameFolder'>Namn</a></th>
+    <th class='antal'><a href='{$httpRef}facet'>Antal</a></th>
+    <th class='knapp'>&nbsp;</th>
     </tr>
 EOD;
 
@@ -157,13 +170,11 @@ $i = 0;
 while($row = $results[0]->fetch_object()) {
     $htmlFolderList .= <<< EOD
     <tr>
-        <td id="idFolder_{$i}">{$row->id}</td>
+        <!-- <td id="idFolder_{$i}">{$row->id}</td> -->
         <td id="nameFolder_{$i}">{$row->name}</td>
         <td id="facet_{$i}">{$row->facet}</td>
         <td>
-            <a href="#" id="dialogDelete_{$i}" class="ui-state-default ui-corner-all dialogRowIcon delete">
-                <span id="dialogDeleteSpan_{$i}" class="ui-icon ui-icon-close delete"></span>
-            </a>
+            <span id="dialogToggleSpan_{$i}" class="toggle"></span>
         </td>
     </tr>
 EOD;
