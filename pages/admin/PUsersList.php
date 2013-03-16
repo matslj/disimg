@@ -78,7 +78,7 @@ $javaScript = <<<EOD
         }).click(function(event) {
             var substr = $(this).attr('id').split(':');
             $('#dialogDeleteUserId').val(substr[1]);
-            $('#dialogDeleteName').html(substr[2]);
+            $('#dialogDeleteName').html(substr[3]);
             $('#dialogDelete').dialog("open");
         });
         
@@ -96,23 +96,6 @@ $javaScript = <<<EOD
             $('button#savenow').attr('disabled', 'disabled');
         }
 
-        function getUserInfoFromRow(targetId) {
-            obj = {};
-            var indexDelimiter = targetId.indexOf("_");
-            var rowIndex = -1;
-            if (indexDelimiter > 0) {
-                rowIndex = targetId.substring(indexDelimiter + 1);
-                obj.accountid = $('#idUser_' + rowIndex).html();
-                obj.accountname = $('#accountName_' + rowIndex).html();
-                obj.name = $('#nameUser_' + rowIndex).html();
-                obj.email = $('#emailUser_' + rowIndex).html();
-             
-                return obj;
-            } else {
-                return null;
-            }
-        }
-
 	// ----------------------------------------------------------------------------------------------
 	//
 	// Event handler for buttons in form. Instead of messing up the html-code with javascript.
@@ -120,24 +103,6 @@ $javaScript = <<<EOD
 	// http://docs.jquery.com/Tutorials:AJAX_and_Events
 	//
 	$('#userList').click(function(event) {
-//            if ($(event.target).is('.edit')) {
-//                $("#dialogEdit").dialog("open");
-//                var userObj = getUserInfoFromRow(event.target.id);
-//                if (userObj != null) {
-//                    $('#dialogEditUserId').val(userObj.accountid);
-//                    $('#dialogEditAccountName').val(userObj.accountname);
-//                    $('#dialogEditName').val(userObj.name);
-//                    $('#dialogEditEmail').val(userObj.email);
-//                }
-//                event.preventDefault();
-//            } else if ($(event.target).is('.delete')) {
-//                $("#dialogDelete").dialog("open");
-//                var userObj = getUserInfoFromRow(event.target.id);
-//                if (userObj != null) {
-//                    $('#dialogDeleteUserId').val(userObj.accountid);
-//                    $('#dialogDeleteName').html(userObj.name);
-//                }
-//                event.preventDefault();
             if ($(event.target).is('.create')) {
                 $("#dialogCreate").dialog("open");
                 event.preventDefault();
@@ -225,7 +190,7 @@ EOD;
                 
 if (strcmp($row->idGroup, 'adm') != 0) {
 $htmlMain .= <<< EOD
-            <span id="{$i}:{$row->accountUser}:{$row->nameUser}" class="delete"></span>
+            <span id="{$i}:{$row->idUser}:{$row->accountUser}:{$row->nameUser}" class="delete"></span>
         </td>
     </tr>
 EOD;
@@ -250,7 +215,7 @@ $htmlMain .= <<< EOD
             <p>Användarnamn eller epost används i samband med inloggning</p>
             <table width='99%'>
                 <tr>
-                    <td><label for="dialogCreateAccountName">Namn: </label></td>
+                    <td><label for="dialogCreateAccountName">Användarnamn: </label></td>
                     <td style='text-align: right;'><input id='dialogCreateAccountName' class='name' type='text' name='accountname' value='' /></td>
                 </tr>
                 <tr>
@@ -275,7 +240,7 @@ $htmlMain .= <<< EOD
         <fieldset>
             <table width='99%'>
                 <tr>
-                    <td><label for="dialogEditAccountName">Namn: </label></td>
+                    <td><label for="dialogEditAccountName">Användarnamn: </label></td>
                     <td style='text-align: right;'><input id='dialogEditAccountName' class='name' type='text' name='accountname' value='' /></td>
                 </tr>
                 <tr>
