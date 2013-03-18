@@ -146,7 +146,10 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 $htmlMain .= <<< EOD
 <div id="folderList">
     <p><a href="#" id="folder-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa katalog</a></p>
-    <table id="folders">
+EOD;
+
+$htmlMainTemp = <<< EOD
+<table id="folders">
     <tr>
     <th class='namn'><a href='{$httpRef}nameFolder'>Namn</a></th>
     <th class='antal'><a href='{$httpRef}facet'>Antal</a></th>
@@ -156,9 +159,9 @@ EOD;
 
 $i = 0;
 while($row = $results[0]->fetch_object()) {
-    $htmlMain .= <<< EOD
+    $htmlMainTemp .= <<< EOD
     <tr>
-        <td id="nameFolder_{$i}">{$row->name}</td>
+        <td id="nameFolder_{$i}"><a href="?p=admin_archive&ff={$row->id}">{$row->name}</a></td>
         <td id="facet_{$i}">{$row->facet}</td>
         <td><span id="{$i}:{$row->id}:{$row->name}" class="delete"></span></td>
     </tr>
@@ -166,11 +169,16 @@ EOD;
 $i++;
 }
 
+$htmlMainTemp .= "</table>";
+
+if ($i == 0) {
+    $htmlMainTemp = "";
+}
 
 $action = "?p=" . $pc->computePage() . "p";
 
 $htmlMain .= <<< EOD
-    </table>
+    {$htmlMainTemp}
 </div>
 <!-- ui-dialog create -->
 <div id="dialogCreate" title="Dialog Title">

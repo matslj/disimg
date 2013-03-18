@@ -31,6 +31,8 @@ $intFilter->UserIsMemberOfGroupAdminOrDie();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
+$folderFilter = $pc->GETisSetOrSetDefault('ff', '');
+
 $uo = CUserData::getInstance();
 $account = $uo -> getAccount();
 $userId	= $uo -> getId();
@@ -63,7 +65,7 @@ while($row = $results[0]->fetch_object()) {
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage());
+$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
 // $archiveDb = $attachment -> getDownloads($db, $userId, 'archive');
 $mysqli->close();
 

@@ -362,20 +362,27 @@ EOD;
         // @param refId Optional. If present with idReference set to refId will be listed
         //                        otherwise files belonging to userId will be listed. 
 	// @return a list of files in the form of a HTML table.
-        public function getFileList($db, $userId, $referer) {
+        public function getFileList($db, $userId, $referer, $folderId) {
             // Assumes the presence of a working mysqli-object
             // No defensive programming!
 
             // Get user-object
             $uo = CUserData::getInstance();
             
-            $spListFiles = DBSP_ListFiles;
+            $query = "";
             
-            // Create the query
+            if (empty($folderId)) {
+            $spListFiles = DBSP_ListFiles;
             $query 	= <<< EOD
             CALL {$spListFiles}('{$userId}');
 EOD;
-
+            } else {
+                $spListFiles = DBSP_ListFilesInFolder;
+            $query 	= <<< EOD
+            CALL {$spListFiles}('{$userId}', $folderId);
+EOD;
+            }
+            
             // Perform the query
             $res = $db->MultiQuery($query);
 

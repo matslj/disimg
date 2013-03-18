@@ -171,7 +171,7 @@ while($row = $results[0]->fetch_object()) {
     $htmlFolderList .= <<< EOD
     <tr>
         <!-- <td id="idFolder_{$i}">{$row->id}</td> -->
-        <td id="nameFolder_{$i}">{$row->name}</td>
+        <td id="nameFolder_{$i}"><a href="?p=admin_archive&ff={$row->id}">{$row->name}</a></td>
         <td id="facet_{$i}">{$row->facet}</td>
         <td>
             <span id="dialogToggleSpan_{$i}" class="toggle"></span>
@@ -179,6 +179,15 @@ while($row = $results[0]->fetch_object()) {
     </tr>
 EOD;
 $i++;
+}
+
+$htmlFolderList .= <<< EOD
+    </table>
+</div>
+EOD;
+
+if ($i == 0) {
+    $htmlFolderList = "";
 }
 
 $results[0]->close();
@@ -192,11 +201,6 @@ $mysqli->close();
 
 $action = "?p=" . $pc->computePage() . "p";
 $redirect = "?p=" . $pc->computePage();
-
-$htmlFolderList .= <<< EOD
-    </table>
-</div>
-EOD;
 
 // -------------------------------------------------------------------------------------------
 //

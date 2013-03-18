@@ -83,6 +83,7 @@ define('DBSP_FileDetails',                  DB_PREFIX . 'PFileDetails');
 define('DBSP_FileByIdDetails',              DB_PREFIX . 'PFileByIdDetails');
 define('DBSP_FileDetailsUpdate',            DB_PREFIX . 'PFileDetailsUpdate');
 define('DBSP_ListFiles',                    DB_PREFIX . 'PListFiles');
+define('DBSP_ListFilesInFolder',            DB_PREFIX . 'PListFilesInFolder');
 define('DBSP_UseReferenceToListFiles',      DB_PREFIX . 'PUseReferenceToListFiles');
 define('DBSP_FileDetailsDeleted',           DB_PREFIX . 'PFileDetailsDeleted');
 define('DBUDF_FileCheckPermission',         DB_PREFIX . 'FFileCheckPermission');

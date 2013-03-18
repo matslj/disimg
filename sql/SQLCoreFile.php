@@ -34,6 +34,7 @@ $spFileDetails = DBSP_FileDetails;
 $spFileByIdDetails = DBSP_FileByIdDetails;
 $spFileDetailsUpdate = DBSP_FileDetailsUpdate;
 $spListFiles = DBSP_ListFiles;
+$spListFilesInFolder = DBSP_ListFilesInFolder;
 $spUseReferenceToListFiles = DBSP_UseReferenceToListFiles;
 $spFileDetailsDeleted = DBSP_FileDetailsDeleted;
 $udfFileCheckPermission = DBUDF_FileCheckPermission;
@@ -76,6 +77,20 @@ CREATE TABLE {$tFolder} (
         nameFolder VARCHAR({$fileDef['CSizeFileName']}) NOT NULL
 );
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Table that connects folders with users. A user can be have many folders and a folder can
+-- have many users.
+--
+DROP TABLE IF EXISTS {$tFolderUser};
+CREATE TABLE {$tFolderUser} (
+
+	-- Primary key(s)
+	idFolder INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	
+	-- Attributes
+        nameFolder VARCHAR({$fileDef['CSizeFileName']}) NOT NULL
+);
 
 -- X++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -273,6 +288,41 @@ BEGIN
 	WHERE
 		A.File_idUser = aUserId AND
 		deletedFile IS NULL
+        ORDER BY createdFile DESC;
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all files in with a specific folder id
+--
+DROP PROCEDURE IF EXISTS {$spListFilesInFolder};
+CREATE PROCEDURE {$spListFilesInFolder}
+(
+	IN aUserId INT UNSIGNED,
+        IN aFolderId INT
+)
+BEGIN
+	SELECT 
+		A.File_idUser AS owner,
+		A.nameFile AS name,
+		A.uniqueNameFile AS uniquename,
+		A.pathToDiskFile AS path,
+		A.sizeFile AS size,
+		A.mimetypeFile AS mimetype,
+		A.createdFile AS created,
+		A.modifiedFile AS modified,
+		A.deletedFile AS deleted,
+                U.accountUser AS account,
+                F.nameFolder AS foldername
+	FROM {$tFile} AS A
+            INNER JOIN {$tUser} AS U
+                    ON A.File_idUser = U.idUser
+            INNER JOIN {$tFolder} AS F
+                    ON A.File_idFolder = F.idFolder
+	WHERE
+		A.File_idUser = aUserId AND
+		deletedFile IS NULL AND
+                A.File_idFolder = aFolderId
         ORDER BY createdFile DESC;
 END;
 

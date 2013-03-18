@@ -31,9 +31,9 @@ $intFilter->IsUserMemberOfGroupAdminOrTerminate();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$folderId 		= $pc->POSTisSetOrSetDefault('folderid', 0);
-$folderName 	= $pc->POSTisSetOrSetDefault('foldername', '');
-$action	= $pc->POSTisSetOrSetDefault('action', '');
+$folderId   = $pc->POSTisSetOrSetDefault('folderid', 0);
+$folderName = $pc->POSTisSetOrSetDefault('foldername', '');
+$action     = $pc->POSTisSetOrSetDefault('action', '');
 
 // Check incoming data
 $pc->IsNumericOrDie($folderId, 0);
