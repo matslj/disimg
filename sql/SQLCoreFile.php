@@ -23,6 +23,7 @@ $fileDef = Array(
 
 $tFile         = DBT_File;
 $tFolder       = DBT_Folder;
+$tFolderUser   = DBT_FolderUser;
 $tUser         = DBT_User;
 $tGroup        = DBT_Group;
 $tGroupMember  = DBT_GroupMember;
@@ -42,8 +43,11 @@ $udfFileDelete = DBUDF_FileDelete;
 
 // Folders
 $spInsertFolder = DBSP_InsertFolder;
+$spInsertFolderUser = DBSP_InsertFolderUser;
 $spListFolders = DBSP_ListFolders;
+$spListFoldersByUser = DBSP_ListFoldersByUser;
 $spDetailFolder = DBSP_DetailFolder;
+$spDeleteFolderUser = DBSP_DeleteFolderUser;
 $udfFileUpdateFolder = DBUDF_FileUpdateFolder;
 $udfNumberOfFilesInFolder = DBUDF_NumberOfFilesInFolder;
 $udfFolderDelete = DBUDF_FolderDelete;
@@ -85,14 +89,22 @@ CREATE TABLE {$tFolder} (
 DROP TABLE IF EXISTS {$tFolderUser};
 CREATE TABLE {$tFolderUser} (
 
-	-- Primary key(s)
-	idFolder INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	
-	-- Attributes
-        nameFolder VARCHAR({$fileDef['CSizeFileName']}) NOT NULL
+        -- Primary key(s)
+        --
+        -- The PK is the combination of the two foreign keys, see below.
+        --
+
+        -- Foreign keys
+        FolderUser_idUser INT NOT NULL,
+        FolderUser_idFolder INT NOT NULL,
+
+        FOREIGN KEY (FolderUser_idUser) REFERENCES {$tUser}(idUser),
+        FOREIGN KEY (FolderUser_idFolder) REFERENCES {$tFolder}(idFolder),
+
+        PRIMARY KEY (FolderUser_idUser, FolderUser_idFolder)
 );
 
--- X++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for File
 --
@@ -218,7 +230,40 @@ BEGIN
         (nameFolder)
     VALUES
         (aName);
-END;   
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to connect folder and user
+--
+DROP PROCEDURE IF EXISTS {$spInsertFolderUser};
+CREATE PROCEDURE {$spInsertFolderUser}
+(
+    IN aUserId INT UNSIGNED,
+    IN aFolderId INT
+)
+BEGIN
+    INSERT INTO {$tFolderUser}
+        (FolderUser_idUser,FolderUser_idFolder)
+    VALUES
+        (aUserId,aFolderId);
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to delete the connection between folder and user
+--
+DROP PROCEDURE IF EXISTS {$spDeleteFolderUser};
+CREATE PROCEDURE {$spDeleteFolderUser}
+(
+    IN aUserId INT UNSIGNED,
+    IN aFolderId INT
+)
+BEGIN
+    DELETE FROM {$tFolderUser}
+    WHERE FolderUser_idFolder = aFolderId
+          AND FolderUser_idUser = aUserId;
+END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -257,6 +302,27 @@ BEGIN
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
 END;        
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all folders for current user. Also list number of files in each folder.
+--
+DROP PROCEDURE IF EXISTS {$spListFoldersByUser};
+CREATE PROCEDURE {$spListFoldersByUser}
+(
+    IN orderSQL varchar(100),
+    IN aUserId INT UNSIGNED
+)
+BEGIN
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+    SET @SQLStatement = CONCAT('SELECT A.idFolder as id, A.nameFolder as name, {$udfNumberOfFilesInFolder}(idFolder) as facet ',
+                             'FROM {$tFolder} AS A INNER JOIN {$tFolderUser} AS FU on A.idFolder = FU.FolderUser_idFolder WHERE FU.FolderUser_idUser = aUserId ',orderSQL);
+
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END; 
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --

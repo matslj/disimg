@@ -18,6 +18,7 @@ $tBildIntresse          = DBT_BildIntresse;
 $tBildgrupp             = DBT_Bildgrupp;
 $tFile                  = DBT_File;
 $tFolder                = DBT_Folder;
+$tFolderUser            = DBT_FolderUser;
 $tArticle 		= DBT_Article;
 $tUser 			= DBT_User;
 $tGroup 		= DBT_Group;
@@ -50,6 +51,7 @@ DROP TABLE IF EXISTS {$tArticle};
 DROP TABLE IF EXISTS {$tBildIntresse};
 DROP TABLE IF EXISTS {$tBildgrupp};
 DROP TABLE IF EXISTS {$tFile};
+DROP TABLE IF EXISTS {$tFolderUser};
 DROP TABLE IF EXISTS {$tFolder};
 DROP TABLE IF EXISTS {$tSida};
 

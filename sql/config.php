@@ -36,6 +36,7 @@ define('DBT_BildIntresse',	DB_PREFIX . 'BildIntresse');
 define('DBT_Bildgrupp',		DB_PREFIX . 'Bildgrupp');
 define('DBT_File', 		DB_PREFIX . 'File');
 define('DBT_Folder', 		DB_PREFIX . 'Folder');
+define('DBT_FolderUser',	DB_PREFIX . 'FolderUser');
 define('DBT_Sida',		DB_PREFIX . 'Sida');
 
 
@@ -91,8 +92,11 @@ define('DBUDF_FileDelete',                  DB_PREFIX . 'FFileDelete');
 
 // Stored routines concering folders
 define('DBSP_InsertFolder',                   DB_PREFIX . 'PInsertFolder');
+define('DBSP_InsertFolderUser',                   DB_PREFIX . 'PInsertFolderUser');
 define('DBSP_ListFolders',                    DB_PREFIX . 'PListFolders');
+define('DBSP_ListFoldersByUser',              DB_PREFIX . 'PListFoldersByUser');
 define('DBSP_DetailFolder',                   DB_PREFIX . 'PDetailFolder');
+define('DBSP_DeleteFolderUser',               DB_PREFIX . 'PDeleteFolderUser');
 define('DBUDF_FileUpdateFolder',              DB_PREFIX . 'FFileUpdateFolder');
 define('DBUDF_NumberOfFilesInFolder',         DB_PREFIX . 'FNumberOfFilesInFolder');
 define('DBUDF_FolderDelete',                  DB_PREFIX . 'FFolderDelete');
