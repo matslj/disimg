@@ -13,7 +13,7 @@
 $pc = CPageController::getInstance();
 //$pc->LoadLanguage(__FILE__);
 
-$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
+$redirectTo = "?p=home"; // $pc->SESSIONisSetOrSetDefault('history2');
 
 
 // -------------------------------------------------------------------------------------------

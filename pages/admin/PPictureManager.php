@@ -29,9 +29,32 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $intFilter->UserIsSignedInOrRecirectToSignIn();
 $intFilter->UserIsMemberOfGroupAdminOrDie();
 
+$userId = $pc->GETisSetOrSetDefault('userid', 0);
+
+$pc->IsNumericOrDie($userId, 0);
+
+$action = "?p=" . $pc->computePage() . "p";
+$redirect = "?p=" . $pc->computePage();
+
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
 $htmlHead = <<<EOD
+    <style type="text/css">
+        .added {
+            background-color: #66CD00;
+        }
+        
+        #userSelect {
+            padding: 0px 0px 0px 1px;
+            margin: 0 0 7px 0;
+            height:24px;
+        }
+        
+        #userSelect .option {
+            margin: 2px 1px 2px 1px;
+        }
+    </style>
+   
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
@@ -45,20 +68,49 @@ $javaScript = <<<EOD
 //
 //
 //
+var globalUrl = "{$action}";
+
 (function($){
     $(document).ready(function() {
-        $('.toggle').button({
-            icons: {secondary : "ui-icon-plusthick"},
+        $.ajaxSetup ({  
+            cache: false  
+        }); 
+
+        $('.toggle').each( function() {
+        var iconmark = $(this).parent().parent().hasClass('added') ? "ui-icon-minusthick" : "ui-icon-plusthick";
+        $(this).button({
+            icons: {secondary : iconmark},
             text: false
         }).click(function(event) {
-            var sign = $(this).button("option", "icons").secondary == "ui-icon-plusthick" ? false : true;
-            if (sign) {
-                $(this).button("option", "icons", {secondary: "ui-icon-plusthick"});
-                $(this).parent().parent().css('background-color', '');
+            var userId = {$userId}; // $('#userSelect').val();
+            if (userId) {
+                var sign = $(this).button("option", "icons").secondary == "ui-icon-plusthick" ? false : true;
+                var tr = $(this).parent().parent();
+                tr.toggleClass('added');
+                var folderId = tr.attr('id');
+                if (sign) {
+                    $(this).button("option", "icons", {secondary: "ui-icon-plusthick"});
+                    // tr.css('background-color', '');
+                } else {
+                    $(this).button("option", "icons", {secondary: "ui-icon-minusthick"});
+                    // tr.css('background-color', '#66CD00');
+                }
+                var action = sign ? "delete" : "add";
+                $.post(  
+                    globalUrl,  
+                    {action: action, userid: userId, folderid: folderId}  
+                );
+                // console.log(userId + " " + folderId);
             } else {
-                $(this).button("option", "icons", {secondary: "ui-icon-minusthick"});
-                $(this).parent().parent().css('background-color', '#66CD00');
+                alert("Du måste välja en användare först");
             }
+        });
+        });
+        
+        // get your select element and listen for a change event on it
+        $('#userSelect').change(function() {
+          // set the window's location property to the value of the option the user has selected
+          window.location = "{$redirect}&userid=" + $('#userSelect').val();
         });
         
 	// ----------------------------------------------------------------------------------------------
@@ -101,7 +153,7 @@ EOD;
 //
 $uo = CUserData::getInstance();
 $account = $uo -> getAccount();
-$userId	= $uo -> getId();
+// $userId	= $uo -> getId();
 
 // -------------------------------------------------------------------------------------------
 //
@@ -118,20 +170,21 @@ $res = $db->Query($query);
 
 // Set up a select-option list using the result from the query
 $selectOption = <<< EOD
-<select id="userSelect" name="userSelect">
-  <option selected value="">Välj en användare...</option>
+<select id="userSelect" class="ui-widget ui-state-default" name="userSelect">
+  <option value="">Välj en användare...</option>
 EOD;
 
 while($row = $res->fetch_object()) {
     if (strcmp($row->idGroup, 'adm') != 0) {
+        $selected = $userId == $row->idUser ? "selected" : "";
     $selectOption .= <<< EOD
-        <option value='{$row->idUser}'>{$row->nameUser}</option>
+        <option {$selected} value='{$row->idUser}'>{$row->nameUser}</option>
 EOD;
     }
 }
 
 $selectOption .= <<< EOD
-</select> 
+</select>
 EOD;
 
 // Close resultset
@@ -141,11 +194,11 @@ $res->close();
 //
 // Load the list of folders from DB
 //
-$spListFolders = DBSP_ListFolders;
+$spListFolders = DBSP_ListFoldersByUser;
 
 // Create the query
 $query 	= <<< EOD
-CALL {$spListFolders}('{$orderStr}');
+CALL {$spListFolders}('{$orderStr}',{$userId});
 EOD;
 
 // Perform the query
@@ -157,7 +210,7 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
 $htmlFolderList = <<< EOD
 <div id="folderList">
-    <table id="folders">
+    <table class="disImgTable">
     <tr>
     <!-- <th><a href='{$httpRef}idFolder'>Id</a></th> -->
     <th class='namn'><a href='{$httpRef}nameFolder'>Namn</a></th>
@@ -168,8 +221,12 @@ EOD;
 
 $i = 0;
 while($row = $results[0]->fetch_object()) {
+    $mark = "";
+    if ($row->mark == 1) {
+        $mark = " class='added'";
+    }
     $htmlFolderList .= <<< EOD
-    <tr>
+    <tr id="{$row->id}"{$mark}>
         <!-- <td id="idFolder_{$i}">{$row->id}</td> -->
         <td id="nameFolder_{$i}"><a href="?p=admin_archive&ff={$row->id}">{$row->name}</a></td>
         <td id="facet_{$i}">{$row->facet}</td>
@@ -197,10 +254,6 @@ $results[0]->close();
 // Close DB
 //
 $mysqli->close();
-
-
-$action = "?p=" . $pc->computePage() . "p";
-$redirect = "?p=" . $pc->computePage();
 
 // -------------------------------------------------------------------------------------------
 //

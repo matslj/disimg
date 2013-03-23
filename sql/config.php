@@ -92,7 +92,7 @@ define('DBUDF_FileDelete',                  DB_PREFIX . 'FFileDelete');
 
 // Stored routines concering folders
 define('DBSP_InsertFolder',                   DB_PREFIX . 'PInsertFolder');
-define('DBSP_InsertFolderUser',                   DB_PREFIX . 'PInsertFolderUser');
+define('DBSP_InsertFolderUser',               DB_PREFIX . 'PInsertFolderUser');
 define('DBSP_ListFolders',                    DB_PREFIX . 'PListFolders');
 define('DBSP_ListFoldersByUser',              DB_PREFIX . 'PListFoldersByUser');
 define('DBSP_DetailFolder',                   DB_PREFIX . 'PDetailFolder');

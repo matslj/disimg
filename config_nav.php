@@ -6,22 +6,32 @@
 //
 // Navigation specific configurations.
 //
+$menuNavBarNoLogin = Array (
+        'Hem'           => '?p=home',
+    	'Om' 		=> '?p=about',
+);
+define('MENU_NAVBAR_NO_LOGIN',           serialize($menuNavBarNoLogin));
 
 $menuNavBar = Array (
         'Hem'           => '?p=home',
         'Filarkiv' 	=> '?p=archive',
-        'Ladda upp' 	=> '?p=upload',
-	'Installera' 	=> '?p=install',
-        'Admin' => '?p=admin',
     	'Om' 		=> '?p=about',
 );
-define('MENU_NAVBAR', 	serialize($menuNavBar));
+define('MENU_NAVBAR',           serialize($menuNavBar));
+
+$menuNavBarForAdmin = Array (
+        'Hem'           => '?p=home',
+	'Installera' 	=> '?p=install',
+        'Admin'         => '?p=admin',
+    	'Om' 		=> '?p=about',
+);
+define('MENU_NAVBAR_FOR_ADMIN', serialize($menuNavBarForAdmin));
 
 $adminMenuNavBar = Array (
-        'Användare'           => '?p=admin_anvandare',
-        'Kataloger' 	=> '?p=admin_folders',
-        'Bildarkiv' 	=> '?p=admin_archive',
-        'Koppla användare' 	=> '?p=admin_manager',
+        'Användare'         => '?p=admin_anvandare',
+        'Kataloger'         => '?p=admin_folders',
+        'Bildarkiv'         => '?p=admin_archive',
+        'Koppla användare'  => '?p=admin_manager',
 );
-define('ADMIN_MENU_NAVBAR', 	serialize($adminMenuNavBar));
+define('ADMIN_MENU_NAVBAR',      serialize($adminMenuNavBar));
 ?>

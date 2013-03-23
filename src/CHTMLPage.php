@@ -46,7 +46,16 @@ class CHTMLPage {
         $footer	= WS_FOOTER;
 
         $top 	= $this->prepareLoginLogoutMenu();
-        $nav 	= $this->prepareNavigationBar();
+        $nav = "";
+        if(isset($_SESSION['accountUser'])) {
+            if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
+                $nav 	= $this->prepareNavigationBar(MENU_NAVBAR_FOR_ADMIN);
+            } else {
+                $nav 	= $this->prepareNavigationBar();
+            }
+        } else {
+            $nav 	= $this->prepareNavigationBar(MENU_NAVBAR_NO_LOGIN);
+        }
         $body 	= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
         $w3c	= $this->prepareValidatorTools();
         $timer	= $this->prepareTimer();

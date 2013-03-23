@@ -149,7 +149,7 @@ $htmlMain .= <<< EOD
 EOD;
 
 $htmlMainTemp = <<< EOD
-<table id="folders">
+<table class="disImgTable">
     <tr>
     <th class='namn'><a href='{$httpRef}nameFolder'>Namn</a></th>
     <th class='antal'><a href='{$httpRef}facet'>Antal</a></th>

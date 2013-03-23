@@ -161,7 +161,7 @@ $res = $db->Query($query);
 $htmlMain .= <<< EOD
 <div id="userList">
     <p><a href="#" id="new-user-link" class="dialog-link ui-state-default ui-corner-all create"><span class="ui-icon ui-icon-newwin create"></span>Skapa användare</a></p>
-    <table id="folders" style='width: 100%;'>
+    <table class="disImgTable" style='width: 100%;'>
     <tr>
     <th><a href='{$httpRef}idUser'>Id</a></th>
     <th><a href='{$httpRef}accountUser'>Användarnamn</a></th>

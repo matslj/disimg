@@ -429,7 +429,7 @@ EOD;
             
             // Start table
             $archiveDbStart = <<<EOD
-                <table width='99%'>
+                <table class="disImgTable" style="width:100%">
                 <thead>
                 <th>Tumme</th>
                 <th>Filnamn</th>
@@ -443,7 +443,7 @@ EOD;
                 <th>Modified</th>
                 -->
                 <th>katalog</th>
-                <th>&nbsp;</th>
+                <th class="knapp">&nbsp;</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>
 EOD;

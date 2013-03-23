@@ -5,7 +5,7 @@
 //
 // Display information about Persia, display the README-file.
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 
@@ -60,7 +60,7 @@ $htmlRight = "";
 //
 $page = new CHTMLPage();
 
-$page->printPage('About Persia', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage('About DisImg', $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

@@ -293,26 +293,26 @@ div.sourcecode {
 	padding-left: 10px;
 }
 
-#folders {
+.disImgTable {
     border-collapse: collapse;
     width: 500px;
 }
 
 
 
-#folders td span:first-child {
+.disImgTable td span:first-child {
     margin: 4px 0 1px 0;
 }
 
-#folders td, #folders th, #folders table {
+.disImgTable td, .disImgTable th, .disImgTable table {
     border: 1px #A65C00 solid;
 }
 
-#folders td, #folders th {
+.disImgTable td, .disImgTable th {
     padding:3px 7px 2px 7px;
 }
 
-#folders th {
+.disImgTable th {
     font-size:1.1em;
     text-align:left;
     padding-top:5px;
@@ -320,14 +320,14 @@ div.sourcecode {
     background-color:#A65C00;
 }
 
-#folders th.knapp {
+.disImgTable th.knapp {
     width: 30px;
     background-color:#FFFFF0;
     border-top: 1px #FFFFF0 solid;
     border-right: 1px #FFFFF0 solid;
 }
 
-#folders th.antal {
+.disImgTable th.antal {
     width: 46px;
 }
 

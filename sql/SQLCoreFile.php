@@ -64,7 +64,12 @@ $query = <<<EOD
 --
 -- =============================================================================================
 
-
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Table that connects folders with users. A user can be have many folders and a folder can
+-- have many users.
+--
+DROP TABLE IF EXISTS {$tFolderUser};
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -81,12 +86,6 @@ CREATE TABLE {$tFolder} (
         nameFolder VARCHAR({$fileDef['CSizeFileName']}) NOT NULL
 );
 
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
--- Table that connects folders with users. A user can be have many folders and a folder can
--- have many users.
---
-DROP TABLE IF EXISTS {$tFolderUser};
 CREATE TABLE {$tFolderUser} (
 
         -- Primary key(s)
@@ -316,8 +315,8 @@ CREATE PROCEDURE {$spListFoldersByUser}
 BEGIN
     -- Enter the dynamic SQL statement into the
     -- variable @SQLStatement
-    SET @SQLStatement = CONCAT('SELECT A.idFolder as id, A.nameFolder as name, {$udfNumberOfFilesInFolder}(idFolder) as facet ',
-                             'FROM {$tFolder} AS A INNER JOIN {$tFolderUser} AS FU on A.idFolder = FU.FolderUser_idFolder WHERE FU.FolderUser_idUser = aUserId ',orderSQL);
+    SET @SQLStatement = CONCAT('SELECT A.idFolder as id, A.nameFolder as name, {$udfNumberOfFilesInFolder}(idFolder) as facet, (FU.uid IS NOT NULL) as mark ',
+                             'FROM {$tFolder} AS A LEFT OUTER JOIN (SELECT FolderUser_idUser as uid, FolderUser_idFolder AS id FROM {$tFolderUser} where FolderUser_idUser = ',aUserId,') AS FU on A.idFolder = FU.id ',orderSQL);
 
     PREPARE stmt FROM @SQLStatement;
     EXECUTE stmt;
