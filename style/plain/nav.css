@@ -69,3 +69,12 @@ border-bottom: #fff solid;
  background: #f90;
  position: relative;
 }
+
+#navigation .row a {
+    color: #000;
+}
+
+#navigation .row.all a {
+    color: #A65C00;
+    font-weight: bold;
+}

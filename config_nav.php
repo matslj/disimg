@@ -14,7 +14,7 @@ define('MENU_NAVBAR_NO_LOGIN',           serialize($menuNavBarNoLogin));
 
 $menuNavBar = Array (
         'Hem'           => '?p=home',
-        'Filarkiv' 	=> '?p=archive',
+        'Bildarkiv' 	=> '?p=archive',
     	'Om' 		=> '?p=about',
 );
 define('MENU_NAVBAR',           serialize($menuNavBar));

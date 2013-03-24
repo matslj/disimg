@@ -75,6 +75,9 @@ EOD;
             $imageLink = WS_IMAGES;
             $uploadLink = WS_SITELINK . FILE_ARCHIVE_FOLDER;
             $pages = TP_PAGESPATH;
+            $uo = CUserData::getInstance();
+            $admin = $uo -> isAdmin() ? "true" : "false";
+             
             
             $javaScript = <<<EOD
                 // ----------------------------------------------------------------------------------------------
@@ -164,6 +167,9 @@ EOD;
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
                 // och skickar iväg den.
                 function sendCheckedCheckboxes(actionType, idFolder) {
+                    if (!{$admin}) {
+                        return false;
+                    }
                     actionType = typeof actionType !== 'undefined' ? actionType : 'file-deleteMulti';
                     idFolder = typeof idFolder !== 'undefined' ? '&folderid=' + idFolder : '';
                     
@@ -371,16 +377,34 @@ EOD;
             
             $query = "";
             
-            if (empty($folderId)) {
-            $spListFiles = DBSP_ListFiles;
-            $query 	= <<< EOD
-            CALL {$spListFiles}('{$userId}');
+            // If user is admin, all files uploaded by the user can be viewed
+            // either as a whole or by folder.
+            if ($uo -> isAdmin()) {
+                if (empty($folderId)) {
+                    $spListFiles = DBSP_ListFiles;
+                    $query 	= <<< EOD
+                    CALL {$spListFiles}('{$userId}');
 EOD;
+                } else {
+                    $spListFiles = DBSP_ListFilesInFolder;
+                    $query 	= <<< EOD
+                    CALL {$spListFiles}('{$userId}', $folderId);
+EOD;
+                }
             } else {
-                $spListFiles = DBSP_ListFilesInFolder;
-            $query 	= <<< EOD
-            CALL {$spListFiles}('{$userId}', $folderId);
+                // If user is not admin, only files made accessible by an admin
+                // can be viewed; either as a whole or by folder.
+                if (empty($folderId)) {
+                    $spListFiles = DBSP_ListAllAccessedFiles;
+                    $query 	= <<< EOD
+                    CALL {$spListFiles}('{$userId}');
 EOD;
+                } else {
+                    $spListFiles = DBSP_ListAllAccessedFilesInFolder;
+                    $query 	= <<< EOD
+                    CALL {$spListFiles}('{$userId}', $folderId);
+EOD;
+                }
             }
             
             // Perform the query
@@ -402,12 +426,8 @@ EOD;
                 $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
                 $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
-                if ($uo -> isAdmin()) {
-                    // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                    $deleteCol = "<td><input id='cbMark#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
-                } else {
-                    $deleteCol = "";
-                }
+                // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
+                $deleteCol = "<td><input id='cbMark#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>

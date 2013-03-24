@@ -4,6 +4,8 @@
 // File: SQLCoreFile.php
 //
 // Description: SQL statements for storing files.
+// 
+// @author Mats Ljungquist
 //
 //
 
@@ -46,6 +48,9 @@ $spInsertFolder = DBSP_InsertFolder;
 $spInsertFolderUser = DBSP_InsertFolderUser;
 $spListFolders = DBSP_ListFolders;
 $spListFoldersByUser = DBSP_ListFoldersByUser;
+$spListFoldersByUserOnly = DBSP_ListFoldersByUserOnly;
+$spListAllAccessedFiles = DBSP_ListAllAccessedFiles;
+$spListAllAccessedFilesInFolder = DBSP_ListAllAccessedFilesInFolder;
 $spDetailFolder = DBSP_DetailFolder;
 $spDeleteFolderUser = DBSP_DeleteFolderUser;
 $udfFileUpdateFolder = DBUDF_FileUpdateFolder;
@@ -285,6 +290,7 @@ END;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to list all folders and the number of files in each folder (facet)
+-- Supports dynamic ORDER BY.
 --
 DROP PROCEDURE IF EXISTS {$spListFolders};
 CREATE PROCEDURE {$spListFolders}
@@ -304,7 +310,9 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to list all folders for current user. Also list number of files in each folder.
+-- SP to list all folders and, also, mark those folders that 'aUserId' has access to.
+-- Also list number of files in each folder.
+-- Supports dynamic ORDER BY.
 --
 DROP PROCEDURE IF EXISTS {$spListFoldersByUser};
 CREATE PROCEDURE {$spListFoldersByUser}
@@ -321,7 +329,29 @@ BEGIN
     PREPARE stmt FROM @SQLStatement;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
-END; 
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all folders and, also, mark those folders that 'aUserId' has access to.
+-- Also list number of files in each folder.
+-- Supports dynamic ORDER BY.
+--
+DROP PROCEDURE IF EXISTS {$spListFoldersByUserOnly};
+CREATE PROCEDURE {$spListFoldersByUserOnly}
+(
+    IN aUserId INT UNSIGNED
+)
+BEGIN
+    SELECT
+        A.idFolder as id, 
+        A.nameFolder as name, 
+        {$udfNumberOfFilesInFolder}(idFolder) as facet
+    FROM {$tFolder} AS A 
+        INNER JOIN {$tFolderUser} AS FU ON A.idFolder = FU.FolderUser_idFolder
+    WHERE
+        FU.FolderUser_idUser = aUserId;
+END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
@@ -390,6 +420,79 @@ BEGIN
                 A.File_idFolder = aFolderId
         ORDER BY createdFile DESC;
 END;
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all files which can be accessed by the user through the FolderUser-table.
+--
+DROP PROCEDURE IF EXISTS {$spListAllAccessedFiles};
+CREATE PROCEDURE {$spListAllAccessedFiles}
+(
+	IN aUserId INT UNSIGNED
+)
+BEGIN
+	SELECT 
+		A.File_idUser AS owner,
+		A.nameFile AS name,
+		A.uniqueNameFile AS uniquename,
+		A.pathToDiskFile AS path,
+		A.sizeFile AS size,
+		A.mimetypeFile AS mimetype,
+		A.createdFile AS created,
+		A.modifiedFile AS modified,
+		A.deletedFile AS deleted,
+                U.accountUser AS account,
+                IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+	FROM {$tFile} AS A
+            INNER JOIN {$tUser} AS U
+                    ON A.File_idUser = U.idUser
+            INNER JOIN {$tFolder} AS F
+                    ON A.File_idFolder = F.idFolder
+            INNER JOIN {$tFolderUser} AS FU
+                    ON A.File_idFolder = FU.FolderUser_idFolder
+	WHERE
+		FU.FolderUser_idUser = aUserId AND
+		deletedFile IS NULL
+        ORDER BY createdFile DESC;
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all files which can be accessed by the user through the FolderUser-table and
+-- which has a specific folder id.
+--
+DROP PROCEDURE IF EXISTS {$spListAllAccessedFilesInFolder};
+CREATE PROCEDURE {$spListAllAccessedFilesInFolder}
+(
+	IN aUserId INT UNSIGNED,
+        IN aFolderId INT
+)
+BEGIN
+	SELECT 
+		A.File_idUser AS owner,
+		A.nameFile AS name,
+		A.uniqueNameFile AS uniquename,
+		A.pathToDiskFile AS path,
+		A.sizeFile AS size,
+		A.mimetypeFile AS mimetype,
+		A.createdFile AS created,
+		A.modifiedFile AS modified,
+		A.deletedFile AS deleted,
+                U.accountUser AS account,
+                F.nameFolder AS foldername
+	FROM {$tFile} AS A
+            INNER JOIN {$tUser} AS U
+                    ON A.File_idUser = U.idUser
+            INNER JOIN {$tFolder} AS F
+                    ON A.File_idFolder = F.idFolder
+            INNER JOIN {$tFolderUser} AS FU
+                    ON A.File_idFolder = FU.FolderUser_idFolder
+	WHERE
+		FU.FolderUser_idUser = aUserId AND
+		deletedFile IS NULL AND
+                A.File_idFolder = aFolderId
+        ORDER BY createdFile DESC;
+END;   
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --

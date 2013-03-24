@@ -103,7 +103,7 @@ switch ($gPage) {
     //	File Archive
     //	
     case 'homef':		require_once(TP_PAGESPATH . 'file_handling/PIndex.php'); break;	
-    case 'archive':             require_once(TP_PAGESPATH . 'file_handling/PFileArchive.php'); break;	
+    case 'archive':             require_once(TP_PAGESPATH . 'file_handling/PPictures.php'); break;	
     case 'upload':              require_once(TP_PAGESPATH . 'file_handling/PFileUpload.php'); break;	
     case 'uploadp':             require_once(TP_PAGESPATH . 'file_handling/PFileUploadProcess.php'); break;
     case 'file-delete':         require_once(TP_PAGESPATH . 'file_handling/PFileDeleteProcess.php'); break;
