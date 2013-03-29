@@ -27,6 +27,7 @@ $menuNavBarForAdmin = Array (
 );
 define('MENU_NAVBAR_FOR_ADMIN', serialize($menuNavBarForAdmin));
 
+// Admin menu - side menu (column menu) but it can of course be used in other ways
 $adminMenuNavBar = Array (
         'Användare'         => '?p=admin_anvandare',
         'Kataloger'         => '?p=admin_folders',

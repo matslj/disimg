@@ -38,12 +38,12 @@ class CHTMLPage {
         $titlePage	= $aTitle;
         $titleSite	= WS_TITLE;
         $subTitleSite   = WS_SUB_TITLE;
-        $subTitleSite = !empty($subTitleSite) ? "<p id='subtitle'>" . $subTitleSite . "</p>" : "";
+        $subTitleSite   = !empty($subTitleSite) ? "<p id='subtitle'>" . $subTitleSite . "</p>" : "";
         $language	= WS_LANGUAGE;
         $charset	= WS_CHARSET;
         $stylesheet	= WS_STYLESHEET;
         $favicon 	= WS_FAVICON;
-        $footer	= WS_FOOTER;
+        $footer         = WS_FOOTER;
 
         $top 	= $this->prepareLoginLogoutMenu();
         $nav = "";
@@ -60,6 +60,7 @@ class CHTMLPage {
         $w3c	= $this->prepareValidatorTools();
         $timer	= $this->prepareTimer();
 
+        // Javascript
         $jQuery     = ($enablejQuery) ? "<script type='text/javascript' src='" . JS_JQUERY . "'></script> <!-- jQuery --> " : '';
 	$javascript = (empty($aJavaScript)) ? '' : "<script type='text/javascript'>{$aJavaScript}</script>";
         
@@ -89,7 +90,7 @@ class CHTMLPage {
                 <div id='title'>
                     <div class='left'>
                         <p>{$titleSite}</p>
-                        $subTitleSite;
+                        {$subTitleSite}
                     </div>
                     <div class='right'>&nbsp;</div>
                 </div>
@@ -182,7 +183,7 @@ EOD;
             $selected = (strcmp($gPage, substr($value, 3)) == 0) ? " class='sel'" : "";
             $nav .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
         }
-        $nav .= '</ul>';
+        $nav .= "</ul>";
 
         return $nav;
     }
