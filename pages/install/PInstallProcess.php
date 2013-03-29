@@ -55,7 +55,9 @@ foreach($queries as $val) {
 
 	$query 	= $db->LoadSQL($val);
 	$res 	= $db->MultiQuery($query);
-	$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
+	$no	= $db->RetrieveAndIgnoreResultsFromMultiQuery();
+        
+        $errorStyle = $mysqli->errno == 0 ? "green" : "red";
 
 	$htmlMain .= <<< EOD
 <h3>SQL Query '{$val}'</h3>
@@ -64,8 +66,8 @@ foreach($queries as $val) {
 <pre>{$query}</pre>
 </div>
 </p>
-<p>Statements that succeeded: {$no}</p>
-<p>Error code: {$mysqli->errno} ({$mysqli->error})</p>
+<p style="font-weight: bold; color:{$errorStyle};">**** Statements that succeeded: {$no} ****</p>
+<p style="font-weight: bold; color:{$errorStyle};">**** Error code: {$mysqli->errno} ({$mysqli->error}) ****</p>
 EOD;
 }
 

@@ -121,8 +121,10 @@ CREATE TABLE {$tFile} (
 	idFile INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	
 	-- Foreign keys
+        -- Creator of the file
 	File_idUser INT UNSIGNED NOT NULL,
 	FOREIGN KEY (File_idUser) REFERENCES {$tUser}(idUser),
+        -- Folder containing the file
         File_idFolder INT NULL,
 	FOREIGN KEY (File_idFolder) REFERENCES {$tFolder}(idFolder),
 	
@@ -363,7 +365,8 @@ CREATE PROCEDURE {$spListFiles}
 	IN aUserId INT UNSIGNED
 )
 BEGIN
-	SELECT 
+	SELECT
+                A.idFile AS id,
 		A.File_idUser AS owner,
 		A.nameFile AS name,
 		A.uniqueNameFile AS uniquename,
@@ -398,6 +401,7 @@ CREATE PROCEDURE {$spListFilesInFolder}
 )
 BEGIN
 	SELECT 
+                A.idFile AS id,
 		A.File_idUser AS owner,
 		A.nameFile AS name,
 		A.uniqueNameFile AS uniquename,
@@ -432,6 +436,7 @@ CREATE PROCEDURE {$spListAllAccessedFiles}
 )
 BEGIN
 	SELECT 
+                A.idFile AS id,
 		A.File_idUser AS owner,
 		A.nameFile AS name,
 		A.uniqueNameFile AS uniquename,
@@ -469,6 +474,7 @@ CREATE PROCEDURE {$spListAllAccessedFilesInFolder}
 )
 BEGIN
 	SELECT 
+                A.idFile AS id,
 		A.File_idUser AS owner,
 		A.nameFile AS name,
 		A.uniqueNameFile AS uniquename,

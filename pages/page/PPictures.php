@@ -33,6 +33,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 $folderFilter = $pc->GETisSetOrSetDefault('ff', '');
 
 $redirect       = "?p=" . $pc->computePage();
+$action = $redirect . "p";
 
 $uo = CUserData::getInstance();
 $account = $uo -> getAccount();
@@ -100,26 +101,25 @@ $javaScript .= <<<EOD
 //
 //
 //
+var globalUrl = "{$action}";
+
 (function($){
     $(document).ready(function() {
         // Event declaration
-        $('.section').click(function(event) {
-            if ($(event.target).is('.delete')) {
-                // Anropa javascript-metoden i CAttachment.php som samlar ihop
-                // och postar alla kryssade checkboxes.
-                sendCheckedCheckboxes();
-                event.preventDefault();
-            } else if ($(event.target).is('.move')) {
-                var ddSelect = $("#ddFolders").val();
-                if (ddSelect) {
-                    // Anropa javascript-metoden i CAttachment.php som samlar ihop
-                    // och postar alla kryssade checkboxes.
-                    sendCheckedCheckboxes('file-moveMulti', ddSelect);
-                } else {
-                    $.jGrowl("Inget händer - ingen kryssruta är markerad.");
-                }
-                event.preventDefault();
+        $('.cbMark').click(function(event) {
+            var userId = {$userId};
+            var action = "";
+            if ($(this).is(':checked')) {
+                $.jGrowl("Ditt intresse är noterat.");
+                action = "add";
+            } else {
+                $.jGrowl("Ditt ointresse är noterat.");
+                action = "delete";
             }
+            $.post(  
+                globalUrl,
+                {action: action, userid: userId, fileid: fileId}  
+            );
         });
     });
 })(jQuery);

@@ -48,10 +48,10 @@ $query = '';
 // Kolla vilken action som gäller och definiera query utifrån detta
 if (strcmp($action, 'add') == 0) {
     $spInsertBildIntresse = DBSP_InsertBildIntresse;
-    $query = "CALL {$spInsertBildIntresse}({$userId},{$folderId});";
+    $query = "CALL {$spInsertBildIntresse}({$userId},{$fileId});";
 } else if (strcmp($action, 'delete') == 0) {
     $spDeleteBildIntresse = DBSP_DeleteBildIntresse;
-    $query = "CALL {$spDeleteBildIntresse}({$userId},{$folderId});";
+    $query = "CALL {$spDeleteBildIntresse}({$userId},{$fileId});";
 } else {
     die("Bad command. Very bad.");
 }
