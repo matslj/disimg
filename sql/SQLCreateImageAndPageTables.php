@@ -40,6 +40,7 @@ $spPInsertOrUpdateSida	= DBSP_PInsertOrUpdateSida;
 $spPGetSidaDetails	= DBSP_PGetSidaDetails;
 $spPGetSidaDetailsById  = DBSP_PGetSidaDetailsById;
 $spPInsertBildIntresse	= DBSP_PInsertBildIntresse;
+$spPDeleteBildIntresse	= DBSP_PDeleteBildIntresse;
 $spPInsertBildgrupp     = DBSP_PInsertBildgrupp;
 $spPListBildIntresse    = DBSP_PListBildIntresse;
 $spPListBildgrupp       = DBSP_PListBildgrupp;
@@ -76,35 +77,20 @@ CREATE TABLE {$tSida} (
 --
 DROP TABLE IF EXISTS {$tBildIntresse};
 CREATE TABLE {$tBildIntresse} (
-
-  -- Primary key(s)
-  idBildIntresse INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-
   -- Foreign keys
   BildIntresse_idUser INT NOT NULL,
   FOREIGN KEY (BildIntresse_idUser) REFERENCES {$tUser}(idUser),
   BildIntresse_idFile INT NOT NULL,
-  FOREIGN KEY (BildIntresse_idFile) REFERENCES {$tFile}(idFile)
+  FOREIGN KEY (BildIntresse_idFile) REFERENCES {$tFile}(idFile),
+
+  PRIMARY KEY (BildIntresse_idUser, BildIntresse_idFile)
+
 ) ENGINE MyISAM CHARACTER SET {$fileDef['DefaultCharacterSet']} COLLATE {$fileDef['DefaultCollate']};
   
 --
 -- This table is used for grouping images for a certain user.
 --
 DROP TABLE IF EXISTS {$tBildgrupp};
-CREATE TABLE {$tBildgrupp} (
-
-  -- Primary key(s)
-  idBildgrupp INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-
-  -- Foreign keys
-  Bildgrupp_idUser INT NOT NULL,
-  FOREIGN KEY (Bildgrupp_idUser) REFERENCES {$tUser}(idUser),
-  Bildgrupp_idFile INT NOT NULL,
-  FOREIGN KEY (Bildgrupp_idFile) REFERENCES {$tFile}(idFile),
-  
-  -- Attributes
-  nameBildgrupp VARCHAR(256) NULL
-) ENGINE MyISAM CHARACTER SET {$fileDef['DefaultCharacterSet']} COLLATE {$fileDef['DefaultCollate']};
 
 --
 -- SP to insert or update article
@@ -209,22 +195,21 @@ BEGIN
                 (BildIntresse_idUser, BildIntresse_idFile)
         VALUES (aUserId, aFileId);
 END;
-        
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to insert bildgrupp
--- If article id is 0 then insert, else update
+-- SP to delete the connection between File and user
 --
-DROP PROCEDURE IF EXISTS {$spPInsertBildgrupp};
-CREATE PROCEDURE {$spPInsertBildgrupp}
+DROP PROCEDURE IF EXISTS {$spPDeleteBildIntresse};
+CREATE PROCEDURE {$spPDeleteBildIntresse}
 (
-	IN aUserId INT,
-	IN aFileId INT,
-        IN aName VARCHAR(256)
+    IN aUserId INT,
+    IN aFileId INT
 )
 BEGIN
-        INSERT INTO {$tBildgrupp}
-                (Bildgrupp_idUser, Bildgrupp_idFile, nameBildgrupp)
-        VALUES (aUserId, aFileId, aName);
+    DELETE FROM {$tBildIntresse}
+    WHERE BildIntresse_idFile = aFileId
+          AND BildIntresse_idUser = aUserId;
 END;
         
 --
@@ -241,24 +226,6 @@ BEGIN
         FROM {$tBildIntresse}
         WHERE
             BildIntresse_idUser = aUserId
-        ;
-END;
-        
---
--- SP to list bildgrupp
---
-DROP PROCEDURE IF EXISTS {$spPListBildgrupp};
-CREATE PROCEDURE {$spPListBildgrupp}
-(
-	IN aUserId INT
-)
-BEGIN
-        SELECT
-            nameBildgrupp AS name,
-            Bildgrupp_idFile AS idFile
-        FROM {$tBildgrupp}
-        WHERE
-            Bildgrupp_idUser = aUserId
         ;
 END;
 

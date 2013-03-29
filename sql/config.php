@@ -55,6 +55,7 @@ define('DBSP_PInsertOrUpdateSida',	DB_PREFIX . 'PInsertOrUpdateSida');
 define('DBSP_PGetSidaDetails',		DB_PREFIX . 'PGetSidaDetails');
 define('DBSP_PGetSidaDetailsById',		DB_PREFIX . 'PGetSidaDetailsById');
 define('DBSP_PInsertBildIntresse',	DB_PREFIX . 'PInsertBildIntresse');
+define('DBSP_PDeleteBildIntresse',	DB_PREFIX . 'PDeleteBildIntresse');
 define('DBSP_PInsertBildgrupp',		DB_PREFIX . 'PInsertBildgrupp');
 define('DBSP_PListBildIntresse',	DB_PREFIX . 'PListBildIntresse');
 define('DBSP_PListBildgrupp',		DB_PREFIX . 'PListBildgrupp');
