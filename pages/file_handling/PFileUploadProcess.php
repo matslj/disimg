@@ -199,6 +199,7 @@ EOD;
     $json = <<<EOD
 {
         "uploadedFile": {
+            "id": "{$fileid}",
             "fileName": "{$_FILES['file']['name']}",
             "size": "{$_FILES['file']['size']}",
             "mimeType": "{$_FILES['file']['type']}",

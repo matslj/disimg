@@ -152,7 +152,7 @@ EOD;
                                         data.uploadedFile.created +
                                         "</td><td class='folderName'>" +
                                         "Ingen katalog" +
-                                        "</td><td><input id='cbMark#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
+                                        "</td><td><input id='" + data.uploadedFile.id + "#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
                         } else {
@@ -163,6 +163,9 @@ EOD;
                         // \$form.find('span.status').html(responseText);
                     }
                 });
+                
+                function getFileDataFromCheckbox() {
+                }
                 
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
                 // och skickar iväg den.
@@ -361,12 +364,15 @@ EOD;
 
         // ------------------------------------------------------------------------------------
 	//
-	// Returns a list of files as HTML. The list consists of a download link and a delete link.
+	// Returns a list of files as a HTML table. The list consist of varius file info and
+        // a column with checkboxes. This checkbox can be used for whatever.
         // 
         // @param db an active database connection. Mandatory.
-        // @param userId a userId. Mandatory.
+        // @param userId a userId. Mandatory (I do not know why though, could get the data from the user object).
         // @param refId Optional. If present with idReference set to refId will be listed
         //                        otherwise files belonging to userId will be listed. 
+        // @param folderId if this parameter is present, the method will only list files
+        //                 from the specified folder.
 	// @return a list of files in the form of a HTML table.
         public function getFileList($db, $userId, $referer, $folderId) {
             // Assumes the presence of a working mysqli-object
@@ -427,7 +433,7 @@ EOD;
                 $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                $deleteCol = "<td><input id='cbMark#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
+                $deleteCol = "<td><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'/></td>";
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>

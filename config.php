@@ -27,6 +27,7 @@ define('WS_IMAGES',	WS_SITELINK . 'img/');                    // Relative path t
 define('WS_JAVASCRIPT',	WS_SITELINK . 'js/');	                  // Relative path to site JavaScript code
 define('WS_HOME',	'home');	                          // Starting page
 
+
 // The logging system
 // Available logging modes are:
 // * 'file' - saves to a log file in TP_LOGPATH. Ensure writing rights to that path.

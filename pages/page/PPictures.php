@@ -108,6 +108,9 @@ var globalUrl = "{$action}";
         // Event declaration
         $('.cbMark').click(function(event) {
             var userId = {$userId};
+            var tempId = $(this).attr('id');
+            var index = tempId.indexOf('#');
+            var fileId = tempId.substring(0, index);
             var action = "";
             if ($(this).is(':checked')) {
                 $.jGrowl("Ditt intresse är noterat.");
