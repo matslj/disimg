@@ -241,8 +241,8 @@ END;
 DROP FUNCTION IF EXISTS {$udfFileOfInterest};
 CREATE FUNCTION {$udfFileOfInterest}
 (
-	IN aUserId INT,
-        IN aFileId INT
+	aUserId INT,
+        aFileId INT
 )
 RETURNS INT UNSIGNED
 READS SQL DATA
@@ -252,7 +252,8 @@ BEGIN
 	-- User has bildintresse?
 	SELECT COUNT(BildIntresse_idFile) INTO i FROM {$tBildIntresse}
 	WHERE
-            BildIntresse_idUser = aUserId;
+            BildIntresse_idUser = aUserId
+            AND BildIntresse_idFile = aFileId;
         IF i > 0 THEN
             RETURN 1;
 	END IF;

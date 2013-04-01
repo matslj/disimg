@@ -128,6 +128,7 @@ var globalUrl = "{$action}";
 })(jQuery);
 EOD;
 
+            
 
 $redirectFail   = "?p=" . $pc->computePage();
 $headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
