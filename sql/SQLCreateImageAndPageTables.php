@@ -46,6 +46,7 @@ $spPListBildIntresse    = DBSP_PListBildIntresse;
 $spPListBildgrupp       = DBSP_PListBildgrupp;
 
 // Get the UDF names
+$udfFileOfInterest = DBUDF_FFileOfInterest;
 $udfFCheckUserIsOwnerOrAdminOfSida = DBUDF_FCheckUserIsOwnerOrAdmin;
 
 // Create the query
@@ -227,6 +228,35 @@ BEGIN
         WHERE
             BildIntresse_idUser = aUserId
         ;
+END;
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Checks if a user is interested in a particular file.
+--
+-- Return values:
+--  1 if there is an interest
+--  0 if no interest can be found
+--
+DROP FUNCTION IF EXISTS {$udfFileOfInterest};
+CREATE FUNCTION {$udfFileOfInterest}
+(
+	IN aUserId INT,
+        IN aFileId INT
+)
+RETURNS INT UNSIGNED
+READS SQL DATA
+BEGIN
+	DECLARE i INT UNSIGNED;
+
+	-- User has bildintresse?
+	SELECT COUNT(BildIntresse_idFile) INTO i FROM {$tBildIntresse}
+	WHERE
+            BildIntresse_idUser = aUserId;
+        IF i > 0 THEN
+            RETURN 1;
+	END IF;
+	RETURN 0;
 END;
 
 --

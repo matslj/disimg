@@ -53,6 +53,7 @@ $spListAllAccessedFiles = DBSP_ListAllAccessedFiles;
 $spListAllAccessedFilesInFolder = DBSP_ListAllAccessedFilesInFolder;
 $spDetailFolder = DBSP_DetailFolder;
 $spDeleteFolderUser = DBSP_DeleteFolderUser;
+$udfFileOfInteresst = DBUDF_FFileOfInterest;
 $udfFileUpdateFolder = DBUDF_FileUpdateFolder;
 $udfNumberOfFilesInFolder = DBUDF_NumberOfFilesInFolder;
 $udfFolderDelete = DBUDF_FolderDelete;
@@ -485,7 +486,8 @@ BEGIN
 		A.modifiedFile AS modified,
 		A.deletedFile AS deleted,
                 U.accountUser AS account,
-                F.nameFolder AS foldername
+                F.nameFolder AS foldername,
+                
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U
                     ON A.File_idUser = U.idUser

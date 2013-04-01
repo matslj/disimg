@@ -59,6 +59,7 @@ define('DBSP_PDeleteBildIntresse',	DB_PREFIX . 'PDeleteBildIntresse');
 define('DBSP_PInsertBildgrupp',		DB_PREFIX . 'PInsertBildgrupp');
 define('DBSP_PListBildIntresse',	DB_PREFIX . 'PListBildIntresse');
 define('DBSP_PListBildgrupp',		DB_PREFIX . 'PListBildgrupp');
+define('DBUDF_FFileOfInterest',	DB_PREFIX . 'FFileOfInterest');
 define('DBUDF_FCheckUserIsOwnerOrAdminOfSida',    DB_PREFIX . 'FCheckUserIsOwnerOrAdminOfSida');
 define('DBUDF_CheckUserIsAdmin',	DB_PREFIX . 'FCheckUserIsAdmin');
 

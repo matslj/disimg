@@ -24,8 +24,6 @@ $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
 $intFilter->UserIsSignedInOrRecirectToSignIn();
-// Check so that logged in user is admin
-$intFilter->IsUserMemberOfGroupAdminOrTerminate();
 
 // -------------------------------------------------------------------------------------------
 //
@@ -47,10 +45,10 @@ $query = '';
 
 // Kolla vilken action som gäller och definiera query utifrån detta
 if (strcmp($action, 'add') == 0) {
-    $spInsertBildIntresse = DBSP_InsertBildIntresse;
+    $spInsertBildIntresse = DBSP_PInsertBildIntresse;
     $query = "CALL {$spInsertBildIntresse}({$userId},{$fileId});";
 } else if (strcmp($action, 'delete') == 0) {
-    $spDeleteBildIntresse = DBSP_DeleteBildIntresse;
+    $spDeleteBildIntresse = DBSP_PDeleteBildIntresse;
     $query = "CALL {$spDeleteBildIntresse}({$userId},{$fileId});";
 } else {
     die("Bad command. Very bad.");
