@@ -21,21 +21,7 @@ $.fn.initDialog = function(options) {
     // Define default values (for those values wich are possible to set for a user using 'options').
     var width = 400;
     var modal = true;
-    var buttons = [
-            {
-                text: "Ok",
-                click: function() {
-                    $("#" + element.attr('id') + "Form").submit();
-                    $( element ).dialog( "close" );
-                }
-            },
-            {
-                text: "Avbryt",
-                click: function() {
-                    $( element ).dialog( "close" );
-                }
-            }
-        ];
+    var buttons = null;
 
     // If options are present; use them
     if (typeof options !== 'undefined') {
@@ -57,6 +43,42 @@ $.fn.initDialog = function(options) {
                 }
             ];
         }
+        if ((typeof options.jsonCallback !== 'undefined')) {
+            buttons = [
+            {
+                text: "Ok",
+                click: function() {
+                    $("#" + element.attr('id') + "Form").submit();
+                    $( element ).dialog( "close" );
+                }
+            },
+            {
+                text: "Avbryt",
+                click: function() {
+                    $( element ).dialog( "close" );
+                }
+            }
+        ];
+        }
+    }
+    
+    // If buttons are uninitialized -> perform standard initialization
+    if (buttons == null) {
+        buttons = [
+            {
+                text: "Ok",
+                click: function() {
+                    $("#" + element.attr('id') + "Form").submit();
+                    $( element ).dialog( "close" );
+                }
+            },
+            {
+                text: "Avbryt",
+                click: function() {
+                    $( element ).dialog( "close" );
+                }
+            }
+        ];
     }
 
     // Dialogify the element

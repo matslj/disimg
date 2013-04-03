@@ -21,6 +21,8 @@ class CAttachment {
         private $action = "";
 
         private $fileListId = "fileList";
+        
+        private $nrOfFilesRead = 0;
 
 	// ------------------------------------------------------------------------------------
 	//
@@ -36,13 +38,20 @@ class CAttachment {
             $this -> fileListId = "fileList";
 	}
 
-
 	// ------------------------------------------------------------------------------------
 	//
 	// Destructor
 	//
 	public function __destruct() {
 	}
+        
+        private function clear() {
+            $this->nrOfFilesRead = 0;
+        }
+        
+        public function getNrOfFilesRead() {
+            return $this->nrOfFilesRead;
+        }
         
         // ------------------------------------------------------------------------------------
 	//
@@ -361,6 +370,29 @@ EOD;
             $archiveDb = $nrOfRows == 0 ? "" : $archiveDb;
             return $archiveDb;
         }
+        
+        public function getTotalNrOfFiles($db) {
+            $total = 0;
+            // Get user-object
+            $uo = CUserData::getInstance();
+            if ($uo -> isAdmin()) {
+                $spListFiles = DBSP_ListFiles;
+                $query = "CALL {$spListFiles}('{$uo->getId()}');";
+            
+                // Perform the query
+                $res = $db->MultiQuery($query);
+
+                // Use results
+                $results = Array();
+                $db->RetrieveAndStoreResultsFromMultiQuery($results);
+                while($row = $results[0]->fetch_object()) {
+                    $total++;
+                }
+                // Close result set
+                $results[0]->close();
+            }
+            return $total;
+        }
 
         // ------------------------------------------------------------------------------------
 	//
@@ -377,6 +409,8 @@ EOD;
         public function getFileList($db, $userId, $referer, $folderId) {
             // Assumes the presence of a working mysqli-object
             // No defensive programming!
+            
+            $this->clear();
 
             // Get user-object
             $uo = CUserData::getInstance();
@@ -429,6 +463,7 @@ EOD;
             
             // Populate table with content
             while($row = $results[0]->fetch_object()) {
+                $this -> nrOfFilesRead++;
                 $checked = "";
                 if ($row->interest != null) {
                     if ($row->interest == 1) {
@@ -439,7 +474,8 @@ EOD;
                 $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                $deleteCol = "<td><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$checked}/></td>";
+                $disabled = $uo -> isAdmin() ? " disabled" : "";
+                $deleteCol = "<td><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$disabled}{$checked}/></td>";
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>

@@ -53,14 +53,13 @@ $mysqli = $db->Connect();
 // Get all the folders from db. This will form the left side folder nav system.
 $folderHtml = "";
 $currentFolderName = "";
-$spListFolders = DBSP_ListFoldersByUserOnly;
-$query 	= <<< EOD
-CALL {$spListFolders}({$userId});
-EOD;
+$total = 0;
+$spListFolders = $uo -> isAdmin() ? DBSP_ListFolders : DBSP_ListFoldersByUserOnly;
+$query 	= $uo -> isAdmin() ? "CALL {$spListFolders}('')" : "CALL {$spListFolders}({$userId})";
 $res = $db->MultiQuery($query);
 $results = Array();
-$total = 0;
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
+
 while($row = $results[0]->fetch_object()) {
     $total = $total + $row->facet;
     $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
@@ -68,12 +67,14 @@ while($row = $results[0]->fetch_object()) {
         $currentFolderName = $row->name;
     }
 }
-$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
 $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
+$total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
+$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
+$results[0]->close();
 $mysqli->close();
 
 // Link to images
@@ -137,12 +138,13 @@ $headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: "
 //
 // Create HTML for page
 //
+$belowTableText = $uo->isAdmin() ? "Du är admin och kan därför inte kryssa för bilderna på den här sidan." : "Vänligen kryssa för de objekt du är intresserad av.";
 $htmlMain = <<<EOD
 <h1>{$headerHtml}</h1>
     <div class='section'>
         {$archiveDb}
     </div>
-    <p class="small" style="text-align: right;">Vänligen kryssa för de objekt du är intresserad av.</p>
+    <p class="small" style="text-align: right;">{$belowTableText}</p>
 EOD;
 
 $htmlRight = "";

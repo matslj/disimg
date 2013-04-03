@@ -6,11 +6,6 @@
 //
 // Navigation specific configurations.
 //
-$menuNavBarNoLogin = Array (
-        'Hem'           => '?p=home',
-    	'Om' 		=> '?p=about',
-);
-define('MENU_NAVBAR_NO_LOGIN',           serialize($menuNavBarNoLogin));
 
 $menuNavBar = Array (
         'Hem'           => '?p=home',
@@ -21,7 +16,7 @@ define('MENU_NAVBAR',           serialize($menuNavBar));
 
 $menuNavBarForAdmin = Array (
         'Hem'           => '?p=home',
-	'Installera' 	=> '?p=install',
+        'Bildarkiv' 	=> '?p=archive',
         'Admin'         => '?p=admin',
     	'Om' 		=> '?p=about',
 );

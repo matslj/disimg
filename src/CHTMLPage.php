@@ -47,14 +47,11 @@ class CHTMLPage {
 
         $top 	= $this->prepareLoginLogoutMenu();
         $nav = "";
-        if(isset($_SESSION['accountUser'])) {
-            if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
-                $nav 	= $this->prepareNavigationBar(MENU_NAVBAR_FOR_ADMIN);
-            } else {
-                $nav 	= $this->prepareNavigationBar();
-            }
+        // if(isset($_SESSION['accountUser'])) {
+        if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
+            $nav 	= $this->prepareNavigationBar(MENU_NAVBAR_FOR_ADMIN);
         } else {
-            $nav 	= $this->prepareNavigationBar(MENU_NAVBAR_NO_LOGIN);
+            $nav 	= $this->prepareNavigationBar();
         }
         $body 	= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
         $w3c	= $this->prepareValidatorTools();

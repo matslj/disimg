@@ -29,6 +29,10 @@ body {
     background: #E3E0D1;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 div#wrap {												/* wraps all divs of page */
     margin: 0 auto;
     padding: 0;
