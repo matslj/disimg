@@ -46,7 +46,12 @@ $pc->IsNumericOrDie($sidaId, 0);
 //
 $pageName = basename(__FILE__);
 
-$title 		= "";
+$needjQuery = TRUE;
+$htmlHead = "";
+$javaScript = "";
+
+$titleLink 	= "";
+$title          = "";
 $content 	= "";
 $isEditable     = "";
 
@@ -69,22 +74,31 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 // Get article details
 $row = $results[0]->fetch_object();
 if ($row) {
+    $title      = $row->title;
     $content    = $row->content;
-    $title = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
+    $titleLink = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
 }
 
 $results[0]->close();
 $mysqli->close();
+
+$pageId = $sidaId;
+$htmlPageTitleLink = "";
+$htmlPageTextDialog = "";
+
+require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
 
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
 //
 $htmlMain = <<<EOD
-<h1>{$title}</h1>
+{$htmlPageTitleLink}
+<h1>{$titleLink}</h1>
 <p>
 {$content}
 </p>
+{$htmlPageTextDialog}
 EOD;
 
 $htmlLeft 	= "";
@@ -92,17 +106,11 @@ $htmlRight	= "";
 
 // -------------------------------------------------------------------------------------------
 //
-// Local menu?
-//
-// require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config_nav.php');
-
-// -------------------------------------------------------------------------------------------
-//
 // Create and print out the resulting page
 //
 $page = new CHTMLPage();
 
-$page->printPage('DisImg - Ett bildarkiv', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage('DisImg - Ett bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>

@@ -99,7 +99,7 @@ $javaScript .= <<<EOD
 (function($){
     $(document).ready(function() {
         var dialogOptions = { width: 500, cancel: false, modal: false};
-        $("#dialogFileUpload").initDialog(dialogOptions);
+        $("#dialogFileUpload").disimgDialog(dialogOptions);
 
         // Event declaration
         $('.section').click(function(event) {

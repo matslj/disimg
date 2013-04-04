@@ -55,8 +55,8 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
-        $("#dialogCreate").initDialog();
-        $("#dialogDelete").initDialog();
+        $("#dialogCreate").disimgDialog();
+        $("#dialogDelete").disimgDialog();
         
         $('.delete').button({
             icons: {secondary : "ui-icon-close"},

@@ -55,9 +55,9 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
-        $("#dialogCreate").initDialog();
-        $("#dialogEdit").initDialog();
-        $("#dialogDelete").initDialog();
+        $("#dialogCreate").disimgDialog();
+        $("#dialogEdit").disimgDialog();
+        $("#dialogDelete").disimgDialog();
         
         // Declare buttons
         $(".edit").button({

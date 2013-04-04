@@ -15,56 +15,25 @@
  * DisImg specific dialog written as a jQueryPlugin
  * The element using this method requires a form by the name 'elementid'Form
  */
-$.fn.initDialog = function(options) {
+$.fn.disimgDialog = function(options) {
     // Secure the 'this'-element
     var element = $(this);
-    // Define default values (for those values wich are possible to set for a user using 'options').
-    var width = 400;
-    var modal = true;
-    var buttons = null;
+    var o = $.extend({}, $.fn.disimgDialog.defaults, options);
 
-    // If options are present; use them
-    if (typeof options !== 'undefined') {
-        console.log(options);
-        // Set default value on width
-        width = typeof options.width !== 'undefined' ? options.width : width;
-        modal = typeof options.modal !== 'undefined' ? options.modal : modal;
-//        if ((typeof options.cancel !== 'undefined') && (options.cancel === false)) {
-//            // Cancel unwanted - pop the cancelbutton (it is last in the buttons array)
-//            buttons.pop();
-//        }
-        if ((typeof options.cancel !== 'undefined') && (options.cancel === false)) {
-            buttons = [
-                {
-                    text: "Stäng",
-                    click: function() {
-                        $( element ).dialog( "close" );
-                    }
+    if ((typeof o.cancel !== 'undefined') && (o.cancel === false)) {
+        o.buttons = [
+            {
+                text: "Stäng",
+                click: function() {
+                    $( element ).dialog( "close" );
                 }
-            ];
-        }
-        if ((typeof options.jsonCallback !== 'undefined')) {
-            buttons = [
-                {
-                    text: "Ok",
-                    click: function() {
-                        $("#" + element.attr('id') + "Form").submit();
-                        $( element ).dialog( "close" );
-                    }
-                },
-                {
-                    text: "Avbryt",
-                    click: function() {
-                        $( element ).dialog( "close" );
-                    }
-                }
-            ];
-        }
+            }
+        ];
     }
     
     // If buttons are uninitialized -> perform standard initialization
-    if (buttons == null) {
-        buttons = [
+    if (o.buttons == null) {
+        o.buttons = [
             {
                 text: "Ok",
                 click: function() {
@@ -82,12 +51,65 @@ $.fn.initDialog = function(options) {
     }
 
     // Dialogify the element
+    $.fn.disimgDialog.dialogify(element, o);
+}
+
+$.fn.pageEditDialog = function(options, data) {
+    // Secure the 'this'-element
+    var element = $(this);
+    var o = $.extend({}, $.fn.disimgDialog.defaults, options);
+
+    // Initialize buttons
+    if (o.buttons == null) {
+        o.buttons = [
+            {
+                text: "Ok",
+                click: function() {
+                    console.log("oohh: " + data.pageId);
+                    // $("#" + element.attr('id') + "Form").submit();
+                    $.post(  
+                        o.url,  
+                        {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
+                        o.callback,
+                        "json"
+                    );
+                    $( element ).dialog( "close" );
+                }
+            },
+            {
+                text: "Avbryt",
+                click: function() {
+                    $( element ).dialog( "close" );
+                }
+            }
+        ];
+    }
+    
+    // Dialogify the element
+    $.fn.disimgDialog.dialogify(element, o);
+}
+
+// This method uses jquery-ui to create a dialog of an element from the options
+// in the parameters.
+$.fn.disimgDialog.dialogify = function(element, o) {
+    if ((typeof element === 'undefined') || (typeof o === 'undefined')) {
+        throw new Error ('Error: dialogify must have all parameters set');
+    }
+    // Dialogify the element
     element.dialog({
-        autoOpen: false,
-        modal: modal,
-        width: width,
-        buttons: buttons
+        autoOpen: o.autoOpen,
+        modal: o.modal,
+        width: o.width,
+        buttons: o.buttons
     });
 }
+
+// Default values for all kinds of dialogs in disimg
+$.fn.disimgDialog.defaults = {
+    autoOpen: false,
+    width: 400,
+    modal: true,
+    buttons: null
+};
 
 })(jQuery);
