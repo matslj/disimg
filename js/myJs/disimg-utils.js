@@ -45,20 +45,20 @@ $.fn.initDialog = function(options) {
         }
         if ((typeof options.jsonCallback !== 'undefined')) {
             buttons = [
-            {
-                text: "Ok",
-                click: function() {
-                    $("#" + element.attr('id') + "Form").submit();
-                    $( element ).dialog( "close" );
+                {
+                    text: "Ok",
+                    click: function() {
+                        $("#" + element.attr('id') + "Form").submit();
+                        $( element ).dialog( "close" );
+                    }
+                },
+                {
+                    text: "Avbryt",
+                    click: function() {
+                        $( element ).dialog( "close" );
+                    }
                 }
-            },
-            {
-                text: "Avbryt",
-                click: function() {
-                    $( element ).dialog( "close" );
-                }
-            }
-        ];
+            ];
         }
     }
     
