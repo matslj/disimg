@@ -10,29 +10,50 @@
 // Author: Mats Ljungquist
 //
 
+// The terms of use for this page fragment is descibed by the parameters listed below.
+// 
+// ***** IN parameters for this page fragment *****
 // These attributes MUST be initialized outside of this file (before it is included).
-//
-// $pageId
-// $title
-// $content
+// $pageId - id of the page, used in db lookup
+// $title - the current title of the page
+// $content - the current content of the page
+// ***** OUT parameters for this page fragment *****
+// The out parameters are set to default values (which is used when user != admin)
+$htmlPageTitleLink = $title; // if admin: a clickable link which opens a edit dialog, otherwise just title text
+$htmlPageContent = $content; // the content which is to be presented as content on the final page. This
+                             // content is manipulated by javascript.
+$htmlPageTextDialog = "";    // The html for the dialog box. Must be added somewhere, in the html, on the final page.
+// *** End of IN/OUT parameter list
 
+// *****************************************************************************
+// **
+// **               Initialize 'global' variables if needed
+// Javascript settings
+$js = WS_JAVASCRIPT;
+$htmlHead = isset($htmlHead) ? $htmlHead : "";
+$javaScript = isset($javaScript) ? $javaScript : "";
+
+// *****************************************************************************
+// **
+// **                   THE CODE (where the magic happens) 
+// The code below is only valid for admin users, for non admins there are nothing 
+// more to process in this fragment.
+$uo = CUserData::getInstance();
+//if ($uo -> isAdmin())
+//{
 // Publish button is initially disabled
 $publishDisabled = 'disabled="disabled"';
 
 // Javascript settings
-$js = WS_JAVASCRIPT;
-if (!isset($htmlHead)) {
-    $htmlHead = "";
-}
 $htmlHead .= <<<EOD
+    <!-- TinyEditor -->
+    <link rel="stylesheet" href="{$js}tinyeditor/tinyeditor.css">
+    <script type='text/javascript' src='{$js}tinyeditor/tiny.editor.packed.js'></script>
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
     <script type='text/javascript' src='{$js}myJs/disimg-utils.js'></script>
 EOD;
 
-if (!isset($javaScript)) {
-    $javaScript = "";
-}
 $javaScript .= <<<EOD
 // ----------------------------------------------------------------------------------------------
 //
@@ -41,6 +62,7 @@ $javaScript .= <<<EOD
 (function($){
     $(document).ready(function() {
         var dialogOptions = {
+            width: 615,
             url: "?p=page-save",
             callback: function(data) {
                 console.log("data-pageid: " + data.pageId);
@@ -82,14 +104,14 @@ $htmlPageContent = "<p id='contentPage'>{$content}</p>";
 $htmlPageTextDialog = <<<EOD
 <!-- ui-dialog delete -->
 <div id="dialogPageTextChange" title="Ändra text">
-    <h1>Ändra text</h1>
     <form id="dialogPageTextChangeForm" action='?p=page-save' method='POST'>
-        <p>Title: <input id='titlePED' type='text' name='title' value='{$title}'></p>
-        <p>
-            <textarea id='contentPED' name='content'>{$content}</textarea>
-        </p>
+        <h3>Titel</h3> 
+        <input id='titlePED' type='text' name='title' value='{$title}'>
+        <h3>Innehåll</h3>
+        <textarea id='contentPED' name='content'>{$content}</textarea>
     </form>
 </div>
 EOD;
+//} // End of if uo -> isAdmin()
 
 ?>
