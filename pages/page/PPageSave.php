@@ -94,7 +94,9 @@ if(strcmp($success, 'json') == 0) {
 {
 	"pageId": {$pageId},
         "timestamp": "{$timestamp}",
-        "action": "{$action}"
+        "action": "{$action}",
+        "title": "{$title}",
+        "content": "{$content}"
 }
 EOD;
     echo $json;

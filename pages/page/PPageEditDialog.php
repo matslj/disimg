@@ -45,12 +45,12 @@ $javaScript .= <<<EOD
             callback: function(data) {
                 console.log("data-pageid: " + data.pageId);
                 console.log("data-timestamp: " + data.timestamp);
+                $('#titlePage').html(data.title);
+                $('#contentPage').html(data.content);
             }
         };
         var formData = {
-            pageId: {$pageId},
-            title: "{$title}",
-            content: "{$content}"
+            pageId: {$pageId}
         };
         $("#dialogPageTextChange").pageEditDialog(dialogOptions, formData);
 
@@ -60,7 +60,7 @@ $javaScript .= <<<EOD
 	// Using Event bubbling as described in this document:
 	// http://docs.jquery.com/Tutorials:AJAX_and_Events
 	//
-	$('#dialogPageTextDivOpen').click(function(event) {
+	$('#titlePage').click(function(event) {
             if ($(event.target).is('.editText')) {
             console.log("opening dialog just det");
                 $("#dialogPageTextChange").dialog("open");
@@ -72,10 +72,9 @@ $javaScript .= <<<EOD
 
 EOD;
 
-$htmlPageTitleLink = "<div id='dialogPageTextDivOpen'><a href='#' id='load-link' class='editText'>Ändra</a></div>";
+$htmlPageTitleLink = "<a id='titlePage' href='#' class='editText'>{$title}</a>";
+$htmlPageContent = "<p id='contentPage'>{$content}</p>";
             
-// <input type='hidden' name='redirect_on_success' value='article-edit&amp;article-id=%1\$d&amp;topic-id=%2\$d'>
-$htmlArticleTitle = "<p>Title: <input id='title' class='changables title' type='text' name='title' value='{$title}'></p>";
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
@@ -85,9 +84,9 @@ $htmlPageTextDialog = <<<EOD
 <div id="dialogPageTextChange" title="Ändra text">
     <h1>Ändra text</h1>
     <form id="dialogPageTextChangeForm" action='?p=page-save' method='POST'>
-        {$htmlArticleTitle}
+        <p>Title: <input id='titlePED' type='text' name='title' value='{$title}'></p>
         <p>
-            <textarea class='changables size500x400' id='content' name='content'>{$content}</textarea>
+            <textarea id='contentPED' name='content'>{$content}</textarea>
         </p>
     </form>
 </div>

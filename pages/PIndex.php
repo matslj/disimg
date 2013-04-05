@@ -84,6 +84,7 @@ $mysqli->close();
 
 $pageId = $sidaId;
 $htmlPageTitleLink = "";
+$htmlPageContent = "";
 $htmlPageTextDialog = "";
 
 require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
@@ -93,11 +94,8 @@ require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
 // Page specific code
 //
 $htmlMain = <<<EOD
-{$htmlPageTitleLink}
-<h1>{$titleLink}</h1>
-<p>
-{$content}
-</p>
+<h1>{$htmlPageTitleLink}</h1>
+{$htmlPageContent}
 {$htmlPageTextDialog}
 EOD;
 

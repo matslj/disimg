@@ -65,7 +65,8 @@ $.fn.pageEditDialog = function(options, data) {
             {
                 text: "Ok",
                 click: function() {
-                    console.log("oohh: " + data.pageId);
+                    data.title = $('#titlePED').val();
+                    data.content = $('#contentPED').val();
                     // $("#" + element.attr('id') + "Form").submit();
                     $.post(  
                         o.url,  
