@@ -39,15 +39,15 @@ $javaScript = isset($javaScript) ? $javaScript : "";
 // The code below is only valid for admin users, for non admins there are nothing 
 // more to process in this fragment.
 $uo = CUserData::getInstance();
-//if ($uo -> isAdmin())
-//{
+if ($uo -> isAdmin())
+{
 // Publish button is initially disabled
 $publishDisabled = 'disabled="disabled"';
 
 // Javascript settings
 $htmlHead .= <<<EOD
     <!-- TinyEditor -->
-    <link rel="stylesheet" href="{$js}tinyeditor/tinyeditor.css">
+    <link rel="stylesheet" href="{$js}tinyeditor/tinyeditor.css" type='text/css' media='screen'>
     <script type='text/javascript' src='{$js}tinyeditor/tiny.editor.packed.js'></script>
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
@@ -67,6 +67,7 @@ $javaScript .= <<<EOD
             callback: function(data) {
                 console.log("data-pageid: " + data.pageId);
                 console.log("data-timestamp: " + data.timestamp);
+                console.log("data-content: " + data.content);
                 $('#titlePage').html(data.title);
                 $('#contentPage').html(data.content);
             }
@@ -84,7 +85,30 @@ $javaScript .= <<<EOD
 	//
 	$('#titlePage').click(function(event) {
             if ($(event.target).is('.editText')) {
-            console.log("opening dialog just det");
+                console.log("opening dialog just det");
+                if (editor == null) {
+                editor = new TINY.editor.edit('editor', {
+                    id: 'contentPED',
+                    width: 584,
+                    height: 175,
+                    cssclass: 'tinyeditor',
+                    controlclass: 'tinyeditor-control',
+                    rowclass: 'tinyeditor-header',
+                    dividerclass: 'tinyeditor-divider',
+                    controls: ['bold', 'italic', '|', 'subscript', 'superscript', '|',
+                            'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
+                            'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
+                            'style', '|', 'image', 'hr', 'link', 'unlink'],
+                    footer: true,
+                    fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
+                    xhtml: true,
+                    cssfile: 'js/tinyeditor/custom.css',
+                    bodyid: 'editor',
+                    footerclass: 'tinyeditor-footer',
+                    toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
+                    resize: {cssclass: 'resize'}
+                });
+                }
                 $("#dialogPageTextChange").dialog("open");
                 event.preventDefault();
             }
@@ -95,7 +119,7 @@ $javaScript .= <<<EOD
 EOD;
 
 $htmlPageTitleLink = "<a id='titlePage' href='#' class='editText'>{$title}</a>";
-$htmlPageContent = "<p id='contentPage'>{$content}</p>";
+$htmlPageContent = "<div id='contentPage'>{$content}</div>";
             
 // -------------------------------------------------------------------------------------------
 //
@@ -108,10 +132,10 @@ $htmlPageTextDialog = <<<EOD
         <h3>Titel</h3> 
         <input id='titlePED' type='text' name='title' value='{$title}'>
         <h3>Innehåll</h3>
-        <textarea id='contentPED' name='content'>{$content}</textarea>
+        <textarea id='contentPED' style="width: 400px; height: 200px">{$content}</textarea>
     </form>
 </div>
 EOD;
-//} // End of if uo -> isAdmin()
+} // End of if uo -> isAdmin()
 
 ?>

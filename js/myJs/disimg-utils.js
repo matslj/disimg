@@ -10,7 +10,7 @@
  */
 
 var editor = null;
- 
+
 (function($) {
 
 /*
@@ -60,29 +60,6 @@ $.fn.pageEditDialog = function(options, data) {
     // Secure the 'this'-element
     var element = $(this);
     var o = $.extend({}, $.fn.disimgDialog.defaults, options);
-    
-    // Initialize tiny editor
-    editor = new TINY.editor.edit('editor', {
-	id: 'contentPED',
-	width: 584,
-	height: 175,
-	cssclass: 'tinyeditor',
-	controlclass: 'tinyeditor-control',
-	rowclass: 'tinyeditor-header',
-	dividerclass: 'tinyeditor-divider',
-	controls: ['bold', 'italic', 'underline', 'strikethrough', '|', 'subscript', 'superscript', '|',
-		'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
-		'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
-		'font', 'size', 'style', '|', 'image', 'hr', 'link', 'unlink', '|', 'print'],
-	footer: true,
-	fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
-	xhtml: true,
-	cssfile: 'custom.css',
-	bodyid: 'editor',
-	footerclass: 'tinyeditor-footer',
-	toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
-	resize: {cssclass: 'resize'}
-    });
 
     // Initialize buttons
     if (o.buttons == null) {
@@ -90,17 +67,21 @@ $.fn.pageEditDialog = function(options, data) {
             {
                 text: "Ok",
                 click: function() {
-                    editor.post();
-                    data.title = $('#titlePED').val();
-                    data.content = $('#contentPED').val();
-                    // $("#" + element.attr('id') + "Form").submit();
-                    $.post(  
-                        o.url,  
-                        {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
-                        o.callback,
-                        "json"
-                    );
-                    $( element ).dialog( "close" );
+                    if (editor != null) {
+                        editor.post();
+                        data.title = $('#titlePED').val();
+                        data.content = $('#contentPED').val();
+                        // $("#" + element.attr('id') + "Form").submit();
+                        $.post(
+                            o.url,
+                            {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
+                            o.callback,
+                            "json"
+                        );
+                        $( element ).dialog( "close" );
+                    } else {
+                        console.log("Error: editor must be initialized");
+                    }
                 }
             },
             {
