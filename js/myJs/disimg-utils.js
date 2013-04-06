@@ -65,7 +65,7 @@ $.fn.pageEditDialog = function(options, data) {
     if (o.buttons == null) {
         o.buttons = [
             {
-                text: "Ok",
+                text: "Spara och stäng",
                 click: function() {
                     if (editor != null) {
                         editor.post();
@@ -79,6 +79,25 @@ $.fn.pageEditDialog = function(options, data) {
                             "json"
                         );
                         $( element ).dialog( "close" );
+                    } else {
+                        console.log("Error: editor must be initialized");
+                    }
+                }
+            },
+            {
+                text: "Spara",
+                click: function() {
+                    if (editor != null) {
+                        editor.post();
+                        data.title = $('#titlePED').val();
+                        data.content = $('#contentPED').val();
+                        // $("#" + element.attr('id') + "Form").submit();
+                        $.post(
+                            o.url,
+                            {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
+                            o.callback,
+                            "json"
+                        );
                     } else {
                         console.log("Error: editor must be initialized");
                     }

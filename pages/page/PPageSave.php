@@ -43,7 +43,7 @@ $log ->debug("title: " . $title . " content: " . $content . " id: " . $pageId . 
 $pc->IsNumericOrDie($pageId, 0);
 
 // Clean up HTML-tags
-$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><li><ol><ul><strong><div><font><blockquote><sub><sup><hr>';
+$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><li><ol><ul><strong><div><font><blockquote><sub><sup><hr><span>';
 $title 		= strip_tags($title, $tagsAllowed);
 $content 	= strip_tags($content, $tagsAllowed);
 
@@ -94,11 +94,11 @@ if(strcmp($success, 'json') == 0) {
 {
 	"pageId": {$pageId},
         "timestamp": "{$timestamp}",
-        "action": "{$action}",
-        "title": "{$title}",
-        "content": "{$content}"
+        "action": "{$action}"
 }
 EOD;
+    // "title": "{$title}",
+    // "content": "{$content}"
     echo $json;
 } else {
     $log -> debug($success);

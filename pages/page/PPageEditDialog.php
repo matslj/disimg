@@ -10,13 +10,14 @@
 // Author: Mats Ljungquist
 //
 
-// The terms of use for this page fragment is descibed by the parameters listed below.
+// The terms of use (not the legal terms :) ) for this page fragment is descibed by the parameters listed below.
 // 
 // ***** IN parameters for this page fragment *****
 // These attributes MUST be initialized outside of this file (before it is included).
 // $pageId - id of the page, used in db lookup
 // $title - the current title of the page
 // $content - the current content of the page
+   $urlToProcessPage = "?p=page-save"; // This is the target page of the ajax call for storing the page.
 // ***** OUT parameters for this page fragment *****
 // The out parameters are set to default values (which is used when user != admin)
 $htmlPageTitleLink = $title; // if admin: a clickable link which opens a edit dialog, otherwise just title text
@@ -63,13 +64,15 @@ $javaScript .= <<<EOD
     $(document).ready(function() {
         var dialogOptions = {
             width: 615,
-            url: "?p=page-save",
+            url: "{$urlToProcessPage}",
             callback: function(data) {
                 console.log("data-pageid: " + data.pageId);
                 console.log("data-timestamp: " + data.timestamp);
-                console.log("data-content: " + data.content);
-                $('#titlePage').html(data.title);
-                $('#contentPage').html(data.content);
+                // console.log("data-content: " + data.content);
+                if (data.pageId) {
+                    $('#titlePage').html($('#titlePED').val());
+                    $('#contentPage').html($('#contentPED').val());
+                }
             }
         };
         var formData = {
@@ -85,29 +88,30 @@ $javaScript .= <<<EOD
 	//
 	$('#titlePage').click(function(event) {
             if ($(event.target).is('.editText')) {
-                console.log("opening dialog just det");
+                // console.log("opening dialog just det");
+                // Initialize the TinyEditor
                 if (editor == null) {
-                editor = new TINY.editor.edit('editor', {
-                    id: 'contentPED',
-                    width: 584,
-                    height: 175,
-                    cssclass: 'tinyeditor',
-                    controlclass: 'tinyeditor-control',
-                    rowclass: 'tinyeditor-header',
-                    dividerclass: 'tinyeditor-divider',
-                    controls: ['bold', 'italic', '|', 'subscript', 'superscript', '|',
-                            'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
-                            'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
-                            'style', '|', 'image', 'hr', 'link', 'unlink'],
-                    footer: true,
-                    fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
-                    xhtml: true,
-                    cssfile: 'js/tinyeditor/custom.css',
-                    bodyid: 'editor',
-                    footerclass: 'tinyeditor-footer',
-                    toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
-                    resize: {cssclass: 'resize'}
-                });
+                    editor = new TINY.editor.edit('editor', {
+                        id: 'contentPED',
+                        width: 584,
+                        height: 175,
+                        cssclass: 'tinyeditor',
+                        controlclass: 'tinyeditor-control',
+                        rowclass: 'tinyeditor-header',
+                        dividerclass: 'tinyeditor-divider',
+                        controls: ['bold', 'italic', 'underline', '|', 'subscript', 'superscript', '|',
+                                'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
+                                'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
+                                'style', '|', 'image', 'hr', 'link', 'unlink'],
+                        footer: true,
+                        fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
+                        xhtml: true,
+                        cssfile: 'js/tinyeditor/custom.css',
+                        bodyid: 'editor',
+                        footerclass: 'tinyeditor-footer',
+                        toggle: {text: 'i kodform', activetext: 'i editorform', cssclass: 'toggle'},
+                        resize: {cssclass: 'resize'}
+                    });
                 }
                 $("#dialogPageTextChange").dialog("open");
                 event.preventDefault();

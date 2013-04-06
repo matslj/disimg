@@ -29,17 +29,14 @@ $intFilter->UserIsMemberOfGroupAdminOrDie();
 $img = WS_IMAGES;
 
 $redirect = $pc->computeRedirect();
-$urlToEditPost = "?p=page-edit{$redirect}&amp;page-id=";
+// $urlToEditPost = "?p=page-edit{$redirect}&amp;page-id=";
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$sidaId	= $pc->GETisSetOrSetDefault('sida-id', 1);
-$userId	= isset($_SESSION['idUser']) ? $_SESSION['idUser'] : "";
-
-// Always check whats coming in...
-$pc->IsNumericOrDie($sidaId, 0);
+$pageId = 0;
+// $userId	= isset($_SESSION['idUser']) ? $_SESSION['idUser'] : "";
 
 // -------------------------------------------------------------------------------------------
 //
@@ -47,7 +44,11 @@ $pc->IsNumericOrDie($sidaId, 0);
 // Relates to files in directory TP_SQLPATH.
 //
 $pageName = basename(__FILE__);
+$needjQuery = TRUE;
+$htmlHead = "";
+$javaScript = "";
 
+$titleLink 	= "";
 $title 		= "";
 $content 	= "";
 $isEditable     = "";
@@ -71,22 +72,31 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 // Get article details
 $row = $results[0]->fetch_object();
 if ($row) {
+    $pageId     = $row->id;
+    $title      = $row->title;
     $content    = $row->content;
-    $title = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
+    // $titleLink = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
 }
 
 $results[0]->close();
 $mysqli->close();
+
+$htmlPageTitleLink = "";
+$htmlPageContent = "";
+$htmlPageTextDialog = "";
+
+if ($pageId != 0) {
+    require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
+}
 
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
 //
 $htmlMain = <<<EOD
-<h1>{$title}</h1>
-<p>
-{$content}
-</p>
+<h1>{$htmlPageTitleLink}</h1>
+{$htmlPageContent}
+{$htmlPageTextDialog}
 EOD;
 
 $htmlRight	= "";
@@ -100,7 +110,7 @@ $page = new CHTMLPage();
 // Creating the left menu panel
 $htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
 
-$page->printPage('Admin', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage('Admin', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>

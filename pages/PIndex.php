@@ -27,17 +27,14 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $img = WS_IMAGES;
 
 $redirect = $pc->computeRedirect();
-$urlToEditPost = "?p=page-edit{$redirect}&amp;page-id=";
+// $urlToEditPost = "?p=page-edit{$redirect}&amp;page-id=";
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$sidaId	= $pc->GETisSetOrSetDefault('sida-id', 1);
+$pageId = 0;
 $userId	= isset($_SESSION['idUser']) ? $_SESSION['idUser'] : "";
-
-// Always check whats coming in...
-$pc->IsNumericOrDie($sidaId, 0);
 
 // -------------------------------------------------------------------------------------------
 //
@@ -74,20 +71,21 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 // Get article details
 $row = $results[0]->fetch_object();
 if ($row) {
+    $pageId     = $row->id;
     $title      = $row->title;
     $content    = $row->content;
-    $titleLink = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
+    // $titleLink = ($intFilter->IsUserMemberOfGroupAdmin()) ? "<a title='Ändra inlägg' href='{$urlToEditPost}{$row->id}'>$row->title</a>" : $row->title;
 }
-
 $results[0]->close();
 $mysqli->close();
 
-$pageId = $sidaId;
 $htmlPageTitleLink = "";
 $htmlPageContent = "";
 $htmlPageTextDialog = "";
 
-require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
+if ($pageId != 0) {
+    require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
+}
 
 // -------------------------------------------------------------------------------------------
 //
