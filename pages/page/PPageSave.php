@@ -34,11 +34,12 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 $title		= $pc->POSTisSetOrSetDefault('title', 'No title');
 $content	= $pc->POSTisSetOrSetDefault('content', 'No content');
 $pageId         = $pc->POSTisSetOrSetDefault('page_id', 0);
+$pageName       = $pc->POSTisSetOrSetDefault('page_name', '');
 $action		= $pc->POSTisSetOrSetDefault('action', '');
 $success	= $pc->POSTisSetOrSetDefault('redirect_on_success', '');
 $failure	= $pc->POSTisSetOrSetDefault('redirect_on_failure', '');
 $userId		= $_SESSION['idUser'];
-$log ->debug("title: " . $title . " content: " . $content . " id: " . $pageId . " action: " . $action . " success: " . $success . " failure: " . $failure . " userid: " . $userId);
+$log ->debug("title: " . $title . " content: " . $content . " id: " . $pageId . " pageName: " . $pageName . " action: " . $action . " success: " . $success . " failure: " . $failure . " userid: " . $userId);
 // Always check whats coming in...
 $pc->IsNumericOrDie($pageId, 0);
 
@@ -55,19 +56,24 @@ $content 	= strip_tags($content, $tagsAllowed);
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
+// Sanitize data
+if (!empty($pageName)) {
+    $pageName = $mysqli->real_escape_string($pageName);
+}
+
 // Get the SP names
 $spPInsertOrUpdateSida			= DBSP_PInsertOrUpdateSida;
 
 // Create the query
 $query = <<< EOD
 SET @aPageId = {$pageId};
-CALL {$spPInsertOrUpdateSida}(@aPageId, '{$userId}', '', '{$title}', '{$content}');
+CALL {$spPInsertOrUpdateSida}(@aPageId, '{$userId}', '{$pageName}', '{$title}', '{$content}');
 SELECT
     @aPageId AS id,
     NOW() AS timestamp
 ;
 EOD;
-
+$log -> debug($query);
 // Perform the query
 $res = $db->MultiQuery($query);
 

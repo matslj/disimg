@@ -10,6 +10,8 @@
 // Author: Mats Ljungquist
 //
 
+$title = isset($title) ? $title : "Titel saknas";
+
 // The terms of use (not the legal terms :) ) for this page fragment is descibed by the parameters listed below.
 // 
 // ***** IN parameters for this page fragment *****
@@ -17,6 +19,8 @@
 // $pageId - id of the page, used in db lookup
 // $title - the current title of the page
 // $content - the current content of the page
+// $hideTitle - if set, and set to true, the title will be hidden.
+// $pageName - holds the name of the current page. Only has to be set if the page doesnt exist already (and has to be created).
    $urlToProcessPage = "?p=page-save"; // This is the target page of the ajax call for storing the page.
 // ***** OUT parameters for this page fragment *****
 // The out parameters are set to default values (which is used when user != admin)
@@ -76,7 +80,8 @@ $javaScript .= <<<EOD
             }
         };
         var formData = {
-            pageId: {$pageId}
+            pageId: {$pageId},
+            pageName: '{$pageName}'
         };
         $("#dialogPageTextChange").pageEditDialog(dialogOptions, formData);
 
@@ -124,7 +129,14 @@ EOD;
 
 $htmlPageTitleLink = "<a id='titlePage' href='#' class='editText'>{$title}</a>";
 $htmlPageContent = "<div id='contentPage'>{$content}</div>";
-            
+
+$type = "text";
+$altText = "";
+if (isset($hideTitle) && $hideTitle == true) {
+    $type = "hidden";
+    $altText = "<p>{$title}</p>";
+}
+
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
@@ -134,7 +146,8 @@ $htmlPageTextDialog = <<<EOD
 <div id="dialogPageTextChange" title="Ändra text">
     <form id="dialogPageTextChangeForm" action='?p=page-save' method='POST'>
         <h3>Titel</h3> 
-        <input id='titlePED' type='text' name='title' value='{$title}'>
+        <input id='titlePED' type='{$type}' name='title' value='{$title}'>
+        {$altText}
         <h3>Innehåll</h3>
         <textarea id='contentPED' style="width: 400px; height: 200px">{$content}</textarea>
     </form>

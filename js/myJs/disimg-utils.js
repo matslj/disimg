@@ -74,7 +74,7 @@ $.fn.pageEditDialog = function(options, data) {
                         // $("#" + element.attr('id') + "Form").submit();
                         $.post(
                             o.url,
-                            {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
+                            {page_id: data.pageId, page_name: data.pageName, redirect_on_success: "json", title: data.title, content: data.content},
                             o.callback,
                             "json"
                         );
@@ -94,7 +94,7 @@ $.fn.pageEditDialog = function(options, data) {
                         // $("#" + element.attr('id') + "Form").submit();
                         $.post(
                             o.url,
-                            {page_id: data.pageId, redirect_on_success: "json", title: data.title, content: data.content},
+                            {page_id: data.pageId, page_name: data.pageName, redirect_on_success: "json", title: data.title, content: data.content},
                             o.callback,
                             "json"
                         );

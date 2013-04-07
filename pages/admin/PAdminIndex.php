@@ -85,9 +85,7 @@ $htmlPageTitleLink = "";
 $htmlPageContent = "";
 $htmlPageTextDialog = "";
 
-if ($pageId != 0) {
-    require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
-}
+require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
 
 // -------------------------------------------------------------------------------------------
 //

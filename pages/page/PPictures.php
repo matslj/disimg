@@ -75,6 +75,52 @@ $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folde
 $total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
 $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();
+
+$htmlHead = "";
+$javaScript = "";
+
+// -------------------------------------------------------------------------------------------
+// 
+// Read editable text for page
+//
+$pageName = basename(__FILE__);
+$title          = "";
+$content 	= "";
+$pageId         = 0;
+
+// Get the SP names
+$spGetSidaDetails	= DBSP_PGetSidaDetails;
+
+$query = <<< EOD
+CALL {$spGetSidaDetails}('$pageName');
+EOD;
+
+// Perform the query
+$results = Array();
+$res = $db->MultiQuery($query);
+$db->RetrieveAndStoreResultsFromMultiQuery($results);
+
+// Get article details
+$row = $results[0]->fetch_object();
+if ($row) {
+    $pageId     = $row->id;
+    $content    = $row->content;
+}
+$results[0]->close();
+
+$title = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
+
+$htmlPageTitleLink = "";
+$htmlPageContent = "";
+$htmlPageTextDialog = "";
+$hideTitle = true;
+
+require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
+
+// -------------------------------------------------------------------------------------------
+//
+// Close DB connection
+//
 $mysqli->close();
 
 // Link to images
@@ -86,7 +132,7 @@ $imageLink = WS_IMAGES;
 //
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
-$htmlHead = <<<EOD
+$htmlHead .= <<<EOD
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
@@ -95,7 +141,7 @@ $htmlHead = <<<EOD
     <script type='text/javascript' src='{$js}myJs/disimg-utils.js'></script>
 EOD;
 $htmlHead .= $attachment -> getHead();
-$javaScript = $attachment -> getJavaScript($pc->computePage());
+$javaScript .= $attachment -> getJavaScript($pc->computePage());
 
 $javaScript .= <<<EOD
 // ----------------------------------------------------------------------------------------------
@@ -132,7 +178,7 @@ EOD;
             
 
 $redirectFail   = "?p=" . $pc->computePage();
-$headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
+// $headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
 
 // -------------------------------------------------------------------------------------------
 //
@@ -140,11 +186,15 @@ $headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: "
 //
 $belowTableText = $uo->isAdmin() ? "Du är admin och kan därför inte kryssa för bilderna på den här sidan." : "Vänligen kryssa för de objekt du är intresserad av.";
 $htmlMain = <<<EOD
-<h1>{$headerHtml}</h1>
+<h1>{$htmlPageTitleLink}</h1>
+    <p>
+        {$htmlPageContent}
+    </p>
     <div class='section'>
         {$archiveDb}
     </div>
     <p class="small" style="text-align: right;">{$belowTableText}</p>
+    {$htmlPageTextDialog}
 EOD;
 
 $htmlRight = "";

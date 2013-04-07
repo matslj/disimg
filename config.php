@@ -33,7 +33,7 @@ define('WS_HOME',	'home');	                          // Starting page
 // * 'file' - saves to a log file in TP_LOGPATH. Ensure writing rights to that path.
 // * 'dummy' - means no logging.
 // * No logger (commented away) - the same as 'dummy'
-define('WS_LOGGER',	'dummy');
+define('WS_LOGGER',	'file');
 
 // The system captcha
 // Available captchas are:
@@ -44,8 +44,8 @@ define('WS_CAPTCHA',	'securimage');
 
 // File handling
 define('FILE_ARCHIVE_FOLDER', 'uploads');
-define('FILE_ARCHIVE_PATH', 'c:\wamp\www\disimg\\' . FILE_ARCHIVE_FOLDER); // Must be writable by webserver
-//define('FILE_ARCHIVE_PATH', '/var/www/disimg/' . FILE_ARCHIVE_FOLDER);       // Must be writable by webserver
+//define('FILE_ARCHIVE_PATH', 'c:\wamp\www\disimg\\' . FILE_ARCHIVE_FOLDER); // Must be writable by webserver
+define('FILE_ARCHIVE_PATH', '/var/www/disimg/' . FILE_ARCHIVE_FOLDER);       // Must be writable by webserver
 define('FILE_MAX_SIZE', 6000000);                                            // Filesize in bytes
 define('FILE_ACTION' , '?p=uploadp');	                                     // JavaScript code
 
