@@ -33,7 +33,7 @@ define('WS_HOME',	'home');	                          // Starting page
 // * 'file' - saves to a log file in TP_LOGPATH. Ensure writing rights to that path.
 // * 'dummy' - means no logging.
 // * No logger (commented away) - the same as 'dummy'
-define('WS_LOGGER',	'file');
+define('WS_LOGGER',	'dummy');
 
 // The system captcha
 // Available captchas are:

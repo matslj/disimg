@@ -90,6 +90,7 @@ switch ($gPage) {
     case 'page-save':		require_once(TP_PAGESPATH . 'page/PPageSave.php'); break;
     case 'archive':             require_once(TP_PAGESPATH . 'page/PPictures.php'); break;
     case 'archivep':            require_once(TP_PAGESPATH . 'page/PPicturesProcess.php'); break;
+    case 'userinterest':        require_once(TP_PAGESPATH . 'page/PPictureUserInterest.php'); break;
 
     //	
     //	File Archive
