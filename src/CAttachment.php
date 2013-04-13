@@ -562,6 +562,85 @@ EOD;
             }
         }
         
+        public function getFilesOfInterestAsJSON($db, $userId, $folderId, $orderOn, $orderOrder) {
+            // I'm assuming that all incoming data has been properly sanitized.
+            
+            $this->clear();
+            
+            // Get user-object
+            $uo = CUserData::getInstance();
+            
+            // Table defenitions
+            $tBildIntresse = DBT_BildIntresse;
+            $tFile         = DBT_File;
+            $tFolder       = DBT_Folder;
+            $tFolderUser   = DBT_FolderUser;
+            $tUser         = DBT_User;
+            
+            $bildIntresseJoin = "";
+            $userWhere = "";
+            
+            // If a userId is provided; list only files which the user with that
+            // userId has expressed an interest in.
+            if (!empty($userId)) {
+                $bildIntresseJoin = " INNER JOIN {$tBildIntresse} AS BI ON BI.BildIntresse_idFile = A.idFile ";
+                $userWhere = " AND WHERE BI.BildIntresse_idUser = {$userId} ";
+            }
+            
+            // If a folderId is provided; list only files in that folder
+            $folderWhere = empty($folderId) ? "" : " AND A.File_idFolder = {$folderId}";
+            
+            // If a field, to order on, has been provided - order on that field by the
+            // provided order order (and ASC if no order order is provided).
+            $orderClause = "";
+            if (!empty($orderOn)) {
+                $orderClause = " ORDER BY {$orderOn} ";
+                $tempOrder = empty($orderOrder) ? "ASC" : $orderOrder;
+                $orderClause .= $tempOrder;
+            }
+            
+            // Create query
+            $query 	= <<< EOD
+                SELECT 
+                    A.idFile AS id,
+                    A.nameFile AS name,
+                    A.uniqueNameFile AS uniquename,
+                    A.pathToDiskFile AS path,
+                    A.createdFile AS created,
+                    IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+                FROM {$tFile} AS A
+                    INNER JOIN {$tUser} AS U
+                            ON A.File_idUser = U.idUser
+                    INNER JOIN {$tFolder} AS F
+                            ON A.File_idFolder = F.idFolder
+                WHERE
+                        A.File_idUser = {$uo->getId()} AND
+                        deletedFile IS NULL
+                        {$folderWhere}
+                {$orderClause};
+EOD;
+            
+            $resultArray = Array();
+            
+            // Perform the query and manage results
+            $results = $db->Query($query);
+            
+            while($row = $results->fetch_object()) {
+                $rowArray = Array();
+                $rowArray['id'] = $row->id;
+                $rowArray['name'] = $row->name;
+                $rowArray['uniquename'] = $row->uniquename;
+                $rowArray['path'] = $row->path;
+                $rowArray['created'] = $row->created;
+                $rowArray['foldername'] = $row->foldername;
+                $resultArray[] = $rowArray;
+            }
+
+            $results->close();
+            
+            return json_encode($resultArray);
+        }
+        
 } // End of Of Class
 
 ?>

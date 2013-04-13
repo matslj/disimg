@@ -71,8 +71,8 @@ while($row = $results[0]->fetch_object()) {
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
-$total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
+$archiveDb = $attachment ->getFilesOfInterestAsJSON($db, "", "", "", "");
+$total = 0;
 $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();
 
@@ -137,8 +137,6 @@ $htmlHead .= <<<EOD
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
     <!-- jQuery Form Plugin -->
-    <script type='text/javascript' src='{$js}jquery-form/jquery.form.js'></script>
-    <script type='text/javascript' src='{$js}myJs/disimg-utils.js'></script>
 EOD;
 $htmlHead .= $attachment -> getHead();
 $javaScript .= $attachment -> getJavaScript($pc->computePage());
