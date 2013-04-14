@@ -31,17 +31,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $folderFilter = $pc->GETisSetOrSetDefault('ff', '');
-$selectedUserId = $pc->GETisSetOrSetDefault('su', '');
 
-// Validate input data - don't want any funny business here
-if (!empty($folderFilter)) {
-    $pc->IsNumericOrDie($folderFilter, 0);
-}
-if (!empty($selectedUserId)) {
-    $pc->IsNumericOrDie($selectedUserId, 0);
-}
-
-// Deside which page this is and compute redirect and action page (process page)
 $redirect       = "?p=" . $pc->computePage();
 $action = $redirect . "p";
 
@@ -86,74 +76,13 @@ $total = 0;
 $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();
 
-// ****************************************************************************
-// **
-// **            Create the middle part of the page
-// ** This is the part that contains the result of folderid/userid selections
-// **
-
-// Table definitions
-$tBildIntresse = DBT_BildIntresse;
-$tFile         = DBT_File;
-$tFolder       = DBT_Folder;
-$tFolderUser   = DBT_FolderUser;
-$tUser         = DBT_User;
-
-$bildIntresseJoin = "";
-$userWhere = "";
-            
-// If a userId is provided; list only files which the user with that
-// userId has expressed an interest in.
-if (!empty($selectedUserId)) {
-    $bildIntresseJoin = " INNER JOIN {$tBildIntresse} AS BI ON BI.BildIntresse_idFile = A.idFile ";
-    $userWhere = " AND WHERE BI.BildIntresse_idUser = {$selectedUserId} ";
-}
-
-// If a folderId is provided; list only files in that folder
-$folderWhere = empty($folderFilter) ? "" : " AND A.File_idFolder = {$folderFilter}";
-            
-// Create query
-$query 	= <<< EOD
-    SELECT 
-        A.idFile AS id,
-        A.nameFile AS name,
-        A.uniqueNameFile AS uniquename,
-        A.pathToDiskFile AS path,
-        A.createdFile AS created,
-        U.accountUser AS account,
-        IFNULL(F.nameFolder, "Ingen katalog") AS foldername,
-        IFNULL(F.nameFolder, "Ingen katalog") AS foldername
-    FROM {$tFile} AS A
-        INNER JOIN {$tUser} AS U
-            ON A.File_idUser = U.idUser
-        LEFT OUTER JOIN {$tFolder} AS F
-            ON A.File_idFolder = F.idFolder
-        LEFT OUTER JOIN {$tBildIntresse} AS BI
-            ON A.idFile = BI.BildIntresse_idFile
-    WHERE
-            A.File_idUser = {$uo->getId()} AND
-            deletedFile IS NULL
-            {$folderWhere};
-EOD;
-            
-$resultArray = Array();
-            
-            // Perform the query and manage results
-            $results = $db->Query($query);
-            
-$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
-$ext = pathinfo($row->path, PATHINFO_EXTENSION);
-$imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
-
-// ******************************************************************
-// **
-// **           Prepare page edit dialog
-// **
-
 $htmlHead = "";
 $javaScript = "";
 
+// -------------------------------------------------------------------------------------------
+// 
 // Read editable text for page
+//
 $pageName = basename(__FILE__);
 $title          = "";
 $content 	= "";
@@ -213,6 +142,11 @@ EOD;
 $htmlHead .= $attachment -> getHead();
 $javaScript .= $attachment -> getJavaScript($pc->computePage());
 
+$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+                $ext = pathinfo($row->path, PATHINFO_EXTENSION);
+                $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
+
+
 $javaScript .= <<<EOD
 // ----------------------------------------------------------------------------------------------
 //
@@ -223,6 +157,34 @@ var globalMaxColumns = 5;
 
 (function($){
     $(document).ready(function() {
+        $.getJSON(globalUrl, function(data) {
+            var tbody = $("#CustomerTable > tbody").html("");
+            var length = data.length;
+            var content = "";
+            var previousFolder = "";
+            var folderContentCounter = 0;
+            for (var i = 0; i < length; i++) {
+                var row = data[i];
+                var thumbs = '{$thumbFolder}' + row.account + '/thumbs/80px_thumb_' + row.uniquename + '.jpg';
+                var imgs = '{$thumbFolder}' + row.account + '/' + row.uniquename + '.' + row.ext;
+                if (row.foldername != previousFolder) {
+                    content += "<div class='biHeader'>" + row.foldername + "</div>";
+                    content += "<div class='biRow'>";
+                    folderContentCounter = 0;
+                }
+                if (folderContentCounter > globalMaxColumns) {
+                    // End the previous biRow and start a new one
+                    content += "</div><div class='biRow'>";
+                }
+                content += "<span><a href='" + imgs + "'><img src='" + thumbs + "' title='Klicka för att titta på bilden' /></a></span>";
+                folderContentCounter++;
+            }
+            if (!content) {
+                // end last biRow
+                content += "</div>";
+            }
+        });
+
         // Event declaration
         $('.cbMark').click(function(event) {
             var userId = {$userId};
