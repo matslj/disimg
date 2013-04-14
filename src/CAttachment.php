@@ -607,6 +607,7 @@ EOD;
                     A.uniqueNameFile AS uniquename,
                     A.pathToDiskFile AS path,
                     A.createdFile AS created,
+                    U.accountUser AS account,
                     IFNULL(F.nameFolder, "Ingen katalog") AS foldername
                 FROM {$tFile} AS A
                     INNER JOIN {$tUser} AS U
@@ -626,12 +627,15 @@ EOD;
             $results = $db->Query($query);
             
             while($row = $results->fetch_object()) {
+                $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $rowArray = Array();
                 $rowArray['id'] = $row->id;
                 $rowArray['name'] = $row->name;
                 $rowArray['uniquename'] = $row->uniquename;
                 $rowArray['path'] = $row->path;
+                $rowArray['ext'] = $ext;
                 $rowArray['created'] = $row->created;
+                $rowArray['account'] = $row->account;
                 $rowArray['foldername'] = $row->foldername;
                 $resultArray[] = $rowArray;
             }

@@ -125,6 +125,7 @@ $mysqli->close();
 
 // Link to images
 $imageLink = WS_IMAGES;
+$thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
 
 // -------------------------------------------------------------------------------------------
 //
@@ -141,15 +142,49 @@ EOD;
 $htmlHead .= $attachment -> getHead();
 $javaScript .= $attachment -> getJavaScript($pc->computePage());
 
+$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+                $ext = pathinfo($row->path, PATHINFO_EXTENSION);
+                $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
+
+
 $javaScript .= <<<EOD
 // ----------------------------------------------------------------------------------------------
 //
 //
 //
 var globalUrl = "{$action}";
+var globalMaxColumns = 5;
 
 (function($){
     $(document).ready(function() {
+        $.getJSON(globalUrl, function(data) {
+            var tbody = $("#CustomerTable > tbody").html("");
+            var length = data.length;
+            var content = "";
+            var previousFolder = "";
+            var folderContentCounter = 0;
+            for (var i = 0; i < length; i++) {
+                var row = data[i];
+                var thumbs = '{$thumbFolder}' + row.account + '/thumbs/80px_thumb_' + row.uniquename + '.jpg';
+                var imgs = '{$thumbFolder}' + row.account + '/' + row.uniquename + '.' + row.ext;
+                if (row.foldername != previousFolder) {
+                    content += "<div class='biHeader'>" + row.foldername + "</div>";
+                    content += "<div class='biRow'>";
+                    folderContentCounter = 0;
+                }
+                if (folderContentCounter > globalMaxColumns) {
+                    // End the previous biRow and start a new one
+                    content += "</div><div class='biRow'>";
+                }
+                content += "<span><a href='" + imgs + "'><img src='" + thumbs + "' title='Klicka för att titta på bilden' /></a></span>";
+                folderContentCounter++;
+            }
+            if (!content) {
+                // end last biRow
+                content += "</div>";
+            }
+        });
+
         // Event declaration
         $('.cbMark').click(function(event) {
             var userId = {$userId};
