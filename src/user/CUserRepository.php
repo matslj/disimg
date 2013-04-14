@@ -14,7 +14,7 @@
 //
 // Author: Mats Ljungquist
 //
-class CUserData {
+class user_CUserRepository {
     
     private $id;
     private $account;

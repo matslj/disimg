@@ -5,7 +5,7 @@
 //
 // To ease database usage for pagecontroller. Supports MySQLi.
 //
-// Author : Mikael Roos
+// Author : Mats Ljungquist
 //
 
 // Include commons for database
@@ -45,6 +45,7 @@ class CDatabaseController {
 	// Connect to the database, return a database object.
 	//
 	public function Connect() {
+            if (!$this->isResource($this->iMysqli)) {
 
 		$this->iMysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 
@@ -52,9 +53,14 @@ class CDatabaseController {
    			echo "Connect to database failed: ".mysqli_connect_error()."<br>";
    			exit();
 		}
+            }
 
-		return $this->iMysqli;
+            return $this->iMysqli;
 	}
+        
+        private function isResource($possibleResource) { 
+            return !is_null(@get_resource_type($possibleResource));
+        }
 
 
 	// ------------------------------------------------------------------------------------
