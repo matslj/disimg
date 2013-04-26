@@ -31,14 +31,14 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $folderFilter = $pc->GETisSetOrSetDefault('ff', '');
-$selectedUserId = $pc->GETisSetOrSetDefault('su', '');
+$userFilter = $pc->GETisSetOrSetDefault('uf', '');
 
 // Validate input data - don't want any funny business here
 if (!empty($folderFilter)) {
     $pc->IsNumericOrDie($folderFilter, 0);
 }
-if (!empty($selectedUserId)) {
-    $pc->IsNumericOrDie($selectedUserId, 0);
+if (!empty($userFilter)) {
+    $pc->IsNumericOrDie($userFilter, 0);
 }
 
 // Deside which page this is and compute redirect and action page (process page)
@@ -48,10 +48,6 @@ $action = $redirect . "p";
 $uo = CUserData::getInstance();
 $account = $uo -> getAccount();
 $userId	= $uo -> getId();
-
-// $log -> debug("userid: " . $userId);
-// Always check whats coming in...
-//$pc->IsNumericOrDie($articleId, 0);
 
 // -------------------------------------------------------------------------------------------
 //
@@ -63,28 +59,32 @@ $mysqli = $db->Connect();
 // Get all the folders from db. This will form the left side folder nav system.
 $folderHtml = "";
 $currentFolderName = "";
-$total = 0;
-$spListFolders = $uo -> isAdmin() ? DBSP_ListFolders : DBSP_ListFoldersByUserOnly;
-$query 	= $uo -> isAdmin() ? "CALL {$spListFolders}('')" : "CALL {$spListFolders}({$userId})";
-$res = $db->MultiQuery($query);
-$results = Array();
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
 
-while($row = $results[0]->fetch_object()) {
-    $total = $total + $row->facet;
-    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
-    if ($row->id == $folderFilter) {
-        $currentFolderName = $row->name;
-    }
-}
+// Get the all the (non admin) users of the system and prepare them for
+// presentation in the right side menu
+// 
+// 
+//kataloger     filer      användare
+//
+//när alla filer visas, så visas maxantal för antal filer i varje katalog
+//detsamma gäller för maxantal filer/användare
+//
+//om man väljer en katalog, så visas fortfarande maxantal filer i varje katalog, enl ovan, men
+//antalet filer/användare är anpassat till vald katalog.
+//
+//om man väljer en användare, så visas fortfarande maxantal filer för varje användare (enligt
+//första ovan), men antalet filer/katalog är anpassat till vald användare.
+$usersHtml = "";
+$usersHandler = user_CUserRepository::getInstance($db);
+$tempUsers = $usersHandler->getUsers();
 
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
 $archiveDb = $attachment ->getFilesOfInterestAsJSON($db, "", "", "", "");
 $total = 0;
-$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
-$results[0]->close();
+
+
 
 // ****************************************************************************
 // **
@@ -99,51 +99,109 @@ $tFolder       = DBT_Folder;
 $tFolderUser   = DBT_FolderUser;
 $tUser         = DBT_User;
 
-$bildIntresseJoin = "";
-$userWhere = "";
-            
-// If a userId is provided; list only files which the user with that
-// userId has expressed an interest in.
-if (!empty($selectedUserId)) {
-    $bildIntresseJoin = " INNER JOIN {$tBildIntresse} AS BI ON BI.BildIntresse_idFile = A.idFile ";
-    $userWhere = " AND WHERE BI.BildIntresse_idUser = {$selectedUserId} ";
+// **************************************************************************************
+// *
+// * List all folders and stor folder id as key and foldername as value in an array.
+// * This array will be used when constructing the left side column.
+// *
+$query = <<< EOD
+    SELECT
+        idFolder AS folderId,
+        nameFolder AS name
+    FROM {$tFolder}
+    ;
+EOD;
+
+$result = Array();
+
+// Perform the query and manage results
+$result = $db->Query($query);
+$tempFolders = array();
+while($row = $result->fetch_object()) {
+    $tempFolders[$row->folderId] = $row->name;
+}
+$result -> close(); // closing the resultset containing user interesst
+
+// **************************************************************************************
+// *
+// * Get number of hits/user (hits = files marked as interesting by user)
+// * in a specific folder (or all folders if no specific folder is chosen)
+// *
+$folderWhere = empty($folderFilter) ? "" : " INNER JOIN {$tFile} ON BildIntresse_idFile = idFile WHERE File_idFolder = {$folderFilter}";
+
+$query = <<< EOD
+    SELECT
+        BildIntresse_idUser AS userId,
+        count(BildIntresse_idUser) AS antal
+    FROM {$tBildIntresse}
+        {$folderWhere}
+    GROUP BY BildIntresse_idUser
+    ;
+EOD;
+
+$result = Array();
+
+// Perform the query and manage results
+$result = $db->Query($query);
+$interestUser = array();
+while($row = $result->fetch_object()) {
+    $interestUser[$row->userId] = $row->antal;
+}
+$result -> close(); // closing the resultset containing user interesst
+
+foreach ($tempUsers as $key => $value) {
+    $tempTot = 0;
+    if(isset($interestUser[$key])) {
+        $tempTot = $interestUser[$key];
+    }
+    $usersHtml .= "<div class='row'><a href='{$redirect}&uf={$value->getId()}'>{$value->getName()} ({$tempTot})</a></div>";
 }
 
-// If a folderId is provided; list only files in that folder
-$folderWhere = empty($folderFilter) ? "" : " AND A.File_idFolder = {$folderFilter}";
-            
-// Create query
-$query 	= <<< EOD
-    SELECT 
-        A.idFile AS id,
-        A.nameFile AS name,
-        A.uniqueNameFile AS uniquename,
-        A.pathToDiskFile AS path,
-        A.createdFile AS created,
-        U.accountUser AS account,
-        IFNULL(F.nameFolder, "Ingen katalog") AS foldername,
-        IFNULL(F.nameFolder, "Ingen katalog") AS foldername
-    FROM {$tFile} AS A
-        INNER JOIN {$tUser} AS U
-            ON A.File_idUser = U.idUser
-        LEFT OUTER JOIN {$tFolder} AS F
-            ON A.File_idFolder = F.idFolder
-        LEFT OUTER JOIN {$tBildIntresse} AS BI
-            ON A.idFile = BI.BildIntresse_idFile
-    WHERE
-            A.File_idUser = {$uo->getId()} AND
-            deletedFile IS NULL
-            {$folderWhere};
+// **************************************************************************************
+// *
+// * Get number of hits/folder (hits = files marked as interesting by any user)
+// * in a specific folder (or all folders if no specific folder is chosen)
+// *
+$userWhere = empty($userFilter) ? "" : " INNER JOIN {$tBildIntresse} ON BildIntresse_idFile = idFile WHERE BildIntresse_idUser = {$userFilter}";
+
+$query = <<< EOD
+    SELECT
+        File_idFolder AS folderId,
+        count(idFile) AS antal
+    FROM {$tFile}
+        {$userWhere}
+    GROUP BY File_idFolder
+    ;
 EOD;
-            
-$resultArray = Array();
-            
-            // Perform the query and manage results
-            $results = $db->Query($query);
-            
-$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
-$ext = pathinfo($row->path, PATHINFO_EXTENSION);
-$imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
+
+$result = Array();
+
+// Perform the query and manage results
+$result = $db->Query($query);
+$interestFolder = array();
+while($row = $result->fetch_object()) {
+    $interestFolder[$row->folderId] = $row->antal;
+}
+$result -> close(); // closing the resultset containing user interesst
+
+foreach ($tempFolders as $key => $value) {
+    $tempTot = 0;
+    if(isset($interestFolder[$key])) {
+        $tempTot = $interestFolder[$key];
+        $total = $total + $tempTot;
+    }
+    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$key}'>{$value} ({$tempTot})</a></div>";
+    if ($key == $folderFilter) {
+        $currentFolderName = $value;
+    }
+}
+$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
+
+// Random stuff
+      
+//$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+//$ext = pathinfo($row->path, PATHINFO_EXTENSION);
+//$imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
 
 // ******************************************************************
 // **
@@ -268,7 +326,7 @@ $htmlMain = <<<EOD
     {$htmlPageTextDialog}
 EOD;
 
-$htmlRight = "<div id='navigation'>{$folderHtml}</div>";
+$htmlRight = "<div id='navigation'>{$usersHtml}</div>";
 
 // -------------------------------------------------------------------------------------------
 //

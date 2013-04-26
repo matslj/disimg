@@ -406,7 +406,7 @@ EOD;
         // @param folderId if this parameter is present, the method will only list files
         //                 from the specified folder.
 	// @return a list of files in the form of a HTML table.
-        public function getFileList($db, $userId, $referer, $folderId) {
+        public function getFileList($db, $userId, $referer, $folderId, $chkDisable = false) {
             // Assumes the presence of a working mysqli-object
             // No defensive programming!
             
@@ -465,16 +465,18 @@ EOD;
             while($row = $results[0]->fetch_object()) {
                 $this -> nrOfFilesRead++;
                 $checked = "";
-                if ($row->interest != null) {
-                    if ($row->interest == 1) {
-                        $checked = " checked";
+                
+                    if(isset($row->interest) && $row->interest != null) {
+                        if ($row->interest == 1) {
+                            $checked = " checked";
+                        }
                     }
-                }
+                
                 $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
                 $ext = pathinfo($row->path, PATHINFO_EXTENSION);
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
-                $disabled = $uo -> isAdmin() ? " disabled" : "";
+                $disabled = $chkDisable && $uo -> isAdmin() ? " disabled" : "";
                 $deleteCol = "<td><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$disabled}{$checked}/></td>";
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>

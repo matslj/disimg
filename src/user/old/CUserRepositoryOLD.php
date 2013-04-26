@@ -1,7 +1,7 @@
 <?php
 
 // ===========================================================================================
-// user_CUserRepository
+// user_CUserRepositoryOLD
 //
 // Description: 
 // This class is responsible for storing all active users in a session variable
@@ -15,7 +15,7 @@
 //
 // Author: Mats Ljungquist
 //
-class user_CUserRepository {
+class user_CUserRepositoryOLD {
     
     private $users;
 

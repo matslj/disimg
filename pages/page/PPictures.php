@@ -71,7 +71,7 @@ while($row = $results[0]->fetch_object()) {
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
+$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter, true);
 $total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
 $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();
