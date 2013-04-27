@@ -160,10 +160,10 @@ var globalUrl = "{$action}";
             var fileId = tempId.substring(0, index);
             var action = "";
             if ($(this).is(':checked')) {
-                $.jGrowl("Ditt intresse är noterat.");
+                $.jGrowl("Registrerat intresse.");
                 action = "add";
             } else {
-                $.jGrowl("Ditt ointresse är noterat.");
+                $.jGrowl("Avregistrerat intresse.");
                 action = "delete";
             }
             $.post(  

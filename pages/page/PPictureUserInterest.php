@@ -59,38 +59,15 @@ $mysqli = $db->Connect();
 // Get all the folders from db. This will form the left side folder nav system.
 $folderHtml = "";
 $currentFolderName = "";
-
-// Get the all the (non admin) users of the system and prepare them for
-// presentation in the right side menu
-// 
-// 
-//kataloger     filer      användare
-//
-//när alla filer visas, så visas maxantal för antal filer i varje katalog
-//detsamma gäller för maxantal filer/användare
-//
-//om man väljer en katalog, så visas fortfarande maxantal filer i varje katalog, enl ovan, men
-//antalet filer/användare är anpassat till vald katalog.
-//
-//om man väljer en användare, så visas fortfarande maxantal filer för varje användare (enligt
-//första ovan), men antalet filer/katalog är anpassat till vald användare.
+$currentUserName = "";
 $usersHtml = "";
 $usersHandler = user_CUserRepository::getInstance($db);
 $tempUsers = $usersHandler->getUsers();
 
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
-$attachment = new CAttachment();
-$archiveDb = $attachment ->getFilesOfInterestAsJSON($db, "", "", "", "");
-$total = 0;
-
-
-
-// ****************************************************************************
-// **
-// **            Create the middle part of the page
-// ** This is the part that contains the result of folderid/userid selections
-// **
+// $attachment = new CAttachment();
+// $archiveDb = $attachment ->getFilesOfInterestAsJSON($db, "", "", "", "");
 
 // Table definitions
 $tBildIntresse = DBT_BildIntresse;
@@ -149,13 +126,17 @@ while($row = $result->fetch_object()) {
 }
 $result -> close(); // closing the resultset containing user interesst
 
+$total = 0;
 foreach ($tempUsers as $key => $value) {
     $tempTot = 0;
     if(isset($interestUser[$key])) {
         $tempTot = $interestUser[$key];
+        $total = $total + $tempTot;
     }
     $usersHtml .= "<div class='row'><a href='{$redirect}&uf={$value->getId()}'>{$value->getName()} ({$tempTot})</a></div>";
 }
+
+$usersHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$usersHtml}";
 
 // **************************************************************************************
 // *
@@ -184,6 +165,7 @@ while($row = $result->fetch_object()) {
 }
 $result -> close(); // closing the resultset containing user interesst
 
+$total = 0;
 foreach ($tempFolders as $key => $value) {
     $tempTot = 0;
     if(isset($interestFolder[$key])) {
@@ -197,8 +179,83 @@ foreach ($tempFolders as $key => $value) {
 }
 $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 
-// Random stuff
-      
+// ****************************************************************************
+// **
+// **            Create the middle part of the page
+// ** This is the part that contains the result of folderid/userid selections
+// **
+
+$folderWhere = empty($folderFilter) ? "" : " AND WHERE File_idFolder = {$folderFilter}";
+$userWhere = empty($userFilter) ? "" : " AND WHERE BildIntresse_idUser = {$userFilter}";
+
+// Create query
+$query 	= <<< EOD
+    SELECT 
+        A.idFile AS id,
+        A.nameFile AS name,
+        A.uniqueNameFile AS uniquename,
+        A.pathToDiskFile AS path,
+        A.createdFile AS created,
+        BI.BildIntresse_idUser as userId,
+        A.File_idFolder as folderId
+    FROM {$tFile} AS A
+        INNER JOIN {$tBildIntresse} AS BI
+                ON A.File_idFolder = BI.BildIntresse_idFile
+    WHERE
+        A.File_idUser = {$uo->getId()} AND
+        deletedFile IS NULL
+        {$folderWhere}
+        {$userWhere}
+        ORDER BY folderId asc, id asc;
+EOD;
+
+// Perform the query and manage results
+$results = $db->Query($query);
+
+// Start table
+$archiveDbStart = <<<EOD
+    <table class="disImgTable" style="width:100%">
+    <thead>
+    <th>Tumme</th>
+    <th>Filnamn</th>
+    <th>Katalog</th>
+    <th>Användare</th>
+    </thead>
+    <tbody>
+EOD;
+$prevFolder = 0;
+$prevUser = 0;
+$contentHtml = "";
+$thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
+while($row = $results->fetch_object()) {
+    if ($prevFolder == 0 || $prevFolder != $row->folderId) {
+        $contentHtml .= "<div class='folderHeader'>" . $tempFolders[$row->folderId] . "</div>";
+        $contentHtml .= <<<EOD
+            <table class="disImgTable" style="width:100%">
+            <thead>
+                <th>Tumme</th>
+                <th>Filnamn</th>
+            </thead>
+            <tbody>
+EOD;
+    }
+    
+    $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+    $ext = pathinfo($row->path, PATHINFO_EXTENSION);
+    $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
+    
+    // Print file information
+    $contentHtml .= <<<EOD
+        <tr id='row{$row->uniquename}'>
+            <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
+            <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
+        </tr>
+EOD;
+    // Print which users are interested in file.
+}
+
+$results -> close();
+                
 //$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
 //$ext = pathinfo($row->path, PATHINFO_EXTENSION);
 //$imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
@@ -268,52 +325,15 @@ $htmlHead .= <<<EOD
 
     <!-- jQuery Form Plugin -->
 EOD;
-$htmlHead .= $attachment -> getHead();
-$javaScript .= $attachment -> getJavaScript($pc->computePage());
-
-$javaScript .= <<<EOD
-// ----------------------------------------------------------------------------------------------
-//
-//
-//
-var globalUrl = "{$action}";
-var globalMaxColumns = 5;
-
-(function($){
-    $(document).ready(function() {
-        // Event declaration
-        $('.cbMark').click(function(event) {
-            var userId = {$userId};
-            var tempId = $(this).attr('id');
-            var index = tempId.indexOf('#');
-            var fileId = tempId.substring(0, index);
-            var action = "";
-            if ($(this).is(':checked')) {
-                $.jGrowl("Ditt intresse är noterat.");
-                action = "add";
-            } else {
-                $.jGrowl("Ditt ointresse är noterat.");
-                action = "delete";
-            }
-            $.post(  
-                globalUrl,
-                {action: action, userid: userId, fileid: fileId}  
-            );
-        });
-    });
-})(jQuery);
-EOD;
-
-            
+// $htmlHead .= $attachment -> getHead();
+// $javaScript .= $attachment -> getJavaScript($pc->computePage());          
 
 $redirectFail   = "?p=" . $pc->computePage();
-// $headerHtml = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
 
 // -------------------------------------------------------------------------------------------
 //
 // Create HTML for page
 //
-$belowTableText = $uo->isAdmin() ? "Du är admin och kan därför inte kryssa för bilderna på den här sidan." : "Vänligen kryssa för de objekt du är intresserad av.";
 $htmlMain = <<<EOD
 <h1>{$htmlPageTitleLink}</h1>
     <p>
@@ -322,7 +342,6 @@ $htmlMain = <<<EOD
     <div class='section'>
         {$archiveDb}
     </div>
-    <p class="small" style="text-align: right;">{$belowTableText}</p>
     {$htmlPageTextDialog}
 EOD;
 
