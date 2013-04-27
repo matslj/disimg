@@ -247,6 +247,7 @@ EOD;
             </tr>
 EOD;
     }
+    $prevFile = $row->id;
     $contentHtml .= "<tr class='users'><td colspan='2'>" . $tempUsers[$row->userId] -> getName() . "</td></tr>";
 
     
