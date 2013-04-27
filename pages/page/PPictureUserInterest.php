@@ -125,7 +125,7 @@ while($row = $result->fetch_object()) {
     $interestUser[$row->userId] = $row->antal;
 }
 $result -> close(); // closing the resultset containing user interesst
-
+$folderPar = empty($folderFilter) ? "" : "&ff={$folderFilter}";
 $total = 0;
 foreach ($tempUsers as $key => $value) {
     $tempTot = 0;
@@ -133,10 +133,9 @@ foreach ($tempUsers as $key => $value) {
         $tempTot = $interestUser[$key];
         $total = $total + $tempTot;
     }
-    $usersHtml .= "<div class='row'><a href='{$redirect}&uf={$value->getId()}'>{$value->getName()} ({$tempTot})</a></div>";
+    $usersHtml .= "<div class='row'><a href='{$redirect}&uf={$value->getId()}{$folderPar}'>{$value->getName()} ({$tempTot})</a></div>";
 }
-
-$usersHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$usersHtml}";
+$usersHtml = "<div class='row all'><a href='{$redirect}{$folderPar}'>Alla ({$total})</a></div>{$usersHtml}";
 
 // **************************************************************************************
 // *
@@ -164,7 +163,7 @@ while($row = $result->fetch_object()) {
     $interestFolder[$row->folderId] = $row->antal;
 }
 $result -> close(); // closing the resultset containing user interesst
-
+$userPar = empty($userFilter) ? "" : "&uf={$userFilter}";
 $total = 0;
 foreach ($tempFolders as $key => $value) {
     $tempTot = 0;
@@ -172,12 +171,12 @@ foreach ($tempFolders as $key => $value) {
         $tempTot = $interestFolder[$key];
         $total = $total + $tempTot;
     }
-    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$key}'>{$value} ({$tempTot})</a></div>";
+    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$key}{$userPar}'>{$value} ({$tempTot})</a></div>";
     if ($key == $folderFilter) {
         $currentFolderName = $value;
     }
 }
-$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
+$folderHtml = "<div class='row all'><a href='{$redirect}{$userPar}'>Alla ({$total})</a></div>{$folderHtml}";
 
 // ****************************************************************************
 // **
@@ -185,8 +184,8 @@ $folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></d
 // ** This is the part that contains the result of folderid/userid selections
 // **
 
-$folderWhere = empty($folderFilter) ? "" : " AND WHERE File_idFolder = {$folderFilter}";
-$userWhere = empty($userFilter) ? "" : " AND WHERE BildIntresse_idUser = {$userFilter}";
+$folderWhere = empty($folderFilter) ? "" : " AND File_idFolder = {$folderFilter}";
+$userWhere = empty($userFilter) ? "" : " AND BildIntresse_idUser = {$userFilter}";
 
 // Create query
 $query 	= <<< EOD
@@ -196,39 +195,33 @@ $query 	= <<< EOD
         A.uniqueNameFile AS uniquename,
         A.pathToDiskFile AS path,
         A.createdFile AS created,
+        A.File_idUser AS userIdCreator,
         BI.BildIntresse_idUser as userId,
         A.File_idFolder as folderId
     FROM {$tFile} AS A
         INNER JOIN {$tBildIntresse} AS BI
-                ON A.File_idFolder = BI.BildIntresse_idFile
+                ON A.idFile = BI.BildIntresse_idFile
     WHERE
         A.File_idUser = {$uo->getId()} AND
         deletedFile IS NULL
-        {$folderWhere}
-        {$userWhere}
-        ORDER BY folderId asc, id asc;
+        {$folderWhere}{$userWhere}
+        ORDER BY folderId, id
+        ;
 EOD;
 
 // Perform the query and manage results
 $results = $db->Query($query);
 
-// Start table
-$archiveDbStart = <<<EOD
-    <table class="disImgTable" style="width:100%">
-    <thead>
-    <th>Tumme</th>
-    <th>Filnamn</th>
-    <th>Katalog</th>
-    <th>Användare</th>
-    </thead>
-    <tbody>
-EOD;
 $prevFolder = 0;
-$prevUser = 0;
+$prevFile = 0;
 $contentHtml = "";
 $thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
+$downloadFile = "?p=file-download&amp;referer={$redirect}&amp;file=";
 while($row = $results->fetch_object()) {
     if ($prevFolder == 0 || $prevFolder != $row->folderId) {
+        if ($prevFolder != 0) {
+            $contentHtml .= "</tbody></table>";
+        }
         $contentHtml .= "<div class='folderHeader'>" . $tempFolders[$row->folderId] . "</div>";
         $contentHtml .= <<<EOD
             <table class="disImgTable" style="width:100%">
@@ -239,26 +232,33 @@ while($row = $results->fetch_object()) {
             <tbody>
 EOD;
     }
+    $prevFolder = $row->folderId;
     
-    $thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
-    $ext = pathinfo($row->path, PATHINFO_EXTENSION);
-    $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
-    
-    // Print file information
-    $contentHtml .= <<<EOD
-        <tr id='row{$row->uniquename}'>
-            <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
-            <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
-        </tr>
+    if ($prevFile == 0 || $prevFile != $row->id) {
+        $thumbs = $thumbFolder . $tempUsers[$row->userIdCreator] -> getAccount() . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
+        $ext = pathinfo($row->path, PATHINFO_EXTENSION);
+        $imgs = $thumbFolder . $tempUsers[$row->userIdCreator] -> getAccount() . '/' . $row -> uniquename . '.' . $ext;
+
+        // Print file information
+        $contentHtml .= <<<EOD
+            <tr id='row{$row->uniquename}'>
+                <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
+                <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
+            </tr>
 EOD;
+    }
+    $contentHtml .= "<tr class='users'><td colspan='2'>" . $tempUsers[$row->userId] -> getName() . "</td></tr>";
+
+    
     // Print which users are interested in file.
 }
+if ($prevFolder != 0) {
+    $contentHtml .= "</tbody></table>";
+}
+
+$contentHtml .= "<pre>{$query}</pre>";
 
 $results -> close();
-                
-//$thumbs = $thumbFolder . $row -> account . '/thumbs/' . '80px_thumb_' . $row -> uniquename . ".jpg";
-//$ext = pathinfo($row->path, PATHINFO_EXTENSION);
-//$imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
 
 // ******************************************************************
 // **
@@ -309,10 +309,6 @@ require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
 //
 $mysqli->close();
 
-// Link to images
-$imageLink = WS_IMAGES;
-$thumbFolder = WS_SITELINK . FILE_ARCHIVE_FOLDER . '/';
-
 // -------------------------------------------------------------------------------------------
 //
 // Add JavaScript and html head stuff related to JavaScript
@@ -325,14 +321,10 @@ $htmlHead .= <<<EOD
 
     <!-- jQuery Form Plugin -->
 EOD;
-// $htmlHead .= $attachment -> getHead();
-// $javaScript .= $attachment -> getJavaScript($pc->computePage());          
-
-$redirectFail   = "?p=" . $pc->computePage();
 
 // -------------------------------------------------------------------------------------------
 //
-// Create HTML for page
+// Create HTML for middle column
 //
 $htmlMain = <<<EOD
 <h1>{$htmlPageTitleLink}</h1>
@@ -340,7 +332,7 @@ $htmlMain = <<<EOD
         {$htmlPageContent}
     </p>
     <div class='section'>
-        {$archiveDb}
+        {$contentHtml}
     </div>
     {$htmlPageTextDialog}
 EOD;
