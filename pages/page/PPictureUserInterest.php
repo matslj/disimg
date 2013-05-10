@@ -78,8 +78,9 @@ $tUser         = DBT_User;
 
 // **************************************************************************************
 // *
-// * List all folders and stor folder id as key and foldername as value in an array.
-// * This array will be used when constructing the left side column.
+// * List all folders and store folder id as key and foldername as value in an array.
+// * This array will be used when constructing the left side column. So this part
+// * is just some pre work for the left side column presentation.
 // *
 $query = <<< EOD
     SELECT
@@ -103,6 +104,8 @@ $result -> close(); // closing the resultset containing user interesst
 // *
 // * Get number of hits/user (hits = files marked as interesting by user)
 // * in a specific folder (or all folders if no specific folder is chosen)
+// * 
+// * Also, pick out the current user.
 // *
 $folderWhere = empty($folderFilter) ? "" : " INNER JOIN {$tFile} ON BildIntresse_idFile = idFile WHERE File_idFolder = {$folderFilter}";
 
@@ -133,14 +136,22 @@ foreach ($tempUsers as $key => $value) {
         $tempTot = $interestUser[$key];
         $total = $total + $tempTot;
     }
-    $usersHtml .= "<div class='row'><a href='{$redirect}&uf={$value->getId()}{$folderPar}'>{$value->getName()} ({$tempTot})</a></div>";
+    $classSelected = "";
+    if ($key == $userFilter) {
+        $currentUserName = $value;
+        $classSelected = " selected";
+    }
+    $usersHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&uf={$value->getId()}{$folderPar}'>{$value->getName()} ({$tempTot})</a></div>";
 }
-$usersHtml = "<div class='row all'><a href='{$redirect}{$folderPar}'>Alla ({$total})</a></div>{$usersHtml}";
+$markRow = empty($currentUserName) ? " selected" : "";
+$usersHtml = "<div class='row all{$markRow}'><a href='{$redirect}{$folderPar}'>Alla ({$total})</a></div>{$usersHtml}";
 
 // **************************************************************************************
 // *
 // * Get number of hits/folder (hits = files marked as interesting by any user)
 // * in a specific folder (or all folders if no specific folder is chosen)
+// *
+// * Also, pick out the current folder.
 // *
 $userWhere = empty($userFilter) ? "" : " INNER JOIN {$tBildIntresse} ON BildIntresse_idFile = idFile WHERE BildIntresse_idUser = {$userFilter}";
 
@@ -171,17 +182,22 @@ foreach ($tempFolders as $key => $value) {
         $tempTot = $interestFolder[$key];
         $total = $total + $tempTot;
     }
-    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$key}{$userPar}'>{$value} ({$tempTot})</a></div>";
+    $classSelected = "";
     if ($key == $folderFilter) {
         $currentFolderName = $value;
+        $classSelected = " selected";
     }
+    $folderHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&ff={$key}{$userPar}'>{$value} ({$tempTot})</a></div>";
 }
-$folderHtml = "<div class='row all'><a href='{$redirect}{$userPar}'>Alla ({$total})</a></div>{$folderHtml}";
+$markRow = empty($currentFolderName) ? " selected" : "";
+$folderHtml = "<div class='row all{$markRow}'><a href='{$redirect}{$userPar}'>Alla ({$total})</a></div>{$folderHtml}";
 
 // ****************************************************************************
 // **
 // **            Create the middle part of the page
 // ** This is the part that contains the result of folderid/userid selections
+// ** 
+// ** Observe that this part presents the union of folder- and user-selections
 // **
 
 $folderWhere = empty($folderFilter) ? "" : " AND File_idFolder = {$folderFilter}";
@@ -266,43 +282,46 @@ $results -> close();
 // **           Prepare page edit dialog
 // **
 
-$htmlHead = "";
-$javaScript = "";
-
-// Read editable text for page
-$pageName = basename(__FILE__);
-$title          = "";
-$content 	= "";
-$pageId         = 0;
-
-// Get the SP names
-$spGetSidaDetails	= DBSP_PGetSidaDetails;
-
-$query = <<< EOD
-CALL {$spGetSidaDetails}('$pageName');
-EOD;
-
-// Perform the query
-$results = Array();
-$res = $db->MultiQuery($query);
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
-
-// Get article details
-$row = $results[0]->fetch_object();
-if ($row) {
-    $pageId     = $row->id;
-    $content    = $row->content;
-}
-$results[0]->close();
-
-$title = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
+//$htmlHead = "";
+//$javaScript = "";
+//
+//// Read editable text for page
+//$pageName = basename(__FILE__);
+//$title          = "";
+//$content 	= "";
+//$pageId         = 0;
+//
+//// Get the SP names
+//$spGetSidaDetails	= DBSP_PGetSidaDetails;
+//
+//$query = <<< EOD
+//CALL {$spGetSidaDetails}('$pageName');
+//EOD;
+//
+//// Perform the query
+//$results = Array();
+//$res = $db->MultiQuery($query);
+//$db->RetrieveAndStoreResultsFromMultiQuery($results);
+//
+//// Get article details
+//$row = $results[0]->fetch_object();
+//if ($row) {
+//    $pageId     = $row->id;
+//    $content    = $row->content;
+//}
+//$results[0]->close();
+//
+//// Create the title of the page (the middle column title)
+//$currentFolderName = empty($currentFolderName) ? "Alla" : $currentFolderName;
+//$currentUserName = empty($currentUserName) ? "Alla" : $currentUserName;
+$title = "";
 
 $htmlPageTitleLink = "";
 $htmlPageContent = "";
 $htmlPageTextDialog = "";
 $hideTitle = true;
 
-require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
+// require_once(TP_PAGESPATH . 'page/PPageEditDialog.php');
 
 // -------------------------------------------------------------------------------------------
 //
@@ -328,7 +347,7 @@ EOD;
 // Create HTML for middle column
 //
 $htmlMain = <<<EOD
-<h1>{$htmlPageTitleLink}</h1>
+<!-- <h1>{$htmlPageTitleLink}</h1> -->
     <p>
         {$htmlPageContent}
     </p>

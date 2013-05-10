@@ -78,7 +78,7 @@ EOD;
     }
 
     public function getUser($idUser) {
-        return $users[$idUser];
+        return $this->users[$idUser];
     }
 
     public function getUsers() {

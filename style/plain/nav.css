@@ -43,7 +43,7 @@
 /*
  * Left Side navigation menu
  */
-#navigation {font-size:0.75em; width:150px; padding-top:32px;}
+#navigation {font-size:0.75em; padding-top:32px;}
 #navigation ul {margin:0px; padding:0px; background:#666;}
 #navigation li {list-style: none;
 border-bottom: #fff solid;
@@ -77,4 +77,8 @@ border-bottom: #fff solid;
 #navigation .row.all a {
     color: #A65C00;
     font-weight: bold;
+}
+
+#navigation .row.selected a {
+    font-size: 17px;
 }

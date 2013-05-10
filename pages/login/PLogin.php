@@ -5,7 +5,7 @@
 //
 // Show a login-form, ask for user name and password.
 //
-// Author: Mikael Roos
+// Author: Mats Ljungquist
 //
 
 // $log = CLogger::getInstance(__FILE__);
