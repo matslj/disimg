@@ -43,7 +43,7 @@
 /*
  * Left Side navigation menu
  */
-#navigation {font-size:0.75em; padding-top:32px;}
+#navigation {font-size:0.75em;}
 #navigation ul {margin:0px; padding:0px; background:#666;}
 #navigation li {list-style: none;
 border-bottom: #fff solid;

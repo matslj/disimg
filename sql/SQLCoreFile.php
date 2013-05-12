@@ -23,6 +23,7 @@ $fileDef = Array(
 	'DefaultCollate'	=> 'utf8_unicode_ci',
 );
 
+$tBildIntresse = DBT_BildIntresse;
 $tFile         = DBT_File;
 $tFolder       = DBT_Folder;
 $tFolderUser   = DBT_FolderUser;
@@ -702,6 +703,8 @@ wrap: BEGIN
             RETURN i;
 	END IF;
         
+        -- Delete the file. But first delete all interest in the file.
+        DELETE FROM {$tBildIntresse} WHERE BildIntresse_idFile = fileid;
         DELETE FROM {$tFile} WHERE idFile = fileid;
         
         -- Below I return 0 even though it is not entierly correct to do so.

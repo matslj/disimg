@@ -146,12 +146,29 @@ foreach ($folders as $key => $value) {
 }
 $folderHtml .= "</select>";
 
+// ------------------------------------------------------------
+// --
+// --                  Systemhjälp
+// --
+$helpContent = <<<EOD
+<p>
+    Den här sidan används för att administrera användare i systemet. Det finns
+    två typer av användare: adm (administratörer) och usr (vanliga användare).
+    Det går bara att ta bort vanliga användare.
+</p>
+EOD;
+
+// Provides help facility - include $htmlHelp in main content
+require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
+// -------------------- Slut Systemhjälp ----------------------
+
 // -------------------------------------------------------------------------------------------
 //
 // Create HTML for page
 //
 $htmlMain = <<<EOD
 <h1>Bildarkiv</h1>
+{$htmlHelp}
     <div class='section'>
         <div id='fileArchiveDiv'>
             <p>

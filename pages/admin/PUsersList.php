@@ -112,8 +112,25 @@ $javaScript = <<<EOD
 })(jQuery);
 EOD;
 
+// ------------------------------------------------------------
+// --
+// --                  Systemhjälp
+// --
+$helpContent = <<<EOD
+<p>
+    Den här sidan används för att administrera användare i systemet. Det finns
+    två typer av användare: adm (administratörer) och usr (vanliga användare).
+    Det går bara att ta bort vanliga användare.
+</p>
+EOD;
+
+// Provides help facility - include $htmlHelp in main content
+require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
+// -------------------- Slut Systemhjälp ----------------------
+
 $htmlMain = <<<EOD
 <h1>Användarkonton</h1>
+{$htmlHelp}
 EOD;
 
 $htmlRight = "";
@@ -169,7 +186,6 @@ $htmlMain .= <<< EOD
     <th><a href='{$httpRef}emailUser'>E-post</a></th>
     <th><a href='{$httpRef}lastLoginUser'>Senaste inloggning</a></th>
     <th><a href='{$httpRef}idGroup'>Grupp</a></th>
-    <th><a href='{$httpRef}nameGroup'>Grupp - beskrivning</a></th>
     <th class='knapp' style='width: 80px;'>&nbsp;</th>
     </tr>
 EOD;
@@ -184,7 +200,6 @@ while($row = $res->fetch_object()) {
         <td id="emailUser_{$i}">{$row->emailUser}</td>
         <td id="lastLoginUser_{$i}">{$row->lastLoginUser}</td>
         <td id="idGroup_{$i}">{$row->idGroup}</td>
-        <td id="nameGroup_{$i}">{$row->nameGroup}</td>
         <td><span id="{$i}:{$row->idUser}:{$row->accountUser}:{$row->nameUser}:{$row->emailUser}" class="edit"></span>
 EOD;
                 

@@ -55,13 +55,6 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
-        // Hide page help and initialize page help handler
-        $('#pageHelp').hide();
-        $('#pageHelpToggle').click(function() {
-            $('#pageHelp').toggle(400);
-            return false;
-        });
-
         $("#dialogCreate").disimgDialog();
         $("#dialogDelete").disimgDialog();
         
@@ -97,21 +90,30 @@ $javaScript = <<<EOD
 })(jQuery);
 EOD;
 
+// ------------------------------------------------------------
+// --
+// --                  Systemhjälp
+// --
+$helpContent = <<<EOD
+<p>
+    Alla filer som läggs upp i systemet måste läggas in i en katalog för att kunna
+    delas ut till en/flera användare och det är här du lägger upp katalogerna. I
+    tabellen nedan så betyder:
+</p>
+<ul>
+    <li>Namn - Namnet på katalogen. Detta bör inte vara alltför långt.</li>
+    <li>Antal - Antalet filer som just nu ligger i katalogen.</li>
+    <li>Kolumn för att ta bort en katalog. Du kan bara ta bort katalogen om den är tom.</li>
+</ul>
+EOD;
+
+// Provides help facility - include $htmlHelp in main content
+require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
+// -------------------- Slut Systemhjälp ----------------------
+
 $htmlMain = <<<EOD
 <h1>Kataloger</h1>
-    <a id="pageHelpToggle" href="#">Visa/dölj sidhjälp</a>
-    <div id="pageHelp">
-    <p>
-        Alla filer som läggs upp i systemet måste läggas in i en katalog för att kunna
-        delas ut till en/flera användare och det är här du lägger upp katalogerna. I
-        tabellen nedan så betyder:
-    </p>
-    <ul>
-        <li>Namn - Namnet på katalogen. Detta bör inte vara alltför långt.</li>
-        <li>Antal - Antalet filer som just nu ligger i katalogen.</li>
-        <li>Kolumn för att ta bort en katalog. Du kan bara ta bort katalogen om den är tom.</li>
-    </ul>
-    </div>
+{$htmlHelp}
 EOD;
 
 $htmlRight = "";

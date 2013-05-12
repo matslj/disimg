@@ -62,10 +62,12 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
 while($row = $results[0]->fetch_object()) {
     $total = $total + $row->facet;
-    $folderHtml .= "<div class='row'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
+    $classSelected = "";
     if ($row->id == $folderFilter) {
         $currentFolderName = $row->name;
+        $classSelected = " selected";
     }
+    $folderHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
 }
 
 // Create file handler (CAttachment()). The file handler presents html
@@ -73,7 +75,8 @@ while($row = $results[0]->fetch_object()) {
 $attachment = new CAttachment();
 $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter, true);
 $total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
-$folderHtml = "<div class='row all'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
+$markRow = empty($currentFolderName) ? " selected" : "";
+$folderHtml = "<div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();
 
 $htmlHead = "";

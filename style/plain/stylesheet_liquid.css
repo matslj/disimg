@@ -132,15 +132,16 @@ div#content_M { margin-right: 0px; }
 /* The left column */
 div#left_LMR,
 div#left_LM  {
-  float: left;
-  width: 160px;
+    float: left;
+    width: 160px;
 }
 
 /* The right column */
 div#right_LMR,
 div#right_MR {
-	float: right;
+    float: right;
     width: 250px;
+    padding-top: 13px;
 }
 
 /* The main column */
