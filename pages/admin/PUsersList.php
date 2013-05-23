@@ -45,6 +45,13 @@ $htmlHead = <<<EOD
     <!-- jQuery Form Plugin -->
     <script type='text/javascript' src='{$js}jquery-form/jquery.form.js'></script>
     <script type='text/javascript' src='{$js}myJs/disimg-utils.js'></script>
+        
+    <style>
+        .errorTextField {
+            background-color: red;
+            color: white;
+        }
+    </style>
 EOD;
 
 $redirectOnSuccess = 'json';
@@ -55,8 +62,54 @@ $javaScript = <<<EOD
 //
 (function($){
     $(document).ready(function() {
-        $("#dialogCreate").disimgDialog();
-        $("#dialogEdit").disimgDialog();
+        var createErrorMsg = function(errors) {
+            var retHtml = "<ul>";
+            for (var i = 0; i < errors.length; i++) {
+                retHtml = retHtml + "<li>" + errors[i] + "</li>";
+            }
+            retHtml = retHtml + "</ul>";
+            $(".errorMsg").html(retHtml);
+        };
+        
+        var dialogOptions = {
+            validator: function(dialogId) {
+                $(".errorMsg").html('');
+                var errors = [];
+                $("#" + dialogId + " input:text").each(function() {
+                    var name = $(this).attr('name');
+                    var val = $(this).val();
+                    if (name == 'accountname') {
+                        if (!val) {
+                            errors.push("Användarnamn-fältet måste ha ett värde");
+                            $(this).addClass('errorTextField');
+                        } else {
+                            $(this).removeClass('errorTextField');
+                        }
+                    } else if (name == 'name') {
+                        if (!val) {
+                        errors.push("Namn-fältet måste ha ett värde");
+                            $(this).addClass('errorTextField');
+                        } else {
+                            $(this).removeClass('errorTextField');
+                        }
+                    } else if (name == 'email') {
+                        if (!val) {
+                            errors.push("Epost-fältet måste ha ett värde");
+                            $(this).addClass('errorTextField');
+                        } else {
+                            $(this).removeClass('errorTextField');
+                        }
+                    }
+                });
+                if (errors.length != 0) {
+                    createErrorMsg(errors);
+                }
+                return (errors.length == 0);
+            }
+        };
+
+        $("#dialogCreate").disimgDialog(dialogOptions);
+        $("#dialogEdit").disimgDialog(dialogOptions);
         $("#dialogDelete").disimgDialog();
         
         // Declare buttons
@@ -83,7 +136,7 @@ $javaScript = <<<EOD
         });
         
         var options = {
-            success:       showResponse,  // post-submit callback 
+            success:   showResponse,  // post-submit callback 
             dataType:  "json"
         }; 
         // Bind to form
@@ -227,6 +280,8 @@ $htmlMain .= <<< EOD
         <input type='hidden' id='dialogCreateUserId' name='accountid' value=''>
         <input type='hidden' id='dialogCreateAction' name='action' value='create'>
         <fieldset>
+            <div class="errorMsg">
+            </div>
             <p>Användarnamn eller epost används i samband med inloggning</p>
             <table width='99%'>
                 <tr>
@@ -253,6 +308,8 @@ $htmlMain .= <<< EOD
         <input type='hidden' id='dialogEditUserId' name='accountid' value=''>
         <input type='hidden' id='dialogEditAction' name='action' value='edit'>
         <fieldset>
+            <div class="errorMsg">
+            </div>
             <table width='99%'>
                 <tr>
                     <td><label for="dialogEditAccountName">Användarnamn: </label></td>

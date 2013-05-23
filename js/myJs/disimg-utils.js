@@ -39,8 +39,14 @@ $.fn.disimgDialog = function(options) {
             {
                 text: "Ok",
                 click: function() {
-                    $("#" + element.attr('id') + "Form").submit();
-                    $( element ).dialog( "close" );
+                    var passedValidation = true;
+                    if (typeof o.validator !== 'undefined') {
+                        passedValidation = o.validator(element.attr('id'));
+                    }
+                    if (passedValidation) {
+                        $("#" + element.attr('id') + "Form").submit();
+                        $( element ).dialog( "close" );
+                    }
                 }
             },
             {
