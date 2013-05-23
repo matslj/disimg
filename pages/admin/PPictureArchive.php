@@ -37,6 +37,10 @@ $uo = CUserData::getInstance();
 $account = $uo -> getAccount();
 $userId	= $uo -> getId();
 
+$action 	= "?p=uploadp";
+$redirect       = "?p=" . $pc->computePage();
+$redirectFail   = "?p=" . $pc->computePage();
+
 // $log -> debug("userid: " . $userId);
 // Always check whats coming in...
 //$pc->IsNumericOrDie($articleId, 0);
@@ -48,24 +52,35 @@ $userId	= $uo -> getId();
 $db 		= new CDatabaseController();
 $mysqli = $db->Connect();
 
-// Get all the folders from db (the result will, later on, be used in order
-// to populate drop downs).
+
+// Get all the folders from db. This will form the left side folder nav system.
+$folderTreeHtml = "";
+$currentFolderName = "";
 $spListFolders = DBSP_ListFolders;
-$query 	= <<< EOD
-CALL {$spListFolders}('');
-EOD;
+$query 	= "CALL {$spListFolders}('')";
+
 $res = $db->MultiQuery($query);
 $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 $folders = Array();
 while($row = $results[0]->fetch_object()) {
     $folders[$row->id] = $row->name . "#" . $row->facet;
+    $classSelected = "";
+    if ($row->id == $folderFilter) {
+        $currentFolderName = $row->name;
+        $classSelected = " selected";
+    }
+    $folderTreeHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
 }
 
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
 $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
+$total = $attachment->getTotalNrOfFiles($db);
+$markRow = empty($currentFolderName) ? " selected" : "";
+$folderTreeHtml = "<div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderTreeHtml}";
+$results[0]->close();
 // $archiveDb = $attachment -> getDownloads($db, $userId, 'archive');
 $mysqli->close();
 
@@ -130,9 +145,6 @@ $javaScript .= <<<EOD
 EOD;
 
 $maxFileSize 	= FILE_MAX_SIZE;
-$action 	= "?p=uploadp";
-$redirect       = "?p=" . $pc->computePage();
-$redirectFail   = "?p=" . $pc->computePage();
 
 $folderHtml = <<<EOD
     <select id="ddFolders">
@@ -224,7 +236,7 @@ $htmlRight = "";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "{$folderTreeHtml}</div>";
 
 $page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

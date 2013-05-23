@@ -77,3 +77,19 @@ div#infobar p {
 	padding: 0;
 	font-size: x-small;
 }
+
+#left_LMR p.note {
+    font-size: 8px;
+    padding: 5px;
+    height: 30px;
+    background-color: #E3E0D1;
+    border: 1px solid black;
+}
+
+#right_LMR p.note {
+    font-size: 8px;
+    padding: 5px;
+    height: 30px;
+    background-color: #E3E0D1;
+    border: 1px solid black;
+}

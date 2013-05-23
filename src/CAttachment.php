@@ -148,6 +148,7 @@ EOD;
                     // old delete-link <a href='?p=file-delete&amp;referer={$redirect}&amp;file=" + data.uploadedFile.uniqueName + "&amp;ext=" + data.uploadedFile.extension + "' title='Klicka för att radera bilden.'>[delete]</a>
                     function showResponse(data, statusText, xhr, \$form) {
                         if (typeof data.errorMessage === 'undefined') {
+                            updateFolderListItemAll();
                             var link = "{$uploadLink}/" + data.uploadedFile.accountName + "/";
                             var theFile = data.uploadedFile.uniqueName + "." + data.uploadedFile.extension;
                             // window.location = "?p={$redirect}";
@@ -161,17 +162,76 @@ EOD;
                                         data.uploadedFile.created +
                                         "</td><td class='folderName'>" +
                                         "Ingen katalog" +
-                                        "</td><td><input id='" + data.uploadedFile.id + "#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
+                                        "</td><td class='delCol'><input id='" + data.uploadedFile.id + "#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
                         } else {
                             var message = "<span class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat; padding-left: 20px;\">" + data.errorMessage + "</span>";
                             \$form.find('span.status').html(message);
                         }
-                        $.jGrowl("Uploaded file. Done.");
+                        //$.jGrowl("Uploaded file. Done.");
                         // \$form.find('span.status').html(responseText);
                     }
                 });
+                
+                /*
+                 * This function updates the list of folders in the left navigation menu
+                 * This is a bit of a secret/customized operation and therefore not very good but
+                 * I want to make it easy for myself in this case.
+                 *
+                 * Anyhow, with the help of jQuery, this retrievs all elements with
+                 * the '.row' selector and updates their child a-href html text if
+                 * the row is a row with the '.all'-class or if the row has the
+                 * folder name folderName.
+                 *
+                 */
+                function updateFolderListItemAll() {
+                    var e = $('.row.all').first()
+                    var h = e.html();
+                    e.html(incOrDecNumber(h, true));
+                }
+                
+                function moveFolderInList(source, destination) {
+                    $('.row').each(function() {
+                        var e = $(this).first();
+                        var h = e.html();
+                        
+                        if (h.indexOf(destination) > 0) {
+                            e.html(incOrDecNumber(h, true));
+                        } else if (h.indexOf(source) > 0) {
+                            e.html(incOrDecNumber(h, false));
+                        } 
+                    });
+                }
+                
+                function deleteFolderInList(source) {
+                    var e = $('.row.all').first()
+                    var h = e.html();
+                    e.html(incOrDecNumber(h, false));
+                    
+                    $('.row').each(function() {
+                        var e = $(this).first();
+                        var h = e.html();
+                        
+                        if (h.indexOf(source) > 0) {
+                            e.html(incOrDecNumber(h, false));
+                        } 
+                    });
+                }
+                
+                function incOrDecNumber(html, inc) {
+                    var h = html;
+                    var start = h.indexOf('(') + 1;
+                    var end = h.indexOf(')');
+                    var number = parseInt(h.substring(start, end));
+                    if (inc) {
+                        number++;
+                    } else {
+                        number--;
+                    }
+                    var newH = h.substring(0,start) + number + h.substring(end);
+                    return newH;
+                }
                 
                 function getFileDataFromCheckbox() {
                 }
@@ -217,15 +277,20 @@ EOD;
                                     if (index1 >= 0 && index2 >= 0) {
                                         var indexName = checkedList[i].substring(index1 + 1, index2);
                                         if (data.action == 'file-deleteMulti') {
+                                            var oldText = $('#row' + indexName + ' td.folderName').text();
+                                            deleteFolderInList(oldText);
                                             $('#row' + indexName).remove();
                                         } else {
+                                            var oldText = $('#row' + indexName + ' td.folderName').text();
                                             $('#row' + indexName + ' td.folderName').text(data.folderName);
+                                            moveFolderInList(oldText, data.folderName);
                                             // $('select').find(":selected").text(data.folderName + ' (' + data.facet + ')');
                                         }
                                         console.log(index1);
                                         console.log(checkedList[i].substring(index1 + 1, index2));
                                     }
                                 }
+                                $('.cbMark').attr('checked', false);
                                 //$('input.cbMark').remove();
                                 // alert(res);
                             }
@@ -477,7 +542,7 @@ EOD;
                 $imgs = $thumbFolder . $row -> account . '/' . $row -> uniquename . '.' . $ext;
                 // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
                 $disabled = $chkDisable && $uo -> isAdmin() ? " disabled" : "";
-                $deleteCol = "<td><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$disabled}{$checked}/></td>";
+                $deleteCol = "<td class='delCol'><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$disabled}{$checked}/></td>";
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
@@ -512,7 +577,7 @@ EOD;
                 
                 <th>Modified</th>
                 -->
-                <th>katalog</th>
+                <th>Katalog</th>
                 <th class="knapp">&nbsp;</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>

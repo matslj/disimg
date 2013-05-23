@@ -153,15 +153,17 @@ $usersHtml = "<div class='row all{$markRow}'><a href='{$redirect}{$folderPar}'>A
 // *
 // * Also, pick out the current folder.
 // *
-$userWhere = empty($userFilter) ? "" : " INNER JOIN {$tBildIntresse} ON BildIntresse_idFile = idFile WHERE BildIntresse_idUser = {$userFilter}";
+$userWhere = empty($userFilter) ? "" : " WHERE BildIntresse_idUser = {$userFilter}";
+ // INNER JOIN {$tBildIntresse} ON BildIntresse_idFile = idFile
 
 $query = <<< EOD
     SELECT
-        File_idFolder AS folderId,
-        count(idFile) AS antal
-    FROM {$tFile}
-        {$userWhere}
-    GROUP BY File_idFolder
+        A.File_idFolder AS folderId,
+        count(A.idFile) AS antal
+    FROM {$tFile} AS A
+    INNER JOIN (SELECT DISTINCT BildIntresse_idFile FROM {$tBildIntresse}
+                INNER JOIN {$tFile} ON BildIntresse_idFile = idFile{$userWhere}) AS C ON BildIntresse_idFile = idFile
+    GROUP BY A.File_idFolder
     ;
 EOD;
 
@@ -240,9 +242,9 @@ while($row = $results->fetch_object()) {
         }
         $contentHtml .= "<div class='folderHeader'>" . $tempFolders[$row->folderId] . "</div>";
         $contentHtml .= <<<EOD
-            <table class="disImgTable" style="width:100%">
+            <table class="userInterest">
             <thead>
-                <th>Tumme</th>
+                <th class="thumb">Tumme</th>
                 <th>Filnamn</th>
             </thead>
             <tbody>
@@ -258,7 +260,7 @@ EOD;
         // Print file information
         $contentHtml .= <<<EOD
             <tr id='row{$row->uniquename}'>
-                <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
+                <td class="thumb"><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
                 <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
             </tr>
 EOD;
@@ -357,7 +359,7 @@ $htmlMain = <<<EOD
     {$htmlPageTextDialog}
 EOD;
 
-$htmlRight = "<div id='navigation'>{$usersHtml}</div>";
+$htmlRight = "<p class='note'>(x) anger antal bilder en användare är intresserad av. 'Alla' visar här den totala 'intressesumman'.</p><div id='navigation'>{$usersHtml}</div>";
 
 // -------------------------------------------------------------------------------------------
 //
@@ -366,7 +368,7 @@ $htmlRight = "<div id='navigation'>{$usersHtml}</div>";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>{$folderHtml}</div>";
+$htmlLeft = "<p class='note'>(x) anger antal bilder som någon användare visat intresse för i respektive katalog.</p><div id='navigation'>{$folderHtml}</div>";
 
 $page->printPage('Bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
