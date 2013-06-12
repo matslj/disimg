@@ -36,8 +36,8 @@ html {
 div#wrap {												/* wraps all divs of page */
     margin: 0 auto;
     padding: 0;
-    min-width: 500px;
-    max-width: 1000px;
+    min-width: 600px;
+    max-width: 1100px;
     background: #FFFFF0;
 }
 
@@ -133,7 +133,7 @@ div#content_M { margin-right: 0px; }
 div#left_LMR,
 div#left_LM  {
     float: left;
-    width: 160px;
+    width: 190px;
 }
 
 /* The right column */
@@ -146,7 +146,7 @@ div#right_MR {
 
 /* The main column */
 div#main_LMR,
-div#main_LM { margin-left: 170px;  margin-right: 10px;}
+div#main_LM { margin-left: 200px;  margin-right: 10px;}
 div#main_MR,
 div#main_M { margin-left: 10px; margin-right: 10px;}
 
@@ -338,6 +338,14 @@ div.sourcecode {
 
 .disImgTable th.antal {
     width: 46px;
+}
+
+.disImgTable th.thumb {
+    width: 80px;
+}
+
+.disImgTable td.folderName {
+    width: 200px;
 }
 
 /* Tabell för PPictureUserInterest.php */

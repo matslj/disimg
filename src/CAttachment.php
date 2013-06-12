@@ -543,22 +543,44 @@ EOD;
                 // $deleteCol = "<td><a href='{$deleteFile}{$row->uniquename}&amp;ext={$ext}' title='Click to delete file.'>[delete]</a></td>";
                 $disabled = $chkDisable && $uo -> isAdmin() ? " disabled" : "";
                 $deleteCol = "<td class='delCol'><input id='{$row->id}#{$row->uniquename}#{$ext}' class='cbMark' type='checkbox' name='cbMark#{$row->uniquename}'{$disabled}{$checked}/></td>";
+                $adminColumns = "";
+                if ($uo -> isAdmin()) {
+                    $adminColumns .= <<<EOD
+                        <td>{$row->size}</td>
+                        <td>{$row->created}</td>
+                        <!--
+                        <td title='{$row->path}'>{$row->uniquename}</td>
+
+                        <td>{$row->mimetype}</td>
+
+                        <td>{$row->modified}</td>
+                        -->
+                        
+EOD;
+                }
                 $archiveDb .= <<<EOD
                     <tr id='row{$row->uniquename}'>
                     <td><a href='{$imgs}'><img src='{$thumbs}' title='Klicka för att titta på bilden' /></a></td>
                     <td><a href='{$downloadFile}{$row->uniquename}' title='Click to download file.'>{$row -> name}</a></td>
-                    <td>{$row->size}</td>
-                    <td>{$row->created}</td>
-                    <!--
-                    <td title='{$row->path}'>{$row->uniquename}</td>
-                    
-                    <td>{$row->mimetype}</td>
-                    
-                    <td>{$row->modified}</td>
-                    -->
+                    {$adminColumns}
                     <td class='folderName'>{$row->foldername}</td>
                     {$deleteCol}
                     </tr>
+EOD;
+            }
+            
+            $adminColumns = "";
+            if ($uo -> isAdmin()) {
+                $adminColumns .= <<<EOD
+                    <th>Storlek</th>
+                    <th>Skapad</th>
+                    <!--
+                    <th>Unique</th>
+
+                    <th>Type</th>
+
+                    <th>Modified</th>
+                    -->
 EOD;
             }
             
@@ -566,17 +588,9 @@ EOD;
             $archiveDbStart = <<<EOD
                 <table class="disImgTable" style="width:100%">
                 <thead>
-                <th>Tumme</th>
+                <th class="thumb">Tumme</th>
                 <th>Filnamn</th>
-                <th>Storlek</th>
-                <th>Skapad</th>
-                <!--
-                <th>Unique</th>
-                
-                <th>Type</th>
-                
-                <th>Modified</th>
-                -->
+                {$adminColumns}
                 <th>Katalog</th>
                 <th class="knapp">&nbsp;</th>
                 </thead>
@@ -588,6 +602,7 @@ EOD;
             // Finish table
             $archiveDb .= <<<EOD
                 </tbody>
+                <!--
                 <tfoot>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -596,6 +611,7 @@ EOD;
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 </tfoot>
+                -->
                 </table>
 EOD;
 

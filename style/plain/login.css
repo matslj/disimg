@@ -10,7 +10,18 @@
 /* -------------------------------------------------------------------------------------
 /* Login div */
 
-div#login {}
+div#login {
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#login fieldset {
+    padding: 10px;
+    background-color: #dbdadc;
+    border-right: 3px solid black;
+    border-bottom: 3px solid black;
+}
 
 div#login input.login,
 div#login input.password

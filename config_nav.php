@@ -10,7 +10,6 @@
 $menuNavBar = Array (
         'Hem'           => '?p=home',
         'Bildarkiv' 	=> '?p=archive',
-    	'Om' 		=> '?p=about',
 );
 define('MENU_NAVBAR',           serialize($menuNavBar));
 
@@ -19,7 +18,7 @@ $menuNavBarForAdmin = Array (
         'Bildarkiv' 	=> '?p=archive',
         'Bildintresse' 	=> '?p=userinterest',
         'Admin'         => '?p=admin',
-    	'Om' 		=> '?p=about',
+    	//'Om' 		=> '?p=about',
 );
 define('MENU_NAVBAR_FOR_ADMIN', serialize($menuNavBarForAdmin));
 

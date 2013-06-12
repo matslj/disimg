@@ -101,7 +101,7 @@ $helpContent = <<<EOD
     tabellen nedan så betyder:
 </p>
 <ul>
-    <li>Namn - Namnet på katalogen. Detta bör inte vara alltför långt.</li>
+    <li>Namn - Namnet på katalogen. Får vara max 20 tecken långt, inklusive mellanslag.</li>
     <li>Antal - Antalet filer som just nu ligger i katalogen.</li>
     <li>Kolumn för att ta bort en katalog. Du kan bara ta bort katalogen om den är tom.</li>
 </ul>

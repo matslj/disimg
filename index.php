@@ -68,7 +68,7 @@ switch ($gPage) {
     //
     // Login
     //
-    case 'login':               require_once(TP_PAGESPATH . 'login/PLogin.php'); break;
+    case 'login':               require_once(TP_PAGESPATH . 'login/PLoginSimple.php'); break;
     case 'loginp':              require_once(TP_PAGESPATH . 'login/PLoginProcess.php'); break;
     case 'logoutp':             require_once(TP_PAGESPATH . 'login/PLogoutProcess.php'); break;
 

@@ -1,9 +1,18 @@
 <?php
 // ===========================================================================================
 //
-// File: PPictureArchive.php
+// File: PPictureUserInterest.php
 //
-// Description: Show the content of the users filearchive.
+// Description: 
+// Presents which objects a user are interested in. 
+// 
+// This page has three columns:
+// - left:   list of available folders with number of files of interest in each folder.
+//           The number of files in each folder varies depending on choices in the right column.
+// - middle: the result of selections made in left column and right column; it shows the
+//           which pictures a user are interested in.
+// - right:  list of users who has any kind of interest of any file in any folder.
+//           The number of files on each user varies depending on choices in the left column.
 //
 // Author: Mats Ljungquist
 //
@@ -275,7 +284,7 @@ if ($prevFolder != 0) {
     $contentHtml .= "</tbody></table>";
 }
 
-$contentHtml .= "<pre>{$query}</pre>";
+// $contentHtml .= "<pre>{$query}</pre>";
 
 $results -> close();
 
@@ -318,7 +327,7 @@ $results -> close();
 //$currentUserName = empty($currentUserName) ? "Alla" : $currentUserName;
 $title = "";
 
-$htmlPageTitleLink = "";
+$htmlPageTitleLink = "Visat intresse";
 $htmlPageContent = "";
 $htmlPageTextDialog = "";
 $hideTitle = true;
@@ -343,13 +352,34 @@ $htmlHead .= <<<EOD
 
     <!-- jQuery Form Plugin -->
 EOD;
+    
+// ------------------------------------------------------------
+// --
+// --                  Systemhjälp
+// --
+$helpContent = <<<EOD
+<p>
+    Den här sidan visar vilka objekt en olika användare är intresserade av. Sidan
+    är uppdelad i tre kolumner:
+</p>
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+EOD;
+
+// Provides help facility - include $htmlHelp in main content
+require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
+// -------------------- Slut Systemhjälp ----------------------
 
 // -------------------------------------------------------------------------------------------
 //
 // Create HTML for middle column
 //
 $htmlMain = <<<EOD
-<!-- <h1>{$htmlPageTitleLink}</h1> -->
+    <h1>{$htmlPageTitleLink}</h1>
+    {$htmlHelp}
     <p>
         {$htmlPageContent}
     </p>
@@ -359,7 +389,8 @@ $htmlMain = <<<EOD
     {$htmlPageTextDialog}
 EOD;
 
-$htmlRight = "<p class='note'>(x) anger antal bilder en användare är intresserad av. 'Alla' visar här den totala 'intressesumman'.</p><div id='navigation'>{$usersHtml}</div>";
+// $htmlRight = "<p class='note'>(x) anger antal bilder en användare är intresserad av. 'Alla' visar här den totala 'intressesumman'.</p><div id='navigation'>{$usersHtml}</div>";
+$htmlRight = "<div id='navigation' style='margin-top: 50px;'>{$usersHtml}</div>";
 
 // -------------------------------------------------------------------------------------------
 //
@@ -368,7 +399,8 @@ $htmlRight = "<p class='note'>(x) anger antal bilder en användare är intresser
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<p class='note'>(x) anger antal bilder som någon användare visat intresse för i respektive katalog.</p><div id='navigation'>{$folderHtml}</div>";
+// $htmlLeft = "<p class='note'>(x) anger antal bilder som någon användare visat intresse för i respektive katalog.</p><div id='navigation'>{$folderHtml}</div>";
+$htmlLeft = "<div id='navigation' style='margin-top: 45px;'>{$folderHtml}</div>";
 
 $page->printPage('Bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

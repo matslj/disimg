@@ -261,9 +261,12 @@ $mysqli->close();
 // --
 $helpContent = <<<EOD
 <p>
-    Den här sidan används för att administrera användare i systemet. Det finns
-    två typer av användare: adm (administratörer) och usr (vanliga användare).
-    Det går bara att ta bort vanliga användare.
+    På den här sidan kan du koppla en användare till en eller flera kataloger.
+    Koppla gör du genom att trycka på plus-tecknet i tabellens högerkant. Användaren
+    som du kopplar kan bara se de kataloger som du kopplat upp användaren emot.
+</p>
+<p>
+    Du kopplar loss användare från en katalog genom att klicka på minus-tecknet.
 </p>
 EOD;
 

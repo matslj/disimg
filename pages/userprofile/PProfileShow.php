@@ -38,7 +38,7 @@ $intFilter ->IsUserMemberOfGroupAdminOrIsCurrentUser($userId);
 $htmlLeft = "";
 $htmlRight = "";
 $htmlMain = <<<EOD
-<h1>Account settings</h1>
+<h1>Kontoinställningar</h1>
 EOD;
 
 // I could have gone directly on the userObject in session, but this wont work
@@ -79,7 +79,22 @@ $avatarUser = $row -> avatar;
 $gravatar = $row -> gravatar;
 $gravatarsmall = $row -> gravatarsmall;
 
-
+$readonly = "";
+if ($uo -> isAdmin()) {
+$readonly .= <<< EOD
+    <tr>
+        <td><label for="account">Lösenord:</label></td>
+        <td style='text-align: right;'><input class='password' type='password' name='password1'></td>
+    </tr>
+    <tr>
+        <td><label for="account">Lösenord (igen):</label></td>
+        <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
+    </tr>
+    <tr>
+        <td colspan='2' style='text-align: right;'><button type='submit' name='submit' value='change-password'>Ändra lösenord</button></td>
+    </tr>
+EOD;
+}
 
 $action = "?p=profilep";
 $redirect = "?p=profile";
@@ -90,7 +105,7 @@ $htmlMain .= <<< EOD
 <div id="userProfile">
 
     <!-- userid and password -->
-    <h2>Account and password</h2>
+    <h2>Användarid</h2>
     <form action='{$action}' method='POST'>
         <input type='hidden' name='redirect' value='{$redirect}#basic'>
         <input type='hidden' name='redirect-fail' value='{$redirect}'>
@@ -98,26 +113,16 @@ $htmlMain .= <<< EOD
         <fieldset class='accountsettings'>
             <table width='99%'>
                 <tr>
-                    <td><label for="account">Name:</label></td>
+                    <td><label for="account">Användarid:</label></td>
                     <td style='text-align: right;'><input class='account-dimmed' type='text' name='account' readonly value='{$accountUser}'></td>
                 </tr>
-                <tr>
-                    <td><label for="account">Password:</label></td>
-                    <td style='text-align: right;'><input class='password' type='password' name='password1'></td>
-                </tr>
-                <tr>
-                    <td><label for="account">Password (again):</label></td>
-                    <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
-                </tr>
-                <tr>
-                    <td colspan='2' style='text-align: right;'><button type='submit' name='submit' value='change-password'>Change password</button></td>
-                </tr>
+                {$readonly}
             </table>
         </fieldset>
     </form>
 
     <!-- email -->
-    <h2 id='email'>Email settings</h2>
+    <h2 id='email'>Epost</h2>
     <form action='{$action}' method='POST'>
         <input type='hidden' name='redirect' value='{$redirect}#email'>
         <input type='hidden' name='redirect-failure' value='{$redirect}'>
@@ -125,11 +130,11 @@ $htmlMain .= <<< EOD
         <fieldset class='accountsettings'>
             <table width='99%'>
                 <tr>
-                    <td><label for="account">Email: </label></td>
+                    <td><label for="account">Epost: </label></td>
                     <td style='text-align: right;'><input class='email' type='text' name='email' value='{$emailUser}' /></td>
                 </tr>
                 <tr>
-                    <td colspan='2' style='text-align: right;'><button type='submit' name='submit' value='change-email'>Update email</button></td>
+                    <td colspan='2' style='text-align: right;'><button type='submit' name='submit' value='change-email'>Ändra epost</button></td>
                 </tr>
             </table>
         </fieldset>
@@ -150,7 +155,7 @@ $htmlMain .= <<< EOD
                 </tr>
                 <tr>
                     <td><img src='{$avatarUser}' alt=':)'></td>
-                    <td style='text-align: right;'><button type='submit' name='submit' value='change-avatar'>Update avatar</button></td>
+                    <td style='text-align: right;'><button type='submit' name='submit' value='change-avatar'>Ändra avatar</button></td>
                 </tr>
             </table>
         </fieldset>
@@ -165,15 +170,15 @@ $htmlMain .= <<< EOD
         <fieldset class='accountsettings'>
         <table width='99%'>
             <tr>
-                <td colspan='2'><p>User your Gravatar from <a href='http://gravatar.com'>gravatar.com</a></p></td>
+                <td colspan='2'><p>Din Gravatar från <a href='http://gravatar.com'>gravatar.com</a></p></td>
             </tr>
             <tr>
-                <td><label for="gravatar">Gravatar id (email):</label></td>
+                <td><label for="gravatar">Gravatar id (epost):</label></td>
                 <td style='text-align: right;'><input class='gravatar' type='text' name='gravatar' value='{$gravatar}' placeholder="Insert gravatar id here"></td>
             </tr>
             <tr>
                 <td><img src='{$gravatarsmall}' alt=''></td>
-                <td style='text-align: right;'><button type='submit' name='submit' value='change-gravatar'>Update gravatar</button></td>
+                <td style='text-align: right;'><button type='submit' name='submit' value='change-gravatar'>Ändra gravatar</button></td>
             </tr>
         </table>
         </fieldset>

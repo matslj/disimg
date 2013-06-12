@@ -42,8 +42,9 @@ $user 		= $pc->POSTisSetOrSetDefault('nameUser', '');
 $password 	= $pc->POSTisSetOrSetDefault('passwordUser', '');
 $passwordAgain 	= $pc->POSTisSetOrSetDefault('passwordUserAgain', '');
 $createAccount 	= $pc->POSTisSetOrSetDefault('createNewAccount', FALSE);
+$adminLogin     = $pc->POSTisSetOrSetDefault('admin', FALSE);
 
-$errorRedirect = "login&createAccount={$createAccount}";
+$errorRedirect = "login&al={$adminLogin}&createAccount={$createAccount}";
 
 // --------------------------------------------------------------------------------------------
 // Validate input fields
@@ -52,9 +53,9 @@ $errorRedirect = "login&createAccount={$createAccount}";
 if ($createAccount) {
     $log ->debug("in here: ");
     if (empty($password) || empty($passwordAgain)) {
-        $_SESSION['errorMessage']	= "Password fields cannot be empty";
+        $_SESSION['errorMessage']	= "Lösenordsfälten får inte vara tomma";
     } else if (strcmp($password, $passwordAgain) != 0) {
-        $_SESSION['errorMessage']	= "Entered and reentered password must match";
+        $_SESSION['errorMessage']	= "Lösenordesfälten måste matcha varandra";
     } else {
         // Validate captcha
         $captcha = captcha_CCaptcha::getInstance();
@@ -117,7 +118,7 @@ if($results[$index]->num_rows === 1) {
         $uo -> populateUserData($row->id, $row->account, $row->name, $row->email, $row->avatar, $row->groupid);
         // $log -> debug("id = " . $uo -> getId());
 } else {
-        $_SESSION['errorMessage']	= "Failed to login, wrong username or password";
+        $_SESSION['errorMessage']	= "Inloggning misslyckades - felaktigt användarnamn och/eller lösenord.";
         $_POST['redirect'] 		= $errorRedirect;
 }
 

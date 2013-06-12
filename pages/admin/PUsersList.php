@@ -107,6 +107,14 @@ $javaScript = <<<EOD
                 return (errors.length == 0);
             }
         };
+        
+        var clearErrors = function(dialogId, clearFields) {
+            $(".errorMsg").html('');
+            var element = $("#" + dialogId + " input:text").removeClass('errorTextField');
+            if (clearFields) {
+                element.val('');
+            }
+        }
 
         $("#dialogCreate").disimgDialog(dialogOptions);
         $("#dialogEdit").disimgDialog(dialogOptions);
@@ -123,6 +131,7 @@ $javaScript = <<<EOD
             $('#dialogEditName').val(substr[3]);
             $('#dialogEditEmail').val(substr[4]);
             $("#dialogEdit").dialog("open");
+            clearErrors("dialogEdit", false);
         });
         
         $(".delete").button({
@@ -133,6 +142,7 @@ $javaScript = <<<EOD
             $('#dialogDeleteUserId').val(substr[1]);
             $('#dialogDeleteName').html(substr[3]);
             $('#dialogDelete').dialog("open");
+            $(".errorMsg").html('');
         });
         
         var options = {
@@ -158,6 +168,7 @@ $javaScript = <<<EOD
 	$('#userList').click(function(event) {
             if ($(event.target).is('.create')) {
                 $("#dialogCreate").dialog("open");
+                clearErrors("dialogCreate", true);
                 event.preventDefault();
             }
 	});

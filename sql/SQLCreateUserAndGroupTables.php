@@ -461,7 +461,7 @@ END;
 INSERT INTO {$tUser} (accountUser, emailUser, nameUser, lastLoginUser, passwordUser, avatarUser)
 VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', NOW(), md5('hemligt'), '{$imageLink}/man_60x60.png');
 INSERT INTO {$tUser} (accountUser, emailUser, nameUser, lastLoginUser, passwordUser, avatarUser)
-VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', NOW(), md5('doe'), '{$imageLink}/woman_60x60.png');
+VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', NOW(), md5('DIS1000'), '{$imageLink}/woman_60x60.png');
 
 
 --

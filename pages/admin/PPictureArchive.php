@@ -3,9 +3,14 @@
 //
 // File: PPictureArchive.php
 //
-// Description: Show the content of the users filearchive.
+// Description:
+// On this page an admin user can move upload images (thumbnails will be automatically
+// created), move images between folders and delete images.
+// 
+// In the left column there is a menu for the admin panel and also there is a folder
+// chooser (similar to the ones that exist on many other pages in this application).
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 $log = CLogger::getInstance(__FILE__);
@@ -79,7 +84,7 @@ $attachment = new CAttachment();
 $archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
 $total = $attachment->getTotalNrOfFiles($db);
 $markRow = empty($currentFolderName) ? " selected" : "";
-$folderTreeHtml = "<div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderTreeHtml}";
+$folderTreeHtml = "<div class='folderTree'><div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderTreeHtml}</div>";
 $results[0]->close();
 // $archiveDb = $attachment -> getDownloads($db, $userId, 'archive');
 $mysqli->close();
@@ -96,6 +101,11 @@ $attachment = new CAttachment();
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
 $htmlHead = <<<EOD
+    <style>
+        .folderTree {
+            margin-top: 20px;
+        }
+    </style>
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
@@ -164,9 +174,8 @@ $folderHtml .= "</select>";
 // --
 $helpContent = <<<EOD
 <p>
-    Den här sidan används för att administrera användare i systemet. Det finns
-    två typer av användare: adm (administratörer) och usr (vanliga användare).
-    Det går bara att ta bort vanliga användare.
+    Här kan du lägga upp, ta bort och flytta filer. Flytta handlar om att flytta
+    filer mellan olika kataloger.
 </p>
 EOD;
 
