@@ -210,6 +210,105 @@ class CPageController {
 
 		return $refToThisPage;
 	}
+        
+        /**
+         * 
+         * @param type $totalrows
+         * @param type $numLimit
+         * @param type $amm
+         * @param type $queryStr
+         * @return type a string array. This array contains:
+         *              pos 0 - mysql LIMIT clause -> this is to be added last
+         *                      in the query
+         *              pos 1 - html presenting current selection
+         *              pos 2 - html control panel (with step left/right arrows)
+         */
+        public static function pageBrowser($totalrows,$numLimit,$amm,$queryStr) {
+            
+            $pc = CPageController::getInstance();
+            
+            // Get parameters defining current selection
+            $numBegin = $pc->GETisSetOrSetDefault('numBegin', '');
+            $begin = $pc->GETisSetOrSetDefault('begin', '');
+            $num = $pc->GETisSetOrSetDefault('num', '');
+            
+            // Check parameters (only if not empty)
+            if (!empty($numBegin)) $pc->IsNumericOrDie($numBegin, 0);
+            if (!empty($begin)) $pc->IsNumericOrDie($begin, 0);
+            if (!empty($num)) $pc->IsNumericOrDie($num, 0);
+
+            $larrow = " << Prev ".$numLimit." "; //You can either have an image or text, eg. Previous
+            $rarrow = " Next ".$numLimit." >> "; //You can either have an image or text, eg. Next
+            $wholePiece = "";
+            //$wholePiece .= "Alla attribut: {$totalrows} {$numLimit} {$amm} {$queryStr} {$numBegin} {$begin} {$num}   ";
+            $wholePiece .= "Sida: "; //This appears in front of your page numbers
+
+            if ($totalrows > 0) {
+                $numSoFar = 1;
+                $cycle = ceil($totalrows/$amm);
+                if (empty($numBegin) || $numBegin < 1) {
+                    $numBegin = 1;
+                    $num = 1;
+                }
+                $minus = $numBegin-1;
+                $start = $minus*$amm;
+                if (empty($begin)) {
+                    $begin = $start;
+                }
+                $preBegin = $numBegin-$numLimit;
+                $preStart = $amm*$numLimit;
+                $preStart = $start-$preStart;
+                $preVBegin = $start-$amm;
+                $preRedBegin = $numBegin-1;
+                if ($start > 0 || $numBegin > 1) {
+                    $wholePiece .= "<a href='?num=".$preRedBegin
+                            ."&numBegin=".$preBegin
+                            ."&begin=".$preVBegin
+                            .$queryStr."'>"
+                            .$larrow."</a>\n";
+                }
+                for ($i=$numBegin;$i<=$cycle;$i++) {
+                    if ($numSoFar == $numLimit+1) {
+                        $piece = "<a href='?numBegin=".$i
+                            ."&num=".$i
+                            ."&begin=".$start
+                            .$queryStr."'>"
+                            .$rarrow."</a>\n";
+                        $wholePiece .= $piece;
+                        break;
+                    }
+                    $piece = "<a href='?begin=".$start
+                        ."&num=".$i
+                        ."&numBegin=".$numBegin
+                        .$queryStr
+                        ."'>";
+                    if ($num == $i) {
+                        $piece .= "</a><b>$i</b><a>";
+                    } else {
+                        $piece .= "$i";
+                    }
+                    $piece .= "</a>\n";
+                    $start = $start+$amm;
+                    $numSoFar++;
+                    $wholePiece .= $piece;
+                }
+                $wholePiece .= "\n";
+                $wheBeg = $begin+1;
+                $wheEnd = $begin+$amm;
+                $wheToWhe = "<b>".$wheBeg."</b> - <b>";
+                if ($totalrows <= $wheEnd) {
+                    $wheToWhe .= $totalrows."</b>";
+                } else {
+                    $wheToWhe .= $wheEnd."</b>";
+                }
+                $sqlprod = " LIMIT ".$begin.", ".$amm;
+            } else {
+                $wholePiece = "Sorry, no records to display.";
+                $wheToWhe = "<b>0</b> - <b>0</b>";
+            }
+
+            return array($sqlprod,$wheToWhe,$wholePiece);
+        }
 
 
 } // End of Of Class

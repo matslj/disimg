@@ -73,8 +73,10 @@ while($row = $results[0]->fetch_object()) {
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter, true);
 $total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
+$dto = new CFileDto($userId, $pc->computePage(), $folderFilter, true);
+
+$archiveDb = $attachment -> getFileList($db, $dto);
 $markRow = empty($currentFolderName) ? " selected" : "";
 $folderHtml = "<div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";
 $results[0]->close();

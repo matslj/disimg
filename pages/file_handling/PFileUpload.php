@@ -58,9 +58,9 @@ $javaScript = $attachment -> getJavaScript();
 //
 
 $maxFileSize 	= FILE_MAX_SIZE;
-$action 			= "?p=uploadp";
-$redirect 		= "?p=upload";
-$redirectFail = "?p=upload";
+$action 	= "?p=uploadp";
+$redirect 	= "?p=upload";
+$redirectFail   = "?p=upload";
 
 $htmlMain = <<<EOD
 <div class='section'>

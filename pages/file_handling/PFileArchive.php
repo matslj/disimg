@@ -76,7 +76,8 @@ $archiveDisk .= '</table>';
 $db 		= new CDatabaseController();
 $mysqli = $db->Connect();
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, 'archive');
+$dto = new CFileDto($userId, 'archive');
+$archiveDb = $attachment -> getFileList($db, $userId);
 // $archiveDb = $attachment -> getDownloads($db, $userId, 'archive');
 $mysqli->close();
 

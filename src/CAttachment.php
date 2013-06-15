@@ -436,11 +436,22 @@ EOD;
             return $archiveDb;
         }
         
+        /**
+         * Returns the total number of files uploaded by the current (admin) user.
+         * This method is only to be used by admins.
+         * 
+         * @param type $db a reference to a database object
+         * @return int the number of files uploaded by the current admin user
+         *             if the user is not an admin -1 will be returned, signaling
+         *             that something is wrong (in effect, that this method is
+         *             not to be used in this context).
+         */
         public function getTotalNrOfFiles($db) {
-            $total = 0;
+            $total = -1;
             // Get user-object
             $uo = CUserData::getInstance();
             if ($uo -> isAdmin()) {
+                $total = 0;
                 $spListFiles = DBSP_ListFiles;
                 $query = "CALL {$spListFiles}('{$uo->getId()}');";
             
@@ -458,24 +469,30 @@ EOD;
             }
             return $total;
         }
-
-        // ------------------------------------------------------------------------------------
-	//
-	// Returns a list of files as a HTML table. The list consist of varius file info and
-        // a column with checkboxes. This checkbox can be used for whatever.
-        // 
-        // @param db an active database connection. Mandatory.
-        // @param userId a userId. Mandatory (I do not know why though, could get the data from the user object).
-        // @param refId Optional. If present with idReference set to refId will be listed
-        //                        otherwise files belonging to userId will be listed. 
-        // @param folderId if this parameter is present, the method will only list files
-        //                 from the specified folder.
-	// @return a list of files in the form of a HTML table.
-        public function getFileList($db, $userId, $referer, $folderId, $chkDisable = false) {
+        
+        /**
+         * Returns a list of files as a HTML table. The list consist of varius file info and
+         * a column with checkboxes. This checkbox can be used for whatever.
+         * 
+         * @param type $db an active database connection. Mandatory.
+         * @param type $userId a userId. Mandatory (I do not know why though, could get the data from the user object).
+         * @param type $referer Optional. If present with idReference set to refId will be listed
+         *                      otherwise files belonging to userId will be listed. 
+         * @param type $folderId if this parameter is present, the method will only list files
+         *                       from the specified folder.
+         * @param type $chkDisable
+         * @return type a list of files in the form of a HTML table.
+         */
+        public function getFileList($db, $fileDto) {
             // Assumes the presence of a working mysqli-object
             // No defensive programming!
             
             $this->clear();
+
+            $userId = $fileDto -> getUserId();
+            $referer = $fileDto -> getReferer();
+            $folderId = $fileDto -> getFolderId();
+            $chkDisable = $fileDto -> getChkDisable();
 
             // Get user-object
             $uo = CUserData::getInstance();
@@ -619,30 +636,6 @@ EOD;
             $results[0]->close();
             
             return $archiveDb;
-        }
-        
-        public function getOptionList($db, $userId, $referer) {
-            $options = "";
-            
-            $spListFiles = DBSP_ListFiles;
-            
-            // Create the query
-            $query 	= <<< EOD
-            CALL {$spListFiles}('{$userId}');
-EOD;
-
-            // Perform the query
-            $res = $db->MultiQuery($query);
-
-            // Use results
-            $results = Array();
-            $db->RetrieveAndStoreResultsFromMultiQuery($results);
-            
-            while($row = $results[0]->fetch_object()) {
-                $options .= <<<EOD
-                    <option value="{$row->uniquename}">{$row -> name}</option>
-EOD;
-            }
         }
         
         public function getFilesOfInterestAsJSON($db, $userId, $folderId, $orderOn, $orderOrder) {

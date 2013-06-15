@@ -81,8 +81,10 @@ while($row = $results[0]->fetch_object()) {
 // Create file handler (CAttachment()). The file handler presents html
 // for listing files.
 $attachment = new CAttachment();
-$archiveDb = $attachment -> getFileList($db, $userId, $pc->computePage(), $folderFilter);
+$dto = new CFileDto($userId, $pc->computePage(), $folderFilter);
 $total = $attachment->getTotalNrOfFiles($db);
+$navigate = CPageController::pageBrowser($total, 6, 20, $pc->computePage());
+$archiveDb = $attachment -> getFileList($db, $dto);
 $markRow = empty($currentFolderName) ? " selected" : "";
 $folderTreeHtml = "<div class='folderTree'><div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderTreeHtml}</div>";
 $results[0]->close();
