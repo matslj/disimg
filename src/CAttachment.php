@@ -190,6 +190,7 @@ EOD;
                     var h = e.html();
                     e.html(incOrDecNumber(h, true));
                     incPageNumber();
+                    uncheckMasterCheckbox();
                 }
                 
                 function moveFolderInList(source, destination) {
@@ -203,6 +204,7 @@ EOD;
                             e.html(incOrDecNumber(h, false));
                         } 
                     });
+                    uncheckMasterCheckbox();
                 }
                 
                 function deleteFolderInList(source) {
@@ -218,6 +220,7 @@ EOD;
                             e.html(incOrDecNumber(h, false));
                         } 
                     });
+                    uncheckMasterCheckbox();
                 }
                 
                 function incOrDecNumber(html, inc) {
@@ -242,7 +245,13 @@ EOD;
                     e.html(number);
                 }
                 
-                function getFileDataFromCheckbox() {
+                function checkUncheckAllCheckboxes(element) {
+                    var bool = $(element).attr('checked') ? true : false;
+                    $('input.cbMark').attr('checked', bool);
+                }
+                
+                function uncheckMasterCheckbox() {
+                    $('#masterChk').attr('checked', false);
                 }
                 
                 // Hämtar id på alla checkade checkboxar, lägger dessa i en array
@@ -610,6 +619,11 @@ EOD;
 EOD;
             }
             
+            $masterChk = "<input id='masterChk' type='checkbox' name='masterChk' onclick='checkUncheckAllCheckboxes(this);' />";
+            if ($chkDisable || !$uo -> isAdmin()) {
+                $masterChk = '&nbsp;';
+            }
+            
             // Start table
             $archiveDbStart = <<<EOD
                 Visar objekt {$fileDto->getCurrentSelection()}
@@ -619,7 +633,7 @@ EOD;
                 <th>Filnamn</th>
                 {$adminColumns}
                 <th>Katalog</th>
-                <th class="knapp">&nbsp;</th>
+                <th class="knapp">{$masterChk}</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>
 EOD;
