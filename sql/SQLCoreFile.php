@@ -39,6 +39,8 @@ $spFileByIdDetails = DBSP_FileByIdDetails;
 $spFileDetailsUpdate = DBSP_FileDetailsUpdate;
 $spListFiles = DBSP_ListFiles;
 $spListFilesInFolder = DBSP_ListFilesInFolder;
+$spListFilesXXX = DBSP_ListFilesXXX;
+$spListFilesInFolderXXX = DBSP_ListFilesInFolderXXX;
 $spUseReferenceToListFiles = DBSP_UseReferenceToListFiles;
 $spFileDetailsDeleted = DBSP_FileDetailsDeleted;
 $udfFileCheckPermission = DBUDF_FileCheckPermission;
@@ -361,8 +363,8 @@ END;
 --
 -- SP to list all files
 --
-DROP PROCEDURE IF EXISTS {$spListFiles};
-CREATE PROCEDURE {$spListFiles}
+DROP PROCEDURE IF EXISTS {$spListFilesXXX};
+CREATE PROCEDURE {$spListFilesXXX}
 (
 	IN aUserId INT UNSIGNED
 )
@@ -391,12 +393,54 @@ BEGIN
         ORDER BY createdFile DESC;
 END;
    
+DROP PROCEDURE IF EXISTS {$spListFiles};
+CREATE PROCEDURE {$spListFiles}
+(
+	IN aUserId INT UNSIGNED,
+        IN criteria varchar(100)
+)
+BEGIN
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+      
+    SET @SQLStatement = CONCAT(
+    
+    'SELECT
+            A.idFile AS id,
+            A.File_idUser AS owner,
+            A.nameFile AS name,
+            A.uniqueNameFile AS uniquename,
+            A.pathToDiskFile AS path,
+            A.sizeFile AS size,
+            A.mimetypeFile AS mimetype,
+            A.createdFile AS created,
+            A.modifiedFile AS modified,
+            A.deletedFile AS deleted,
+            U.accountUser AS account,
+            IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+    FROM {$tFile} AS A
+        INNER JOIN {$tUser} AS U
+                ON A.File_idUser = U.idUser
+        LEFT OUTER JOIN {$tFolder} AS F
+                ON A.File_idFolder = F.idFolder
+    WHERE
+            A.File_idUser = ',aUserId,' AND
+            deletedFile IS NULL
+    ORDER BY createdFile DESC'
+    
+    ,criteria);
+
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END;
+   
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to list all files in with a specific folder id
 --
-DROP PROCEDURE IF EXISTS {$spListFilesInFolder};
-CREATE PROCEDURE {$spListFilesInFolder}
+DROP PROCEDURE IF EXISTS {$spListFilesInFolderXXX};
+CREATE PROCEDURE {$spListFilesInFolderXXX}
 (
 	IN aUserId INT UNSIGNED,
         IN aFolderId INT
@@ -425,6 +469,54 @@ BEGIN
 		deletedFile IS NULL AND
                 A.File_idFolder = aFolderId
         ORDER BY createdFile DESC;
+END;
+   
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to list all files in with a specific folder id
+--
+DROP PROCEDURE IF EXISTS {$spListFilesInFolder};
+CREATE PROCEDURE {$spListFilesInFolder}
+(
+	IN aUserId INT UNSIGNED,
+        IN aFolderId INT,
+        IN criteria varchar(100)
+)
+BEGIN
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+    
+    SET @SQLStatement = CONCAT(
+    
+    'SELECT 
+        A.idFile AS id,
+        A.File_idUser AS owner,
+        A.nameFile AS name,
+        A.uniqueNameFile AS uniquename,
+        A.pathToDiskFile AS path,
+        A.sizeFile AS size,
+        A.mimetypeFile AS mimetype,
+        A.createdFile AS created,
+        A.modifiedFile AS modified,
+        A.deletedFile AS deleted,
+        U.accountUser AS account,
+        F.nameFolder AS foldername
+    FROM {$tFile} AS A
+        INNER JOIN {$tUser} AS U
+                ON A.File_idUser = U.idUser
+        INNER JOIN {$tFolder} AS F
+                ON A.File_idFolder = F.idFolder
+    WHERE
+            A.File_idUser = ',aUserId,' AND
+            deletedFile IS NULL AND
+            A.File_idFolder = ',aFolderId,
+    ' ORDER BY createdFile DESC'
+    
+    ,criteria);
+    
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
 END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

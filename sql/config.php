@@ -51,17 +51,17 @@ define('DBSP_PGetTopicLastEntryDetails',		DB_PREFIX . 'PGetTopicLastEntryDetails
 define('DBSP_PGetArticleAndTopicDetails',		DB_PREFIX . 'PGetArticleAndTopicDetails');
 
 // Stored routines concerning page and pictures
-define('DBSP_PInsertOrUpdateSida',	DB_PREFIX . 'PInsertOrUpdateSida');
-define('DBSP_PGetSidaDetails',		DB_PREFIX . 'PGetSidaDetails');
-define('DBSP_PGetSidaDetailsById',		DB_PREFIX . 'PGetSidaDetailsById');
-define('DBSP_PInsertBildIntresse',	DB_PREFIX . 'PInsertBildIntresse');
-define('DBSP_PDeleteBildIntresse',	DB_PREFIX . 'PDeleteBildIntresse');
-define('DBSP_PInsertBildgrupp',		DB_PREFIX . 'PInsertBildgrupp');
-define('DBSP_PListBildIntresse',	DB_PREFIX . 'PListBildIntresse');
-define('DBSP_PListBildgrupp',		DB_PREFIX . 'PListBildgrupp');
-define('DBUDF_FFileOfInterest',	DB_PREFIX . 'FFileOfInterest');
-define('DBUDF_FCheckUserIsOwnerOrAdminOfSida',    DB_PREFIX . 'FCheckUserIsOwnerOrAdminOfSida');
-define('DBUDF_CheckUserIsAdmin',	DB_PREFIX . 'FCheckUserIsAdmin');
+define('DBSP_PInsertOrUpdateSida',	       DB_PREFIX . 'PInsertOrUpdateSida');
+define('DBSP_PGetSidaDetails',		       DB_PREFIX . 'PGetSidaDetails');
+define('DBSP_PGetSidaDetailsById',	       DB_PREFIX . 'PGetSidaDetailsById');
+define('DBSP_PInsertBildIntresse',	       DB_PREFIX . 'PInsertBildIntresse');
+define('DBSP_PDeleteBildIntresse',	       DB_PREFIX . 'PDeleteBildIntresse');
+define('DBSP_PInsertBildgrupp',		       DB_PREFIX . 'PInsertBildgrupp');
+define('DBSP_PListBildIntresse',	       DB_PREFIX . 'PListBildIntresse');
+define('DBSP_PListBildgrupp',		       DB_PREFIX . 'PListBildgrupp');
+define('DBUDF_FFileOfInterest',	               DB_PREFIX . 'FFileOfInterest');
+define('DBUDF_FCheckUserIsOwnerOrAdminOfSida', DB_PREFIX . 'FCheckUserIsOwnerOrAdminOfSida');
+define('DBUDF_CheckUserIsAdmin',	       DB_PREFIX . 'FCheckUserIsAdmin');
 
 // Stored routines concerning user
 define('DBSP_AuthenticateUser',             DB_PREFIX . 'PAuthenticateUser');
@@ -87,26 +87,28 @@ define('DBSP_FileByIdDetails',              DB_PREFIX . 'PFileByIdDetails');
 define('DBSP_FileDetailsUpdate',            DB_PREFIX . 'PFileDetailsUpdate');
 define('DBSP_ListFiles',                    DB_PREFIX . 'PListFiles');
 define('DBSP_ListFilesInFolder',            DB_PREFIX . 'PListFilesInFolder');
+define('DBSP_ListFilesXXX',                 DB_PREFIX . 'PListFilesXXX');
+define('DBSP_ListFilesInFolderXXX',         DB_PREFIX . 'PListFilesInFolderXXX');
 define('DBSP_UseReferenceToListFiles',      DB_PREFIX . 'PUseReferenceToListFiles');
 define('DBSP_FileDetailsDeleted',           DB_PREFIX . 'PFileDetailsDeleted');
 define('DBUDF_FileCheckPermission',         DB_PREFIX . 'FFileCheckPermission');
 define('DBUDF_FileDelete',                  DB_PREFIX . 'FFileDelete');
 
 // Stored routines concering folders
-define('DBSP_InsertFolder',                   DB_PREFIX . 'PInsertFolder');
-define('DBSP_InsertFolderUser',               DB_PREFIX . 'PInsertFolderUser');
-define('DBSP_ListFolders',                    DB_PREFIX . 'PListFolders');
-define('DBSP_ListFoldersByUser',              DB_PREFIX . 'PListFoldersByUser');
-define('DBSP_ListFoldersByUserOnly',          DB_PREFIX . 'PListFoldersByUserOnly');
-define('DBSP_ListAllAccessedFiles',           DB_PREFIX . 'PListAllAccessedFiles');
-define('DBSP_ListAllAccessedFilesInFolder',   DB_PREFIX . 'PListAllAccessedFilesInFolder');
-define('DBSP_DetailFolder',                   DB_PREFIX . 'PDetailFolder');
-define('DBSP_DeleteFolderUser',               DB_PREFIX . 'PDeleteFolderUser');
-define('DBUDF_FileUpdateFolder',              DB_PREFIX . 'FFileUpdateFolder');
-define('DBUDF_NumberOfFilesInFolder',         DB_PREFIX . 'FNumberOfFilesInFolder');
-define('DBUDF_FolderDelete',                  DB_PREFIX . 'FFolderDelete');
+define('DBSP_InsertFolder',                 DB_PREFIX . 'PInsertFolder');
+define('DBSP_InsertFolderUser',             DB_PREFIX . 'PInsertFolderUser');
+define('DBSP_ListFolders',                  DB_PREFIX . 'PListFolders');
+define('DBSP_ListFoldersByUser',            DB_PREFIX . 'PListFoldersByUser');
+define('DBSP_ListFoldersByUserOnly',        DB_PREFIX . 'PListFoldersByUserOnly');
+define('DBSP_ListAllAccessedFiles',         DB_PREFIX . 'PListAllAccessedFiles');
+define('DBSP_ListAllAccessedFilesInFolder', DB_PREFIX . 'PListAllAccessedFilesInFolder');
+define('DBSP_DetailFolder',                 DB_PREFIX . 'PDetailFolder');
+define('DBSP_DeleteFolderUser',             DB_PREFIX . 'PDeleteFolderUser');
+define('DBUDF_FileUpdateFolder',            DB_PREFIX . 'FFileUpdateFolder');
+define('DBUDF_NumberOfFilesInFolder',       DB_PREFIX . 'FNumberOfFilesInFolder');
+define('DBUDF_FolderDelete',                DB_PREFIX . 'FFolderDelete');
 
 // Triggers
-define('DBTR_TInsertUser',		DB_PREFIX . 'TInsertUser');
-define('DBTR_TAddArticle',		DB_PREFIX . 'TAddArticle');
+define('DBTR_TInsertUser',	            DB_PREFIX . 'TInsertUser');
+define('DBTR_TAddArticle',		    DB_PREFIX . 'TAddArticle');
 ?>

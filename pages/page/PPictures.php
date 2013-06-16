@@ -54,6 +54,7 @@ $mysqli = $db->Connect();
 $folderHtml = "";
 $currentFolderName = "";
 $total = 0;
+$currentTotal = -1;
 $spListFolders = $uo -> isAdmin() ? DBSP_ListFolders : DBSP_ListFoldersByUserOnly;
 $query 	= $uo -> isAdmin() ? "CALL {$spListFolders}('')" : "CALL {$spListFolders}({$userId})";
 $res = $db->MultiQuery($query);
@@ -65,6 +66,7 @@ while($row = $results[0]->fetch_object()) {
     $classSelected = "";
     if ($row->id == $folderFilter) {
         $currentFolderName = $row->name;
+        $currentTotal = $row->facet;
         $classSelected = " selected";
     }
     $folderHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
@@ -75,7 +77,9 @@ while($row = $results[0]->fetch_object()) {
 $attachment = new CAttachment();
 $total = $uo -> isAdmin() ? $attachment->getTotalNrOfFiles($db) : $total;
 $dto = new CFileDto($userId, $pc->computePage(), $folderFilter, true);
-
+$navTotal = $currentTotal >= 0 ? $currentTotal : $total;
+$navigate = CPageController::pageBrowser($navTotal, 6, 20, $pc->computePage());
+$dto -> setPagePagination($navigate);
 $archiveDb = $attachment -> getFileList($db, $dto);
 $markRow = empty($currentFolderName) ? " selected" : "";
 $folderHtml = "<div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderHtml}";

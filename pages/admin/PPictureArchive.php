@@ -63,7 +63,7 @@ $folderTreeHtml = "";
 $currentFolderName = "";
 $spListFolders = DBSP_ListFolders;
 $query 	= "CALL {$spListFolders}('')";
-
+$currentTotal = -1;
 $res = $db->MultiQuery($query);
 $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
@@ -73,6 +73,7 @@ while($row = $results[0]->fetch_object()) {
     $classSelected = "";
     if ($row->id == $folderFilter) {
         $currentFolderName = $row->name;
+        $currentTotal = $row->facet;
         $classSelected = " selected";
     }
     $folderTreeHtml .= "<div class='row{$classSelected}'><a href='{$redirect}&ff={$row->id}'>{$row->name} ({$row->facet})</a></div>";
@@ -83,7 +84,9 @@ while($row = $results[0]->fetch_object()) {
 $attachment = new CAttachment();
 $dto = new CFileDto($userId, $pc->computePage(), $folderFilter);
 $total = $attachment->getTotalNrOfFiles($db);
-$navigate = CPageController::pageBrowser($total, 6, 20, $pc->computePage());
+$navTotal = $currentTotal >= 0 ? $currentTotal : $total;
+$navigate = CPageController::pageBrowser($navTotal, 6, 20, $pc->computePage());
+$dto -> setPagePagination($navigate);
 $archiveDb = $attachment -> getFileList($db, $dto);
 $markRow = empty($currentFolderName) ? " selected" : "";
 $folderTreeHtml = "<div class='folderTree'><div class='row all{$markRow}'><a href='{$redirect}'>Alla ({$total})</a></div>{$folderTreeHtml}</div>";

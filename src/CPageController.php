@@ -237,8 +237,8 @@ class CPageController {
             if (!empty($begin)) $pc->IsNumericOrDie($begin, 0);
             if (!empty($num)) $pc->IsNumericOrDie($num, 0);
 
-            $larrow = " << Prev ".$numLimit." "; //You can either have an image or text, eg. Previous
-            $rarrow = " Next ".$numLimit." >> "; //You can either have an image or text, eg. Next
+            $larrow = " << Föregående ".$numLimit." "; //You can either have an image or text, eg. Previous
+            $rarrow = " Nästa ".$numLimit." >> "; //You can either have an image or text, eg. Next
             $wholePiece = "";
             //$wholePiece .= "Alla attribut: {$totalrows} {$numLimit} {$amm} {$queryStr} {$numBegin} {$begin} {$num}   ";
             $wholePiece .= "Sida: "; //This appears in front of your page numbers
@@ -264,6 +264,7 @@ class CPageController {
                     $wholePiece .= "<a href='?num=".$preRedBegin
                             ."&numBegin=".$preBegin
                             ."&begin=".$preVBegin
+                            ."&p="
                             .$queryStr."'>"
                             .$larrow."</a>\n";
                 }
@@ -272,6 +273,7 @@ class CPageController {
                         $piece = "<a href='?numBegin=".$i
                             ."&num=".$i
                             ."&begin=".$start
+                            ."&p="
                             .$queryStr."'>"
                             .$rarrow."</a>\n";
                         $wholePiece .= $piece;
@@ -280,6 +282,7 @@ class CPageController {
                     $piece = "<a href='?begin=".$start
                         ."&num=".$i
                         ."&numBegin=".$numBegin
+                        ."&p="
                         .$queryStr
                         ."'>";
                     if ($num == $i) {
@@ -295,7 +298,7 @@ class CPageController {
                 $wholePiece .= "\n";
                 $wheBeg = $begin+1;
                 $wheEnd = $begin+$amm;
-                $wheToWhe = "<b>".$wheBeg."</b> - <b>";
+                $wheToWhe = "<b>".$wheBeg."</b> - <b id='endValue'>";
                 if ($totalrows <= $wheEnd) {
                     $wheToWhe .= $totalrows."</b>";
                 } else {
@@ -303,8 +306,8 @@ class CPageController {
                 }
                 $sqlprod = " LIMIT ".$begin.", ".$amm;
             } else {
-                $wholePiece = "Sorry, no records to display.";
-                $wheToWhe = "<b>0</b> - <b>0</b>";
+                $wholePiece = "Det finns inget att lista.";
+                $wheToWhe = "<b>0</b> - <b id='endValue'>0</b>";
             }
 
             return array($sqlprod,$wheToWhe,$wholePiece);

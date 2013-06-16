@@ -13,7 +13,10 @@ class CFileDto {
     private $folderId;     // id of current folder
     private $chkDisable;   // true to disable checkboxes
     
-    private $pageCriteria; // A criteria by which the query should be limited
+    // Page pagination
+    private $pageCriteria;     // A criteria by which the query should be limited
+    private $currentSelection; // html for current selection
+    private $navbar;           // html seletion pages nav bar
     
     // Output fields
     private $htmlTable;  // the f
@@ -30,6 +33,12 @@ class CFileDto {
 
     public function __destruct() {
         ;
+    }
+    
+    public function setPagePagination($navigate) {
+        $this->pageCriteria = $navigate[0];
+        $this->currentSelection = $navigate[1];
+        $this->navbar = $navigate[2];
     }
 
     public function getUserId() {
@@ -78,6 +87,22 @@ class CFileDto {
 
     public function setPageCriteria($pageCriteria) {
         $this->pageCriteria = $pageCriteria;
+    }
+    
+    public function getCurrentSelection() {
+        return $this->currentSelection;
+    }
+
+    public function setCurrentSelection($currentSelection) {
+        $this->currentSelection = $currentSelection;
+    }
+
+    public function getNavbar() {
+        return $this->navbar;
+    }
+
+    public function setNavbar($navbar) {
+        $this->navbar = $navbar;
     }
 
 }

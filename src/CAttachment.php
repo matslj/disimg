@@ -186,9 +186,10 @@ EOD;
                  *
                  */
                 function updateFolderListItemAll() {
-                    var e = $('.row.all').first()
+                    var e = $('.row.all').first();
                     var h = e.html();
                     e.html(incOrDecNumber(h, true));
+                    incPageNumber();
                 }
                 
                 function moveFolderInList(source, destination) {
@@ -205,7 +206,7 @@ EOD;
                 }
                 
                 function deleteFolderInList(source) {
-                    var e = $('.row.all').first()
+                    var e = $('.row.all').first();
                     var h = e.html();
                     e.html(incOrDecNumber(h, false));
                     
@@ -231,6 +232,14 @@ EOD;
                     }
                     var newH = h.substring(0,start) + number + h.substring(end);
                     return newH;
+                }
+                
+                function incPageNumber() {
+                    var e = $('#endValue');
+                    var h = e.html();
+                    var number = parseInt(h);
+                    number++;
+                    e.html(number);
                 }
                 
                 function getFileDataFromCheckbox() {
@@ -379,7 +388,7 @@ EOD;
             // List by userId or list by refId
             $spListFiles = DBSP_UseReferenceToListFiles; 
             if (empty($refId)) {
-                $spListFiles = DBSP_ListFiles;
+                $spListFiles = DBSP_ListFilesXXX;
                 $refId = $userId;
             }
             
@@ -452,7 +461,7 @@ EOD;
             $uo = CUserData::getInstance();
             if ($uo -> isAdmin()) {
                 $total = 0;
-                $spListFiles = DBSP_ListFiles;
+                $spListFiles = DBSP_ListFilesXXX;
                 $query = "CALL {$spListFiles}('{$uo->getId()}');";
             
                 // Perform the query
@@ -505,12 +514,12 @@ EOD;
                 if (empty($folderId)) {
                     $spListFiles = DBSP_ListFiles;
                     $query 	= <<< EOD
-                    CALL {$spListFiles}('{$userId}');
+                    CALL {$spListFiles}('{$userId}','{$fileDto->getPageCriteria()}');
 EOD;
                 } else {
                     $spListFiles = DBSP_ListFilesInFolder;
                     $query 	= <<< EOD
-                    CALL {$spListFiles}('{$userId}', $folderId);
+                    CALL {$spListFiles}('{$userId}', $folderId,'{$fileDto->getPageCriteria()}');
 EOD;
                 }
             } else {
@@ -519,12 +528,12 @@ EOD;
                 if (empty($folderId)) {
                     $spListFiles = DBSP_ListAllAccessedFiles;
                     $query 	= <<< EOD
-                    CALL {$spListFiles}('{$userId}');
+                    CALL {$spListFiles}('{$userId}','{$fileDto->getPageCriteria()}');
 EOD;
                 } else {
                     $spListFiles = DBSP_ListAllAccessedFilesInFolder;
                     $query 	= <<< EOD
-                    CALL {$spListFiles}('{$userId}', $folderId);
+                    CALL {$spListFiles}('{$userId}', $folderId,'{$fileDto->getPageCriteria()}');
 EOD;
                 }
             }
@@ -603,6 +612,7 @@ EOD;
             
             // Start table
             $archiveDbStart = <<<EOD
+                Visar objekt {$fileDto->getCurrentSelection()}
                 <table class="disImgTable" style="width:100%">
                 <thead>
                 <th class="thumb">Tumme</th>
@@ -630,6 +640,7 @@ EOD;
                 </tfoot>
                 -->
                 </table>
+                {$fileDto->getNavbar()}
 EOD;
 
             // Close result set
