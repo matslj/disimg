@@ -330,10 +330,15 @@ div.sourcecode {
 }
 
 .disImgTable th.knapp {
+    text-align: center;
     width: 30px;
     background-color:#FFFFF0;
     border-top: 1px #FFFFF0 solid;
     border-right: 1px #FFFFF0 solid;
+}
+
+.disImgTable th.knapp input {
+    margin-right: 5px;
 }
 
 .disImgTable th.antal {

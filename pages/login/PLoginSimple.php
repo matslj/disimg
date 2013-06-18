@@ -88,6 +88,13 @@ $htmlMain .= <<<EOD
         </tr>
         {$adminLoginText}
         <tr>
+            <td>&nbsp;</td>
+            <td>
+                <!-- Captcha? -->
+                {$captcha -> getAsHTML()}
+            </td>
+        </tr>
+        <tr>
             <td colspan='2' style="text-align: right">
                 <button type="submit" name="submit">{$buttonText}</button>
             </td>
@@ -96,9 +103,9 @@ $htmlMain .= <<<EOD
 </form>
 EOD;
 if (!$adminLogin) {
-    $htmlMain .= "<p>[<a href='?p=login&al=TRUE'>Logga in som Admin</a>]</p>";
+    $htmlMain .= "<p style='text-align:right;'>[<a href='?p=login&al=TRUE'>Logga in som Admin</a>]</p>";
 } else {
-    $htmlMain .= "<p>[<a href='?p=login'>Logga in som vanlig användare</a>]</p>";
+    $htmlMain .= "<p style='text-align:right;'>[<a href='?p=login'>Logga in som vanlig användare</a>]</p>";
 }
 $htmlMain .= <<<EOD
 </fieldset>

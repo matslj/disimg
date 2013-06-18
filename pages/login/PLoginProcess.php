@@ -63,12 +63,18 @@ if ($createAccount) {
             $_SESSION['errorMessage'] = $captcha ->getErrorMsg();
         }
     }
-    
-    // If there is an error exit back to login page.
-    if (!empty($_SESSION['errorMessage'])) {
-        $pc->RedirectTo($errorRedirect);
-        exit;
+} else {
+    // Validate captcha
+    $captcha = captcha_CCaptcha::getInstance();
+    if (!$captcha -> validateInput()) {
+        $_SESSION['errorMessage'] = $captcha ->getErrorMsg();
     }
+}
+
+// If there is an error exit back to login page.
+if (!empty($_SESSION['errorMessage'])) {
+    $pc->RedirectTo($errorRedirect);
+    exit;
 }
 
 // Validation passed. Now we will authenticate/create and log on the user.

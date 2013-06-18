@@ -37,10 +37,10 @@ class captcha_CCaptchaSecurimage extends captcha_CCaptcha {
             $html = <<< EOD
                 <img id="captcha" src="{$this -> sitelink}securimage/securimage_show.php" alt="CAPTCHA Image" />
                 <p>
-                    Vänligen skriv in ordet i bilden ovan:
+                    Vänligen repetera ordet ovan:
                 </p>
                 <div>
-                <input id="captchaText" type="text" name="captcha_code" size="10" maxlength="6" /> or 
+                <input id="captchaText" type="text" name="captcha_code" size="10" maxlength="6" /> eller 
                 <a href="#" onclick="document.getElementById('captcha').src = '{$this -> sitelink}securimage/securimage_show.php?' + Math.random(); return false">[ Ny bild ]</a>
                 </div>
 EOD;
@@ -55,7 +55,7 @@ EOD;
             if ($securimage->check($_POST['captcha_code']) == false) {
                 // the code was incorrect
                 // handle the error so that the form processor doesn't continue
-                $this -> errorMsg = "Det du skrivit in matchar inte det som står i bilden. Gå tillbaka och prova igen.";
+                $this -> errorMsg = "Det du skrivit in matchar inte det som står i bilden. Prova igen.";
                 return false;
             }
             return true;

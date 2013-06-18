@@ -18,17 +18,11 @@ class CFileDto {
     private $currentSelection; // html for current selection
     private $navbar;           // html seletion pages nav bar
     
-    // Output fields
-    private $htmlTable;  // the f
-
-    
-    
     public function __construct($userId, $referer, $folderId = "", $chkDisable = false) {
         $this->userId = $userId;
         $this->referer = $referer;
         $this->folderId = $folderId;
         $this->chkDisable = $chkDisable;
-        $this->htmlTable = "";
     }
 
     public function __destruct() {
@@ -71,14 +65,6 @@ class CFileDto {
 
     public function setChkDisable($chkDisable) {
         $this->chkDisable = $chkDisable;
-    }
-
-    public function getHtmlTable() {
-        return $this->htmlTable;
-    }
-
-    public function setHtmlTable($htmlTable) {
-        $this->htmlTable = $htmlTable;
     }
     
     public function getPageCriteria() {
