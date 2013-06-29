@@ -8,7 +8,7 @@
 // 
 // Author: Mats Ljungquist
 //
-abstract class CLogger {
+abstract class logging_CLogger {
 
 	// ------------------------------------------------------------------------------------
 	//
@@ -36,7 +36,7 @@ abstract class CLogger {
 	//
 	// Factory method pattern
         // This class should at its minimum be used as follows:
-        // $log = CLogger::getInstance(__FILE__);
+        // $log = logging_CLogger::getInstance(__FILE__);
         // from the file needing the logger.
         // 
 	// @param aLogger For this class to be meningful the caller should use __FILE__ as a parameter
@@ -44,11 +44,11 @@ abstract class CLogger {
             switch (WS_LOGGER) {
                 case 'file':
                     // file based logger
-                    return CLoggerFile::getInstance($aLogger);
+                    return logging_CLoggerFile::getInstance($aLogger);
                     break;
                 default:
                     // dummy = no logging
-                    return CLoggerDummy::getInstance($aLogger);
+                    return logging_CLoggerDummy::getInstance($aLogger);
                     break;
             }
         }

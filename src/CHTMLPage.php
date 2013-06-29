@@ -187,23 +187,31 @@ EOD;
 
     // ------------------------------------------------------------------------------------
     //
-    // Prepare the header-div of the page
+    // Prepare left side navigation bar.
     //
-    public function PrepareLeftSideNavigationBar($menu) {
+    public function PrepareLeftSideNavigationBar($menu, $title = "no title") {
         $menu = unserialize($menu);
         $theSelection = 'nothing'; // dummy value
         global $gSubPages;
         if (count($gSubPages) > 1) {
             $theSelection = $gSubPages[1];
         }
-        $nav = "<ul>";
+        $nav = <<< EOD
+        <div class="leftSideAdminMenu">
+            <div class="menuBoxHeadline">
+                <div class="menuHeadlineLeft"> </div>
+                <div class="menuHeadlineRight">{$title}</div>
+                <div class="clearer"> </div>
+            </div>
+EOD;
+        $nav .= "<ul>";
         foreach($menu as $key => $value) {
             $index = strpos($value, "_");
             $index = $index > 0 ? $index : 0;
             $selected = (strcmp($theSelection, substr($value, $index + 1)) == 0) ? " class='sel'" : "";
-            $nav .= "<li><a{$selected} href='{$value}'>{$key}</a></li>";
+            $nav .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
         }
-        $nav .= '</ul>';
+        $nav .= '</ul></div>';
 
         return $nav;
     }
@@ -217,6 +225,8 @@ EOD;
 
         // General error message from session
         $htmlErrorMessage = $this->getErrorMessage();
+        // Have to make room on the page for the error-msg.
+        $errorStyle = !empty($htmlErrorMessage) ? " style='margin-top: 30px'" : "";
 
         // Stylesheet must support this
         // 1, 2 or 3-column layout?
@@ -235,7 +245,7 @@ EOD;
         $bodyMain  = empty($aBodyMain)  ? "" : "<div id='main_{$cols}'>{$aBodyMain}<p class='last'>&nbsp;</p></div>";
 
         $html = <<<EOD
-<div id='body'>
+<div id='body'{$errorStyle}>
     {$htmlErrorMessage}
     <div id='container_{$cols}'>
             <div id='content_{$cols}'>

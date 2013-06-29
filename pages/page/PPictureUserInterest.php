@@ -17,7 +17,7 @@
 // Author: Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 // -------------------------------------------------------------------------------------------
 //
@@ -390,8 +390,19 @@ $htmlMain = <<<EOD
 EOD;
 
 // $htmlRight = "<p class='note'>(x) anger antal bilder en användare är intresserad av. 'Alla' visar här den totala 'intressesumman'.</p><div id='navigation'>{$usersHtml}</div>";
-$htmlRight = "<div id='navigation' style='margin-top: 50px;'>{$usersHtml}</div>";
-
+$htmlRight = <<<EOD
+<div class="Box-A" style="width: 100%; margin-top: 4px;">
+    <div class="boxhead">
+        <h2>
+            <span>Användare </span>
+        </h2>
+    </div>
+    <div class="boxbody" style="padding: 5px;">
+        <div id='navigation'>{$usersHtml}</div>
+    </div>
+</div>
+EOD;
+        
 // -------------------------------------------------------------------------------------------
 //
 // Create and print out the resulting page
@@ -400,7 +411,18 @@ $page = new CHTMLPage();
 
 // Creating the left menu panel
 // $htmlLeft = "<p class='note'>(x) anger antal bilder som någon användare visat intresse för i respektive katalog.</p><div id='navigation'>{$folderHtml}</div>";
-$htmlLeft = "<div id='navigation' style='margin-top: 45px;'>{$folderHtml}</div>";
+$htmlLeft = <<<EOD
+<div class="Box-A" style="width: 100%;">
+    <div class="boxhead">
+        <h2>
+            <span>Kategori </span>
+        </h2>
+    </div>
+    <div class="boxbody" style="padding: 5px;">
+        <div id='navigation'>{$folderHtml}</div>
+    </div>
+</div>
+EOD;
 
 $page->printPage('Bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

@@ -84,7 +84,9 @@ CREATE TABLE {$tBildIntresse} (
   BildIntresse_idFile INT NOT NULL,
   FOREIGN KEY (BildIntresse_idFile) REFERENCES {$tFile}(idFile),
 
-  PRIMARY KEY (BildIntresse_idUser, BildIntresse_idFile)
+  PRIMARY KEY (BildIntresse_idUser, BildIntresse_idFile),
+  
+  dateBildIntresse DATETIME NOT NULL
 
 ) ENGINE MyISAM CHARACTER SET {$fileDef['DefaultCharacterSet']} COLLATE {$fileDef['DefaultCollate']};
   
@@ -193,8 +195,8 @@ CREATE PROCEDURE {$spPInsertBildIntresse}
 )
 BEGIN
         INSERT INTO {$tBildIntresse}
-                (BildIntresse_idUser, BildIntresse_idFile)
-        VALUES (aUserId, aFileId);
+                (BildIntresse_idUser, BildIntresse_idFile, dateBildIntresse)
+        VALUES (aUserId, aFileId, NOW());
 END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -223,7 +225,8 @@ CREATE PROCEDURE {$spPListBildIntresse}
 )
 BEGIN
         SELECT
-            BildIntresse_idFile AS idFile
+            BildIntresse_idFile AS idFile,
+            dateBildIntresse AS date
         FROM {$tBildIntresse}
         WHERE
             BildIntresse_idUser = aUserId

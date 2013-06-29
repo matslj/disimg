@@ -106,7 +106,7 @@ $htmlRight	= "";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+$htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
 
 $page->printPage('Admin', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

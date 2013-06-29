@@ -29,7 +29,7 @@ class CInterceptionFilter {
 	public function __construct() {
             $this -> uo = CUserData::GetInstance();
             $this -> pc = CPageController::getInstance();
-            self::$LOG = CLogger::getInstance(__FILE__);
+            self::$LOG = logging_CLogger::getInstance(__FILE__);
 	}
 
 

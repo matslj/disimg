@@ -526,10 +526,16 @@ END;
 DROP PROCEDURE IF EXISTS {$spListAllAccessedFiles};
 CREATE PROCEDURE {$spListAllAccessedFiles}
 (
-	IN aUserId INT UNSIGNED
+	IN aUserId INT UNSIGNED,
+        IN criteria varchar(100)
 )
 BEGIN
-	SELECT 
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+      
+    SET @SQLStatement = CONCAT(
+    
+    'SELECT 
                 A.idFile AS id,
 		A.File_idUser AS owner,
 		A.nameFile AS name,
@@ -542,7 +548,7 @@ BEGIN
 		A.deletedFile AS deleted,
                 U.accountUser AS account,
                 IFNULL(F.nameFolder, "Ingen katalog") AS foldername,
-                {$udfFileOfInterest}(aUserId,A.idFile) AS interest
+                {$udfFileOfInterest}(',aUserId,',A.idFile) AS interest
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U
                     ON A.File_idUser = U.idUser
@@ -551,9 +557,15 @@ BEGIN
             INNER JOIN {$tFolderUser} AS FU
                     ON A.File_idFolder = FU.FolderUser_idFolder
 	WHERE
-		FU.FolderUser_idUser = aUserId AND
+		FU.FolderUser_idUser = ',aUserId,' AND
 		deletedFile IS NULL
-        ORDER BY createdFile DESC;
+        ORDER BY createdFile DESC'
+        
+    ,criteria);
+    
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
 END;
    
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -565,23 +577,29 @@ DROP PROCEDURE IF EXISTS {$spListAllAccessedFilesInFolder};
 CREATE PROCEDURE {$spListAllAccessedFilesInFolder}
 (
 	IN aUserId INT UNSIGNED,
-        IN aFolderId INT
+        IN aFolderId INT,
+        IN criteria varchar(100)
 )
 BEGIN
-	SELECT 
-                A.idFile AS id,
-		A.File_idUser AS owner,
-		A.nameFile AS name,
-		A.uniqueNameFile AS uniquename,
-		A.pathToDiskFile AS path,
-		A.sizeFile AS size,
-		A.mimetypeFile AS mimetype,
-		A.createdFile AS created,
-		A.modifiedFile AS modified,
-		A.deletedFile AS deleted,
-                U.accountUser AS account,
-                F.nameFolder AS foldername,
-                {$udfFileOfInterest}(aUserId,A.idFile) AS interest
+    -- Enter the dynamic SQL statement into the
+    -- variable @SQLStatement
+      
+    SET @SQLStatement = CONCAT(
+    
+    'SELECT 
+        A.idFile AS id,
+        A.File_idUser AS owner,
+        A.nameFile AS name,
+        A.uniqueNameFile AS uniquename,
+        A.pathToDiskFile AS path,
+        A.sizeFile AS size,
+        A.mimetypeFile AS mimetype,
+        A.createdFile AS created,
+        A.modifiedFile AS modified,
+        A.deletedFile AS deleted,
+        U.accountUser AS account,
+        F.nameFolder AS foldername,
+        {$udfFileOfInterest}(',aUserId,',A.idFile) AS interest
                 
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U
@@ -591,10 +609,16 @@ BEGIN
             INNER JOIN {$tFolderUser} AS FU
                     ON A.File_idFolder = FU.FolderUser_idFolder
 	WHERE
-		FU.FolderUser_idUser = aUserId AND
+		FU.FolderUser_idUser = ',aUserId,' AND
 		deletedFile IS NULL AND
-                A.File_idFolder = aFolderId
-        ORDER BY createdFile DESC;
+                A.File_idFolder = ',aFolderId,
+        ' ORDER BY createdFile DESC'
+        
+    ,criteria);
+    
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
 END;   
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -7,7 +7,7 @@
 // 
 // Author: Mats Ljungquist
 //
-class CLoggerDummy extends CLogger {
+class logging_CLoggerDummy extends logging_CLogger {
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor

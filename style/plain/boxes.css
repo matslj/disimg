@@ -1,0 +1,72 @@
+/* =====================================================================================
+ *
+ *
+ * All definitions related to colors and background images.
+ * Change color scheme in this file.
+ *
+ */
+
+
+/* -------------------------------------------------------------------------------------
+/* Color scheme
+/* Palette URL: http://colorschemedesigner.com/#0011DuBi2dgI1 */
+.primary-1 { background-color: #900606 }
+.primary-2 { background-color: #811212 } /* darklight */
+.primary-3 { background-color: #7B0404 } /* dark */
+.primary-4 { background-color: #DE5454 } /* lightdark */
+.primary-5 { background-color: #DE9090 } /* light */
+
+/* -------------------------------------------------------------------------------------
+/* Alt color scheme
+/* Palette URL: http://colorschemedesigner.com/#0G11Tw0w0w0w0 */
+.primary-1 { background-color: #FF8E00 }
+.primary-2 { background-color: #BF8030 } /* darklight */
+.primary-3 { background-color: #A65C00 } /* dark */
+.primary-4 { background-color: #FFAA40 } /* lightdark */
+.primary-5 { background-color: #FFC173 } /* light */
+
+.Box-A {
+    background: url("box-a-body-r.gif") no-repeat scroll right bottom transparent;
+    /* font-size: 100%; */
+    margin-bottom: 15px;
+}
+
+
+.Box-A .boxhead {
+    background: url("box-c-head-r.gif") no-repeat scroll right top transparent;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.Box-A .boxhead h2 {
+    background: url("box-c-head-l.gif") no-repeat scroll left top transparent;
+    color: #222222;
+    font: bold 12px tahoma;
+    margin: 0;
+    padding: 9px 8px 9px 10px;
+}
+
+.Box-A .boxbody {
+    background: url("box-a-body-l.gif") no-repeat scroll left bottom transparent;
+    font: 12px arial;
+    margin: 0;
+    padding: 5px 9px;
+}
+
+.memoryMessage {
+    border: 0 solid #CCCCCC;
+    color: #565656;
+    font: italic 12px arial;
+    padding: 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.memoryMessage A, .memoryMessage A:visited {
+    color: blue;
+    text-decoration: none;
+}
+
+.clearer {
+    clear: both;
+}

@@ -8,7 +8,7 @@
 // Author: Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 // -------------------------------------------------------------------------------------------
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers

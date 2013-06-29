@@ -459,7 +459,7 @@ END;
 -- Add default user(s)
 --
 INSERT INTO {$tUser} (accountUser, emailUser, nameUser, lastLoginUser, passwordUser, avatarUser)
-VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', NOW(), md5('hemligt'), '{$imageLink}/man_60x60.png');
+VALUES ('mats', 'mats@noreply.se', 'Mats Lj', NOW(), md5('hemligt'), '{$imageLink}/man_60x60.png');
 INSERT INTO {$tUser} (accountUser, emailUser, nameUser, lastLoginUser, passwordUser, avatarUser)
 VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', NOW(), md5('DIS1000'), '{$imageLink}/woman_60x60.png');
 
@@ -477,7 +477,7 @@ INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the 
 INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup)
 	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'doe'), 'usr');
 INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup)
-	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'mikael'), 'adm');
+	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'mats'), 'adm');
 
 
 EOD;

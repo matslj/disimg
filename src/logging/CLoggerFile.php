@@ -9,7 +9,7 @@ define("FILENAME", "sitelog.txt"); // Name of logfile - dwells in TP_LOGPATH
 // 
 // Author: Mats Ljungquist
 //
-class CLoggerFile extends CLogger {
+class logging_CLoggerFile extends logging_CLogger {
 
 	// ------------------------------------------------------------------------------------
 	//

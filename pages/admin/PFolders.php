@@ -254,7 +254,7 @@ require_once(TP_SOURCEPATH . 'CHTMLPage.php');
 $page = new CHTMLPage(WS_STYLESHEET);
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+$htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
 
 // $page->printPage($htmlLeft, $htmlMain, $htmlRight, '', $displayAs);
 $page->printPage('Kataloger', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);

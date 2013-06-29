@@ -8,7 +8,7 @@
 // Author: Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 // -------------------------------------------------------------------------------------------
 //
@@ -215,7 +215,37 @@ $htmlRight = "";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>{$folderHtml}</div>";
+$htmlLeft = <<<EOD
+<div class="Box-A" style="width: 100%;">
+    <div class="boxhead">
+        <h2>
+            <span>Kategori </span>
+        </h2>
+    </div>
+    <div class="boxbody" style="padding: 5px;">
+        <div id='navigation'>{$folderHtml}</div>
+    </div>
+</div>
+EOD;
+
+//$htmlLeft .= <<<EOD
+//<div class="Box-A" style="width: 100%; margin-top: 15px;">
+//    <div class="boxhead">
+//        <h2>
+//            <span>Min minneslista </span>
+//        </h2>
+//    </div>
+//    <div class="boxbody" style="padding: 5px;">
+//        <div class="memoryMessage">
+//            <div style="float: left; margin-right: 7px; padding-top: 5px;">
+//                <a href="javascript:memoryList.RedirectToLogin('/MemberManagement/Login/Login');">Logga in</a>
+//                för att se din minneslista här.
+//            </div>
+//            <div class="clearer"></div>
+//        </div>
+//    </div>
+//</div>
+//EOD;
 
 $page->printPage('Bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

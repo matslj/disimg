@@ -8,7 +8,7 @@
 // Author: Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ $htmlRight	= "";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "</div>";
+$htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
 
 // $page->PrintPage("File archive for user '{$account}'", $htmlLeft, $htmlMain, $htmlRight);
 $page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);

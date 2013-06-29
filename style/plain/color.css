@@ -39,10 +39,13 @@ div#top {
 	background: #E3E0D1;
 }
 
-header {}
+header {
+    background: url("rHeader_top_left.png") no-repeat scroll left top #FFFFF0;
+}
 
 div#title {
-	background: #FFAA40 /* dark */ /*#970601 url(nav-tab.png) repeat-x*/;
+        background: url("rounded_title_top_left.png") no-repeat scroll left top #FFAA40;
+	/* background: #FFAA40 */ /* dark */ /*#970601 url(nav-tab.png) repeat-x*/;
 }
 div#title div.right {
 	color: #A65C00;

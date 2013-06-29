@@ -40,7 +40,7 @@ define('WS_LOGGER',	'dummy');
 // * 'securimage' - use the securimage captcha.
 // * 'dummy' - means no captcha.
 // * No captcha (commented away) - the same as 'dummy'
-define('WS_CAPTCHA',	'securimage');
+define('WS_CAPTCHA',	'dummy');
 
 // File handling
 define('FILE_ARCHIVE_FOLDER', 'uploads');

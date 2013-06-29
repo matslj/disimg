@@ -6,7 +6,7 @@
 // Show the users profile information in a form and make it possible to edit the information.
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 // Get user-object
 $uo = CUserData::getInstance();

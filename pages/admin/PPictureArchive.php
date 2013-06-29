@@ -13,7 +13,7 @@
 // Author: Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 // -------------------------------------------------------------------------------------------
 //
@@ -106,11 +106,6 @@ $attachment = new CAttachment();
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
 $htmlHead = <<<EOD
-    <style>
-        .folderTree {
-            margin-top: 20px;
-        }
-    </style>
     <!-- jQuery UI -->
     <script src="{$js}jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
@@ -250,7 +245,19 @@ $htmlRight = "";
 $page = new CHTMLPage();
 
 // Creating the left menu panel
-$htmlLeft = "<div id='navigation'>" . $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR) . "{$folderTreeHtml}</div>";
+$htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
+$htmlLeft .= <<<EOD
+<div class="Box-A" style="width: 100%; margin-top: 15px;">
+    <div class="boxhead">
+        <h2>
+            <span>Kategori </span>
+        </h2>
+    </div>
+    <div class="boxbody" style="padding: 5px;">
+        <div id='navigation'>{$folderTreeHtml}</div>
+    </div>
+</div>
+EOD;
 
 $page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;

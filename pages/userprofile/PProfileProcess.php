@@ -8,7 +8,7 @@
 // @author Mats Ljungquist
 //
 
-$log = CLogger::getInstance(__FILE__);
+$log = logging_CLogger::getInstance(__FILE__);
 
 // -------------------------------------------------------------------------------------------
 //

@@ -40,34 +40,82 @@
 #nav .sel a:hover,
 #nav .sel a:focus {}
 
-/*
+/******************************************************************
  * Left Side navigation menu
  */
-#navigation {font-size:0.75em;}
-#navigation ul {margin:0px; padding:0px; background:#666;}
-#navigation li {list-style: none;
-border-bottom: #fff solid;
- border-top: #fff solid;
- border-width: 1px;
+
+.leftSideAdminMenu {
+    width: 100%;
 }
 
+
+.leftSideAdminMenu .menuBoxHeadline {
+    background: url("box-c-head-r.gif") no-repeat scroll right top #DDDDDD;
+}
+
+
+.leftSideAdminMenu .menuBoxHeadline .menuHeadlineLeft {
+    background: url("box-c-head-l.gif") no-repeat scroll left top #DDDDDD;
+    float: left;
+    height: 30px;
+    width: 10px;
+}
+
+
+.leftSideAdminMenu .menuBoxHeadline .menuHeadlineRight {
+    float: left;
+    font: bold 12px tahoma;
+    padding: 9px 8px 9px 0;
+}
+
+.leftSideAdminMenu ul {margin:0px; padding:0px;}
+
+/*
+#navigation li {
+    list-style: none;
+    border-bottom: #fff solid;
+    border-top: #fff solid;
+    border-width: 1px;
+}
+*/
+
+.leftSideAdminMenu li {
+    color: #444444;
+    list-style: none;
+    background: url("catTreeBackBackground4.gif") repeat-x scroll left bottom #EEEEEE;
+    border-bottom: 1px solid #D8D8D8;
+    border-left: 1px solid #D8D8D8;
+    border-right: 1px solid #D8D8D8;
+    /* padding: 5px 2px 5px 8px; */
+}
+
+.leftSideAdminMenu li:hover, .leftSideAdminMenu li.sel {
+    color: white;
+    background-color: grey;
+    background-image: none;
+}
+
+.leftSideAdminMenu li a, .leftSideAdminMenu li a:visited {
+    color: inherit;
+    font: 12px arial;
+    text-decoration: none;
+    padding: 5px 2px 5px 12px;
+    display: block;
+}
+
+
+/***************************************************************
+ * Navigation style for category/folder tree
+ */
 #navigation a {
  color: #fff;
  cursor: pointer;
  display:block;
  height:25px;
  line-height: 25px;
- text-indent: 10px;
+ text-indent: 5px;
  text-decoration:none;
  width:100%;
-}
-#navigation a:hover, #navigation a.sel {
- text-decoration:none;
-}
-
-#navigation li:hover, #navigation a.sel {
- background: #f90;
- position: relative;
 }
 
 #navigation .row a {

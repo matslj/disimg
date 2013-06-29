@@ -56,7 +56,7 @@ h3.columnMenu {
 
 div#body h1 {
 	/* text-transform: uppercase; */
-	border-bottom: double #333333 4px;
+	border-bottom: solid #565656 1px;
 }
 
 h2 { }
