@@ -161,7 +161,7 @@ EOD;
                                         "</td><td>" +
                                         data.uploadedFile.created +
                                         "</td><td class='folderName'>" +
-                                        "Ingen katalog" +
+                                        "------" +
                                         "</td><td class='delCol'><input id='" + data.uploadedFile.id + "#" + data.uploadedFile.uniqueName + "#" + data.uploadedFile.extension + "' class='cbMark' type='checkbox' name='cbMark#" + data.uploadedFile.uniqueName + "'/></td></tr>");
                             var message = "<span class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat; padding-left: 20px;\">filen är uppladdad</span>";
                             \$form.find('span.status').html(message);
@@ -632,7 +632,7 @@ EOD;
                 <th class="thumb">Tumme</th>
                 <th>Filnamn</th>
                 {$adminColumns}
-                <th>Katalog</th>
+                <th>Kategori</th>
                 <th class="knapp">{$masterChk}</th>
                 </thead>
                 <tbody id='{$this -> fileListId}'>
@@ -709,7 +709,7 @@ EOD;
                     A.pathToDiskFile AS path,
                     A.createdFile AS created,
                     U.accountUser AS account,
-                    IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+                    IFNULL(F.nameFolder, "------") AS foldername
                 FROM {$tFile} AS A
                     INNER JOIN {$tUser} AS U
                             ON A.File_idUser = U.idUser

@@ -96,14 +96,14 @@ EOD;
 // --
 $helpContent = <<<EOD
 <p>
-    Alla filer som läggs upp i systemet måste läggas in i en katalog för att kunna
-    delas ut till en/flera användare och det är här du lägger upp katalogerna. I
+    Alla filer som läggs upp i systemet måste läggas in i en kategori för att kunna
+    delas ut till en/flera användare och det är här du lägger upp kategorierna. I
     tabellen nedan så betyder:
 </p>
 <ul>
-    <li>Namn - Namnet på katalogen. Får vara max 20 tecken långt, inklusive mellanslag.</li>
-    <li>Antal - Antalet filer som just nu ligger i katalogen.</li>
-    <li>Kolumn för att ta bort en katalog. Du kan bara ta bort katalogen om den är tom.</li>
+    <li>Namn - Namnet på kategorin. Får vara max 20 tecken långt, inklusive mellanslag.</li>
+    <li>Antal - Antalet filer som just nu ligger i kategorin.</li>
+    <li>Kolumn för att ta bort en kategori. Du kan bara ta bort kategorin om den är tom.</li>
 </ul>
 EOD;
 
@@ -112,7 +112,7 @@ require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
 // -------------------- Slut Systemhjälp ----------------------
 
 $htmlMain = <<<EOD
-<h1>Kataloger</h1>
+<h1>Kategorier</h1>
 {$htmlHelp}
 EOD;
 
@@ -209,7 +209,7 @@ $htmlMain .= <<< EOD
         <input type='hidden' name='redirect-failure' value='{$redirect}'>
         <input type='hidden' id='dialogCreateAction' name='action' value='create'>
         <fieldset>
-            <p>Skapa ny katalog</p>
+            <p>Skapa ny kategori</p>
             <table width='99%'>
                 <tr>
                     <td><label for="dialogCreateFolderName">Namn: </label></td>
@@ -220,14 +220,14 @@ $htmlMain .= <<< EOD
     </form>
 </div>
 <!-- ui-dialog delete -->
-<div id="dialogDelete" title="Radera katalog">
+<div id="dialogDelete" title="Radera kategori">
     <form id='dialogDeleteForm' action='{$action}' method='POST'>
         <input type='hidden' name='redirect' value='{$redirect}'>
         <input type='hidden' name='redirect-failure' value='{$redirect}'>
         <input type='hidden' id='dialogDeleteFolderId' name='folderid' value=''>
         <input type='hidden' id='dialogDeleteAction' name='action' value='delete'>
         <fieldset>
-            <p>Vill du radera den här katalogen?</p>
+            <p>Vill du radera den här kategorin?</p>
             <div id="dialogDeleteFolderName"></div>
         </fieldset>
     </form>
@@ -257,7 +257,7 @@ $page = new CHTMLPage(WS_STYLESHEET);
 $htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
 
 // $page->printPage($htmlLeft, $htmlMain, $htmlRight, '', $displayAs);
-$page->printPage('Kataloger', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
+$page->printPage('Kategorier', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>

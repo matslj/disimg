@@ -15,6 +15,10 @@ td {
 	font-family: Calibri, sans-serif /* Verdana, Sans-serif */;
 }
 
+th {
+        font-size:1.1em;
+}
+
 div#title p {
 	margin: 0;
 	padding-left: 20px;
@@ -48,7 +52,6 @@ div#bottom p {
 
 body,
 p,
-th,
 td,
 h3.columnMenu {
 	font-size: small;
@@ -78,18 +81,7 @@ div#infobar p {
 	font-size: x-small;
 }
 
-#left_LMR p.note {
-    font-size: 8px;
-    padding: 5px;
-    height: 30px;
-    background-color: #E3E0D1;
-    border: 1px solid black;
-}
-
-#right_LMR p.note {
-    font-size: 8px;
-    padding: 5px;
-    height: 30px;
-    background-color: #E3E0D1;
-    border: 1px solid black;
+/* Font för PPictureUserInterest.php */
+div.folderHeader {
+    font-size: 20px;
 }

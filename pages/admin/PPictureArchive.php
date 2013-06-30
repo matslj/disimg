@@ -175,7 +175,7 @@ $folderHtml .= "</select>";
 $helpContent = <<<EOD
 <p>
     Här kan du lägga upp, ta bort och flytta filer. Flytta handlar om att flytta
-    filer mellan olika kataloger.
+    filer mellan olika kategorier.
 </p>
 EOD;
 
@@ -259,7 +259,7 @@ $htmlLeft .= <<<EOD
 </div>
 EOD;
 
-$page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
+$page->printPage('Bildarkiv', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>

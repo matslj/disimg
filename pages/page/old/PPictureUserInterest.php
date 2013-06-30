@@ -108,7 +108,7 @@ if ($row) {
 }
 $results[0]->close();
 
-$title = empty($currentFolderName) ? "Alla bilder" : "Bilder i katalogen: " . $currentFolderName;
+$title = empty($currentFolderName) ? "Alla bilder" : "Bilder i kategorin: " . $currentFolderName;
 
 $htmlPageTitleLink = "";
 $htmlPageContent = "";

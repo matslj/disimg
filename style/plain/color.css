@@ -28,15 +28,15 @@
 /* -------------------------------------------------------------------------------------
 /* Pagestructure */
 html,
-body {
+body,
+div#top {
     /* background-image: url(bg_paper.jpg);
     background-color:#cccccc; */
+    background: #E3E0D1;
 }
 
-div#wrap {}
-
-div#top {
-	background: #E3E0D1;
+div#wrap {
+    background: #FFFFF0;
 }
 
 header {
@@ -44,40 +44,40 @@ header {
 }
 
 div#title {
-        background: url("rounded_title_top_left.png") no-repeat scroll left top #FFAA40;
-	/* background: #FFAA40 */ /* dark */ /*#970601 url(nav-tab.png) repeat-x*/;
+    background: url("rounded_title_top_left.png") no-repeat scroll left top #FFAA40;
+    /* background: #FFAA40 */ /* dark */ /*#970601 url(nav-tab.png) repeat-x*/;
 }
 div#title div.right {
-	color: #A65C00;
-        background-image: url(marimekko_logo.png);
-        background-repeat: no-repeat;
-        background-position: right;
-        margin-right: 30px;
-        float: right;
-        height: 200px;
-        width: 348px;
+    color: #A65C00;
+    background-image: url(marimekko_logo.png); /* This is the banner image */
+    background-repeat: no-repeat;
+    background-position: right;
+    margin-right: 30px;
+    float: right;
+    height: 200px;
+    width: 348px;
 }
 
 div#title div.left {
-        float: left;
+    float: left;
 }
 
 footer {
-	background: #A65C00 /* darklight */ /* url(nav-tab.png) repeat */;
+    background: #A65C00 /* darklight */ /* url(nav-tab.png) repeat */;
 }
 footer p {
-	color: #FFAA40;
+    color: #FFAA40;
 }
 
 div#bottom {
-	background: #E3E0D1;
+    background: #E3E0D1;
 }
 div#bottom p {
-	color: #999999;
+    color: #999999;
 }
 
 div.sidebox {
-	background: #E3E0D1;
+    background: #E3E0D1;
 }
 
 /* -------------------------------------------------------------------------------------
@@ -116,11 +116,9 @@ h1 a, h1 a:visited, h1 a:hover {
 /* -------------------------------------------------------------------------------------
 /* Navigation bar */
 
-#nav {}
 #nav ul {
 	background: #A65C00;
 }
-#nav li {}
 #nav a {
 	border-right: 1px solid #FFFFF0;
 	border-bottom: none;
@@ -129,17 +127,11 @@ h1 a, h1 a:visited, h1 a:hover {
 	background: #A65C00;
 }
 #nav a:hover,
-#nav a:focus {
-        color: #A65C00;
-	background: #FF8E00;
-}
-#nav .sel a {
-	color: #A65C00;
-	background: #FF8E00;
-}
+#nav a:focus,
+#nav .sel a,
 #nav .sel a:hover,
 #nav .sel a:focus {
-	color: #A65C00;
+        color: #A65C00;
 	background: #FF8E00;
 }
 
@@ -197,11 +189,25 @@ div#bottom a:hover {
 
 th, td {
 	color: #111111;
+        border-color: #A65C00;
 }
 
 th {
-	background: #cccccc;
+	background: #A65C00;
 }
 tfoot td {
-	background: #cccccc;
+	background: #A65C00;
+}
+
+/* Color specifics for PPictureUserInterest.php */
+div.folderHeader {
+    color: #FFAA40;
+}
+
+.userInterest tr.users td {
+    color: #A65C00;
+}
+
+.userInterest th {
+    background-color:#FFAA40;
 }

@@ -52,9 +52,9 @@ $query = '';
 // Kolla vilken action som gäller och definiera query utifrån detta
 if (strcmp($action, 'create') == 0) {
     if (empty($folderName)) {
-        $_SESSION['errorMessage'] = "Katalogen måste ha ett namn";
+        $_SESSION['errorMessage'] = "Kategorin måste ha ett namn";
     } else if (mb_strlen ($folderName, "UTF-8") > 20) {
-        $_SESSION['errorMessage'] = "Katalognamnet får bestå av max 20 tecken, bestod av " . mb_strlen($folderName, "UTF-8") . " tecken";
+        $_SESSION['errorMessage'] = "Kategorinamnet får bestå av max 20 tecken, bestod av " . mb_strlen($folderName, "UTF-8") . " tecken";
     }
     $spCreateFolder = DBSP_InsertFolder;
     $query = "CALL {$spCreateFolder}('{$folderName}');";
@@ -80,7 +80,7 @@ if ($res != null && $res != false) {
         // Ignore results but count successful statements.
         $nrOfStatements = $db->RetrieveAndIgnoreResultsFromMultiQuery();
         if($nrOfStatements != 1) {
-            $_SESSION['errorMessage']	= "Kunde inte skapa katalog";
+            $_SESSION['errorMessage']	= "Kunde inte skapa kategorin";
         }
     } else if (strcmp($action, 'delete') == 0) {
         $results = Array();
@@ -90,7 +90,7 @@ if ($res != null && $res != false) {
         // $log -> debug(print_r($results, true));
         $row = $results[0]->fetch_object();
         if ($row->status == 1) {
-            $_SESSION['errorMessage']	= "Katalogen innehåller bilder och kan därför inte raderas. Radera bilderna i katalogen först.";
+            $_SESSION['errorMessage']	= "Kategorin innehåller bilder och kan därför inte raderas. Radera bilderna i kategorin först.";
         }
         $results[0] -> close();
     }

@@ -5,7 +5,7 @@
 //
 // Description: Upload and store files in the users file archive.
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 

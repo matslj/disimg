@@ -381,7 +381,7 @@ BEGIN
 		A.modifiedFile AS modified,
 		A.deletedFile AS deleted,
                 U.accountUser AS account,
-                IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+                IFNULL(F.nameFolder, "------") AS foldername
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U
                     ON A.File_idUser = U.idUser
@@ -417,7 +417,7 @@ BEGIN
             A.modifiedFile AS modified,
             A.deletedFile AS deleted,
             U.accountUser AS account,
-            IFNULL(F.nameFolder, "Ingen katalog") AS foldername
+            IFNULL(F.nameFolder, "------") AS foldername
     FROM {$tFile} AS A
         INNER JOIN {$tUser} AS U
                 ON A.File_idUser = U.idUser
@@ -547,7 +547,7 @@ BEGIN
 		A.modifiedFile AS modified,
 		A.deletedFile AS deleted,
                 U.accountUser AS account,
-                IFNULL(F.nameFolder, "Ingen katalog") AS foldername,
+                IFNULL(F.nameFolder, "------") AS foldername,
                 {$udfFileOfInterest}(',aUserId,',A.idFile) AS interest
 	FROM {$tFile} AS A
             INNER JOIN {$tUser} AS U

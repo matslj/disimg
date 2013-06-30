@@ -5,7 +5,7 @@
 //
 // Description: Show the content of the users filearchive.
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 $log = logging_CLogger::getInstance(__FILE__);

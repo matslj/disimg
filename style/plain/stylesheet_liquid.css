@@ -11,8 +11,6 @@
 @import url("font.css");  		/* all font related definitions  */
 @import url("color.css"); 		/* all color related definitions */
 @import url("login.css"); 		/* standard login div and related */
-@import url("editor.css"); 		/* for WYSIWYG editor */
-/* @import url("article.css"); 	*/	/* for displaying articles */
 @import url("dialog.css"); 		/* for displaying dialogs */
 @import url("boxes.css"); 		/* for displaying boxes */
 
@@ -27,7 +25,6 @@ body {
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
-    background: #E3E0D1;
 }
 
 html {
@@ -39,7 +36,6 @@ div#wrap {												/* wraps all divs of page */
     padding: 0;
     min-width: 600px;
     max-width: 1100px;
-    background: #FFFFF0;
 }
 
 div#top {
@@ -51,14 +47,14 @@ div#top {
 }
 
 header {												/* wraps all header related divs */
-	margin: 0;
-	padding: 10px 0 0 0;
+    margin: 0;
+    padding: 10px 0 0 0;
 }
 
 div#title {
-	margin: 0 10px 0 10px;
-	padding: 0;
-        height: 200px;
+    margin: 0 10px 0 10px;
+    padding: 0;
+    height: 200px;
 }
 
 #nav {
@@ -66,23 +62,23 @@ div#title {
 }
 
 div#body {
-	margin: 0;
-	padding: 0;
-        margin: 0 10px 5px 10px;
+    margin: 0;
+    padding: 0;
+    margin: 0 10px 5px 10px;
 }
 
 footer {
-	margin: 0;
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	padding: 0;
+    margin: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 0;
 }
 
 div#bottom {
-	margin: 0;
-	padding: 0;
-	padding-top: 4px;
+    margin: 0;
+    padding: 0;
+    padding-top: 4px;
 }
 
 
@@ -151,6 +147,10 @@ div#main_M { margin-left: 10px; margin-right: 10px;}
 div.clear {
 	height: 0;
 	clear: both;
+}
+
+.clearer {
+    clear: both;
 }
 
 p.last {
@@ -239,16 +239,6 @@ fieldset.code {}
  * Fonts
  *
  */
-
-
-
-
-/* For the menu column, header */
-h3.columnMenu {
-	text-transform: uppercase;
-	border-bottom: double #333333 1px;
-}
-
 p.small {}
 
 div#title p {
@@ -273,16 +263,6 @@ div#bottom p {
 a, a:visited {}
 a:hover {}
 
-
-/* -------------------------------------------------------------------------------------
- *
- * Tables
- *
- */
-
-th {}
-td {}
-
 /* -------------------------------------------------------------------------------------
  *
  * Display source code
@@ -295,6 +275,13 @@ div.sourcecode {
 	padding-left: 10px;
 }
 
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Tables
+ *
+ */
+ 
 .disImgTable {
     border-collapse: collapse;
     width: 500px;
@@ -305,7 +292,7 @@ div.sourcecode {
 }
 
 .disImgTable td, .disImgTable th, .disImgTable table {
-    border: 1px #A65C00 solid;
+    border: 1px solid;
 }
 
 .disImgTable td, .disImgTable th {
@@ -313,11 +300,9 @@ div.sourcecode {
 }
 
 .disImgTable th {
-    font-size:1.1em;
     text-align:left;
     padding-top:5px;
     padding-bottom:4px;
-    background-color:#A65C00;
 }
 
 .disImgTable td.delCol {
@@ -329,9 +314,9 @@ div.sourcecode {
 .disImgTable th.knapp {
     text-align: center;
     width: 30px;
-    background-color:#FFFFF0;
-    border-top: 1px #FFFFF0 solid;
-    border-right: 1px #FFFFF0 solid;
+    background-color:transparent;
+    border-top: 1px transparent solid;
+    border-right: 1px transparent solid;
 }
 
 .disImgTable th.knapp input {
@@ -348,12 +333,6 @@ div.sourcecode {
 
 .disImgTable td.folderName {
     width: 200px;
-}
-
-/* Tabell för PPictureUserInterest.php */
-.folderHeader {
-    color: #FFAA40;
-    font-size: 20px;
 }
 
 .userInterest {
@@ -376,15 +355,11 @@ div.sourcecode {
 }
 
 .userInterest tr.users td {
-    font-size: small;
     font-weight: bold;
-    color: #A65C00;
 }
 
 .userInterest th {
     text-align:left;
     padding-top:5px;
     padding-bottom:4px;
-    background-color:#FFAA40;
 }
-

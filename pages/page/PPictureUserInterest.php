@@ -224,6 +224,7 @@ $query 	= <<< EOD
         A.createdFile AS created,
         A.File_idUser AS userIdCreator,
         BI.BildIntresse_idUser as userId,
+        BI.dateBildIntresse as date,
         A.File_idFolder as folderId
     FROM {$tFile} AS A
         INNER JOIN {$tBildIntresse} AS BI
@@ -232,7 +233,7 @@ $query 	= <<< EOD
         A.File_idUser = {$uo->getId()} AND
         deletedFile IS NULL
         {$folderWhere}{$userWhere}
-        ORDER BY folderId, id
+        ORDER BY folderId, id, date
         ;
 EOD;
 
@@ -275,7 +276,7 @@ EOD;
 EOD;
     }
     $prevFile = $row->id;
-    $contentHtml .= "<tr class='users'><td colspan='2'>" . $tempUsers[$row->userId] -> getName() . "</td></tr>";
+    $contentHtml .= "<tr class='users'><td>" . $tempUsers[$row->userId] -> getName() . "</td><td style='font-weight: normal; font-size: 8px;'>({$row->date})</td></tr>";
 
     
     // Print which users are interested in file.
@@ -359,13 +360,29 @@ EOD;
 // --
 $helpContent = <<<EOD
 <p>
-    Den här sidan visar vilka objekt en olika användare är intresserade av. Sidan
+    Den här sidan visar vilka objekt användare är intresserade av. Sidan
     är uppdelad i tre kolumner:
 </p>
 <ul>
-    <li></li>
-    <li></li>
-    <li></li>
+    <li>
+        Kolumn 1 - Tillsammans med kolumn 3 så används den här kolumnen för att 
+        filtrera fram de objekt som någon uttryckt intresse för. Den här kolumen
+        används för att filtrera på kategori och visar även antalet intresseobjekt
+        inom respektive kategori (den här siffran påverkas även av val man gör i
+        kolumn 3).
+    </li>
+    <li>
+        Kolumn 2 - Innehåller det filtrerade resultatet av de val man gjort
+        i kolumn 1 och 3. Standardresultatet, det som visas när man kommer in på
+        sidan, är att visa alla objekt i någon kategori och av någon användare.
+    </li>
+    <li>
+        Kolumn 3 - Tillsammans med kolumn 1 så används den här kolumnen för att 
+        filtrera fram de objekt som någon uttryckt intresse för. Den här kolumen
+        används för att filtrera på användare och visar även antalet objekt som 
+        respektive användare har uttryckt ett intresse för (den här siffran 
+        påverkas även av val man gör i kolumn 1).
+    </li>
 </ul>
 EOD;
 

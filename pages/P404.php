@@ -14,8 +14,6 @@
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
 $pc = CPageController::getInstance();
-//$pc->LoadLanguage(__FILE__);
-
 
 // -------------------------------------------------------------------------------------------
 //
@@ -24,9 +22,6 @@ $pc = CPageController::getInstance();
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
-
 
 // -------------------------------------------------------------------------------------------
 //
@@ -39,7 +34,6 @@ $htmlMain = <<<EOD
 You have used a link that is not supported. The page you are trying to reach does not exist.
 </p>
 EOD;
-
 
 // -------------------------------------------------------------------------------------------
 //

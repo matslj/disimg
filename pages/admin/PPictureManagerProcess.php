@@ -68,7 +68,7 @@ if ($res != null && $res != false) {
     // Ignore results but count successful statements.
     $nrOfStatements = $db->RetrieveAndIgnoreResultsFromMultiQuery();
     if($nrOfStatements != 1) {
-        $_SESSION['errorMessage']	= "Fel: kunde inte skapa katalog";
+        $_SESSION['errorMessage']	= "Fel: kunde inte skapa kategori";
     }
 }
 

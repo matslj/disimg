@@ -6,7 +6,7 @@
 // Config-file for database and SQL related issues. All SQL-statements are usually stored in this
 // directory (TP_SQLPATH). This files contains global definitions for table names and so.
 //
-// Author: Mikael Roos, mos@bth.se
+// Author: Mats Ljungquist
 //
 
 // -------------------------------------------------------------------------------------------

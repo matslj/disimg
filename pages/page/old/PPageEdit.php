@@ -97,6 +97,30 @@ $htmlArticleTitle = "<p>Title: <input id='title' class='changables title' type='
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
 $htmlHead = <<<EOD
+<!-- Nicedit styling -->
+<style>
+form.editor1 {
+}
+
+form.editor1 input.title {
+	font-family: Verdana, Sans-serif;
+	font-size: 1.5em;
+	width: 400px;
+}
+
+form.editor1 textarea.size500x400 {
+	font-family: Verdana, Sans-serif;
+	font-size: 1em;
+	width: 500px;
+	height: 400px;
+}
+
+form.editor1 p.notice {
+	font-size: x-small;
+	font-style: italic;
+}
+</style>
+
 <!-- jGrowl latest -->
 <link rel='stylesheet' href='{$js}jgrowl/jquery.jgrowl.css' type='text/css' />
 <script type='text/javascript' src='{$js}jgrowl/jquery.jgrowl.js'></script>

@@ -261,12 +261,12 @@ $mysqli->close();
 // --
 $helpContent = <<<EOD
 <p>
-    På den här sidan kan du koppla en användare till en eller flera kataloger.
+    På den här sidan kan du koppla en användare till en eller flera kategorier.
     Koppla gör du genom att trycka på plus-tecknet i tabellens högerkant. Användaren
-    som du kopplar kan bara se de kataloger som du kopplat upp användaren emot.
+    som du kopplar kan bara se de kategorier som du kopplat ihop användaren med.
 </p>
 <p>
-    Du kopplar loss användare från en katalog genom att klicka på minus-tecknet.
+    Du kopplar loss användare från en kategori genom att klicka på minus-tecknet.
 </p>
 EOD;
 
@@ -279,7 +279,7 @@ require_once(TP_PAGESPATH . 'admin/PHelpFragment.php');
 // Create HTML for page
 //
 $htmlMain = <<<EOD
-<h1>Katalogbehörighet</h1>
+<h1>Kategoribehörighet</h1>
 {$htmlHelp}
 <div class='section'>
 {$selectOption}
@@ -299,7 +299,7 @@ $page = new CHTMLPage();
 $htmlLeft = $page ->PrepareLeftSideNavigationBar(ADMIN_MENU_NAVBAR, "Admin - undermeny");
 
 // $page->PrintPage("File archive for user '{$account}'", $htmlLeft, $htmlMain, $htmlRight);
-$page->printPage('Användare', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
+$page->printPage('Koppla kategoribehörighet', $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>
