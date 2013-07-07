@@ -224,7 +224,7 @@ $htmlMain .= <<< EOD
             <input type='hidden' name='redirect' value='{$redirect}'>
             <input type='hidden' name='redirect-failure' value='{$redirect}'>
             <input type='hidden' id='dialogCreateUserId' name='accountid' value=''>
-            <input type='hidden' id='submit-ajax' name='do-submit' value='upload-return-html'>
+            
             <input type='hidden' id='dialogCreateAction' name='action' value='?p=uploadp'>
             <fieldset>
                 <p>

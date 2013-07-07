@@ -363,3 +363,7 @@ div.sourcecode {
     padding-top:5px;
     padding-bottom:4px;
 }
+
+img {
+    border: 0;
+}
